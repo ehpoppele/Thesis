@@ -1,6 +1,7 @@
 import gym
 import torch
 import torch.nn as nn
+import random
 #import the pytorch stuff, just basic and nn?
 
 class Genome():
@@ -28,38 +29,45 @@ class Genome():
         #There is certainly a faster way to do this, that doesn't require a python loop. I'll look into it later
         def model(inputs):
             for i in range(len(self.genotype)//2): #int division, but genotype should always be even length
-                inputs = nn.relu((inputs @ self.genotype[2*i] + self.genotype[2*i + 1]))
-            return nn.Softmax(inputs)
+                relu = nn.ReLU()
+                inputs = relu((inputs @ self.genotype[2*i]) + self.genotype[2*i + 1])
+            soft = nn.Softmax(dim=0)
+            return soft(inputs)
         self.model = model
         
-    def evalFitness(self, experiment):
-        assert (experiment == self.experiment), "Attempted to evaluate on incompatible experiment"
-        env = gym.make(experiment["name"])
-        observation = env.reset()
-        for t in range(100): #Can work with changing this to much higher?
-            env.render()
-            outputs = self.model(observation)
-            action = 0
-            rand_select = random()
-            #Select an index i based on the output array distribution
-            for i in range(len(outputs)):
-                rand_select -= outputs[i]
-                if rand_select < 0:
-                    action = i + 1
+    def evalFitness(self):
+        
+        sum_reward = 0
+        trials = self.experiment['trials']
+        for i in range(trials):
+            env = gym.make(self.experiment["name"])
+            observation = env.reset()
+            for t in range(100): #Can work with changing this to much higher?
+                inputs = torch.from_numpy(observation)
+                outputs = self.model(inputs)
+                action = 0
+                rand_select = random.random()
+                #Select an index i based on the output array distribution
+                for i in range(len(outputs)):
+                    rand_select -= outputs[i]
+                    if rand_select < 0:
+                        action = i
+                        break
+                        #We should always break at some point, since outputs should sum 1, and rand_select is 1 at max
+                        #but in a rare rounding error we default to 0
+                observation, reward, done, info = env.step(action)
+                sum_reward += reward
+                if done:
                     break
-                    #We should always break at some point, since outputs should sum 1, and rand_select is 1 at max
-                    #but in a rare rounding error we default to 0
-            observation, reward, done, info = env.step(action)
-            sum_reward += reward
-            if done:
-                break
-        env.close()
-        self.fitness = sum_reward
+            env.close()
+        self.fitness = sum_reward/trials
         return sum_reward
         
     #This currently mutates everything by a fair amount
     #Will change later to be param-based, to adjust number of tensors mutated and by how much
     def mutate(self):
-        for i in range(len(self.genotype)):
-            self.genotype[i] = self.genotype[i] + (torch.randn(self.genotype[i].size()) * (1/self.genotype[i].size()[0]))
-        self.rebuildModel()
+        new = Genome(self.experiment)
+        for i in range(len(new.genotype)):
+            new.genotype[i] = new.genotype[i] + (torch.randn(new.genotype[i].size()) * (1/new.genotype[i].size()[0]))
+        new.rebuildModel()
+        return new

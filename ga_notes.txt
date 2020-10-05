@@ -1,0 +1,18 @@
+Code outline for basic GA neuroevolution:
+
+Main function:
+Takes parameters as inputs (pop size, mutation rates, fitness function? etc)
+    Create N new genomes through some randomization
+    Give fitness ranking to each in first gen
+    For G generations run:
+        rank all in current gen by fitness
+        Make N-1 new genomes by randomly selecting one of T top parents, then mutating
+        Take top 10 individuals from last gen:
+            run fitness on each 30 times, take mean for new fitness
+            take highest fitness of these, add to new gen
+    Print last gen into file?
+    return best genome
+    
+    
+Issues to consider:
+    Should tensors be float or double? Is there a significant cost to double?
