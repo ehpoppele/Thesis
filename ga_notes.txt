@@ -16,3 +16,7 @@ Takes parameters as inputs (pop size, mutation rates, fitness function? etc)
     
 Issues to consider:
     Should tensors be float or double? Is there a significant cost to double?
+    
+    
+Params to fiddle with:
+

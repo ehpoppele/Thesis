@@ -22,6 +22,7 @@ def evolve(pop_size, generation_count, experiment, selection_range):#Add a metri
         if not added:
             population.append(new_net)
     for g in range(generation_count):
+        print(population[0].fitness)
         #Make new population from mutations plus best net from last pop
         new_pop = []
         for i in range(pop_size - 1):
@@ -42,7 +43,7 @@ def evolve(pop_size, generation_count, experiment, selection_range):#Add a metri
         #Do so by retesting each of the top ten 30 times and taking the average
         best_fitness = float('-inf')
         fittest = None
-        for i in range(10):
+        for i in range(experiment.select_range):
             fitsum = 0
             for j in range(30):
                 fitsum += population[i].evalFitness() #eval will also return the new fitness, not just update it

@@ -2,20 +2,22 @@ import basic_evolve
 import torch
 import gym
 import random
+import experiments
 
-experiment = {"name" : 'CartPole-v0', "inputs" : 4, "outputs" : 2, "layers" : 2, "layer_size" : 16, "trials" : 10}
+#experiment = {"name" : 'CartPole-v0', "inputs" : 4, "outputs" : 2, "layers" : 3, "layer_size" : 16, "trials" : 20}
 torch.set_default_tensor_type(torch.DoubleTensor)
 
 if __name__ == "__main__":
-    fit_pop = basic_evolve.evolve(50, 5, experiment, 5)
-    print("final gen", [gene.fitness for gene in fit_pop])
+    experiment = experiments.cart_pole
+    fit_pop = basic_evolve.evolve(experiment.population, experiment.generations, experiment, experiment.select_range)
+    print("fittest:", fit_pop[0].fitness)
     fittest = fit_pop[0]
-    env = gym.make(experiment["name"])
+    env = gym.make(experiment.name)
     observation = env.reset()
     sum_reward = 0
     input("press enter to continue to animation")
     #render not working?
-    for t in range(100):
+    for t in range(200):
         env.render()
         inputs = torch.from_numpy(observation)
         outputs = fittest.model(inputs)
