@@ -11,6 +11,7 @@ class Genome():
         self.fitness = float("-inf") #default fitness is minimum before any evaluation
         self.mutate_effect = experiment.mutate_effect
         self.model = None
+        self.device = experiment.device
         #Now initialize the random genotype
         if randomize:
             if experiment.layers == 0:
@@ -36,8 +37,8 @@ class Genome():
             soft = nn.Softmax(dim=0)
             return soft(inputs)
         """
-        model = Genome_network(self.genotype)
-        self.model = model
+        model = Genome_network(self.genotype, self.device)
+        self.model = model.to(torch.device(self.device))
         
     def evalFitness(self):
         sum_reward = 0
@@ -47,7 +48,7 @@ class Genome():
             observation = env.reset()
             for t in range(1000): #Can work with changing this to higher?
                 inputs = torch.from_numpy(observation)
-                inputs = inputs.double()
+                inputs = (inputs.double()).to(torch.device(self.device))
                 outputs = self.model(inputs)
                 action = 0
                 rand_select = random.random()
@@ -75,9 +76,13 @@ class Genome():
         
 class Genome_network(nn.Module):
     
-    def __init__(self, genotype):
+    def __init__(self, genotype, device):
         super().__init__()
-        self.genotype = genotype
+        self.device = device
+        cuda_genes = []
+        for g in genotype:
+            cuda_genes.append(g.to(torch.device(self.device)))
+        self.genotype = cuda_genes
 
     def forward(self, inputs):
         for i in range(len(self.genotype)//2): #int division, but genotype should always be even length

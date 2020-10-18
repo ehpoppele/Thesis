@@ -20,3 +20,6 @@ Issues to consider:
     
 Params to fiddle with:
 
+
+1534 seconds for 1 gen on cuda, cpu use around 17-20% average, 960mb
+1344 seconds for 1 gen on cpu, cpu use around 50%, 80mb

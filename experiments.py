@@ -9,6 +9,7 @@ class Experiment():
 #Cart pole config, pretty much solves the problem
 #might not be optimal, but final solution about 200 (max score) each time
 cart_pole = Experiment('CartPole-v0')
+cart_pole.device        = 'cuda'
 cart_pole.inputs        = 4
 cart_pole.outputs       = 2
 cart_pole.layers        = 4 #seems that only 2 are necessary?
@@ -26,17 +27,18 @@ cart_pole.elite_evals   = 30
 #---------------------------
 #Frostbite
 frostbite_1 = Experiment('Frostbite-ram-v0')
+frostbite_1.device          = 'cuda'
 frostbite_1.inputs          = 128
 frostbite_1.outputs         = 18
 frostbite_1.layers          = 1
 frostbite_1.layer_size      = 256
 frostbite_1.trials          = 3
 frostbite_1.population      = 100
-frostbite_1.generations     = 8
+frostbite_1.generations     = 5
 frostbite_1.child_count     = 0
 frostbite_1.mutate_range    = frostbite_1.population // 10
 frostbite_1.mutate_count    = frostbite_1.population - 1
-frostbite_1.mutate_effect   = 1
+frostbite_1.mutate_effect   = 5
 frostbite_1.elite_count     = frostbite_1.population - (frostbite_1.child_count + frostbite_1.mutate_count)
 frostbite_1.elite_range     = frostbite_1.mutate_range
-frostbite_1.elite_evals     = 30
+frostbite_1.elite_evals     = 10

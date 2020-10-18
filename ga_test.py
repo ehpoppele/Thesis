@@ -8,20 +8,20 @@ import experiments
 torch.set_default_tensor_type(torch.DoubleTensor)
 
 if __name__ == "__main__":
-    print(torch.cuda.is_available())
-    experiment = experiments.cart_pole
+    #experiment = experiments.cart_pole
+    experiment = experiments.frostbite_1
+    experiment.device = 'cuda'
     fit_pop = basic_evolve.evolve(experiment)
     print("fittest:", fit_pop[0].fitness)
     fittest = fit_pop[0]
     env = gym.make(experiment.name)
     observation = env.reset()
     sum_reward = 0
-    input("press enter to continue to animation")
-    #render not working?
+    #input("press enter to continue to animation")
     for t in range(5000):
         env.render()
         inputs = torch.from_numpy(observation)
-        inputs = inputs.double()
+        inputs = (inputs.double()).to(torch.device(experiment.device))
         outputs = fittest.model(inputs)
         action = 0
         rand_select = random.random()
