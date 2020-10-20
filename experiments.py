@@ -20,7 +20,7 @@ cart_pole.generations   = 10    #needs 35 for stable no-oscillation
 cart_pole.child_count   = 0     #Experiment is basic GA, so no crossover
 cart_pole.mutate_range  = 10
 cart_pole.mutate_count  = cart_pole.population - 1
-cart_pole.mutate_effect = 10
+cart_pole.mutate_effect = 10/4
 cart_pole.elite_count   = cart_pole.population - (cart_pole.child_count + cart_pole.mutate_count)
 cart_pole.elite_range   = 10
 cart_pole.elite_evals   = 30
@@ -30,15 +30,36 @@ frostbite_1 = Experiment('Frostbite-ram-v0')
 frostbite_1.device          = 'cuda'
 frostbite_1.inputs          = 128
 frostbite_1.outputs         = 18
-frostbite_1.layers          = 1
+frostbite_1.layers          = 2
 frostbite_1.layer_size      = 256
-frostbite_1.trials          = 3
-frostbite_1.population      = 100
-frostbite_1.generations     = 5
+frostbite_1.trials          = 1
+frostbite_1.population      = 1001
+frostbite_1.generations     = 10
 frostbite_1.child_count     = 0
-frostbite_1.mutate_range    = frostbite_1.population // 10
+frostbite_1.mutate_range    = 20
 frostbite_1.mutate_count    = frostbite_1.population - 1
-frostbite_1.mutate_effect   = 5
+frostbite_1.mutate_effect   = 0.002
 frostbite_1.elite_count     = frostbite_1.population - (frostbite_1.child_count + frostbite_1.mutate_count)
-frostbite_1.elite_range     = frostbite_1.mutate_range
-frostbite_1.elite_evals     = 10
+frostbite_1.elite_range     = 10
+frostbite_1.elite_evals     = 30
+#---------------------------
+#Venture
+venture_1 = Experiment('Venture-ram-v0')
+venture_1.device          = 'cuda'
+venture_1.inputs          = 128
+venture_1.outputs         = 18
+venture_1.layers          = 2
+venture_1.layer_size      = 256
+venture_1.trials          = 1
+venture_1.population      = 1001
+venture_1.generations     = 1
+venture_1.child_count     = 0
+venture_1.mutate_range    = 20
+venture_1.mutate_count    = venture_1.population - 1
+venture_1.mutate_effect   = 0.002
+venture_1.elite_count     = venture_1.population - (venture_1.child_count + venture_1.mutate_count)
+venture_1.elite_range     = 10
+venture_1.elite_evals     = 30
+
+
+

@@ -43,10 +43,10 @@ class Genome():
     def evalFitness(self):
         sum_reward = 0
         trials = self.experiment.trials
-        for i in range(trials):
+        for _ in range(trials):
             env = gym.make(self.experiment.name)
             observation = env.reset()
-            for t in range(1000): #Can work with changing this to higher?
+            for t in range(20000): #Can work with changing this to higher?
                 inputs = torch.from_numpy(observation)
                 inputs = (inputs.double()).to(torch.device(self.device))
                 outputs = self.model(inputs)
@@ -58,7 +58,7 @@ class Genome():
                     if rand_select < 0:
                         action = i
                         break
-                observation, reward, done, info = env.step(action)
+                observation, reward, done, _ = env.step(action)
                 sum_reward += reward
                 if done:
                     break
@@ -70,7 +70,7 @@ class Genome():
     def mutate(self):
         new = Genome(self.experiment, False) #Not creating initial random, so new.genotype is an empty list
         for i in range(len(self.genotype)):
-            new.genotype.append(self.genotype[i] + (torch.randn(self.genotype[i].size()) * (self.mutate_effect/self.genotype[i].size()[0])))
+            new.genotype.append(self.genotype[i] + (torch.randn(self.genotype[i].size()) * (self.mutate_effect)))
         new.rebuildModel()
         return new
         

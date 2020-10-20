@@ -23,3 +23,18 @@ Params to fiddle with:
 
 1534 seconds for 1 gen on cuda, cpu use around 17-20% average, 960mb
 1344 seconds for 1 gen on cpu, cpu use around 50%, 80mb
+
+frostbite gpu:
+11710 in evalFitness
+776 in forward
+3937 in atari step; 32 total (mostly waiting?)
+ale_python_interface: ~3700 seconds, twice?
+
+frostbite cpu:
+4383 in evalFitness
+342 in forward
+3600 total in ale
+
+venture cpu
+13790 evalFitness
+10800 ale

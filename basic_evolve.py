@@ -1,6 +1,7 @@
 #Main file for basic GA program
 #camelCaps is for func names, snake_case is variables/objects
 import random
+import sys
 from genome import *
 from population import *
 
@@ -23,7 +24,9 @@ def evolve(experiment):
         #If population becomes a class, this would be moved into a method for it (pop push something etc)
         population.add(new_net)
     for g in range(generation_count):
-        print(population.fittest(1).fitness)
+        #Print with sys so we can see output while running (sometimes won't show otherwise)
+        sys.stdout.write(str(population.fittest(1).fitness) + "\n")
+        sys.stdout.flush()
         new_pop = Population(pop_size)
         #Crossover would go right here
         #for now I only have mutation
