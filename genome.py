@@ -4,7 +4,7 @@ import torch.nn as nn
 import random
 
 class Genome():
-    
+
     def __init__(self, experiment, randomize=True):
         self.experiment = experiment
         self.genotype = [] #Genotype will be filled with at least 2 entries, and will always be pairs of weight/bias tensors
@@ -26,7 +26,7 @@ class Genome():
                 self.genotype.append((torch.randn(experiment.layer_size, experiment.outputs)) * (1/experiment.layer_size))
                 self.genotype.append(torch.zeros(experiment.outputs))
             self.rebuildModel()
-            
+
     def rebuildModel(self):
         """"
         #There is certainly a faster way to do this, that doesn't require a python loop. I'll look into it later
@@ -39,12 +39,12 @@ class Genome():
         """
         model = Genome_network(self.genotype, self.device)
         self.model = model.to(torch.device(self.device))
-        
+
     def evalFitness(self):
         sum_reward = 0
         trials = self.experiment.trials
         for _ in range(trials):
-            env = gym.make(self.experiment.name)
+            env = gym.make(self.experiment.name, frameskip=4)
             observation = env.reset()
             for t in range(20000): #Can work with changing this to higher?
                 inputs = torch.from_numpy(observation)
@@ -65,7 +65,7 @@ class Genome():
             env.close()
         self.fitness = sum_reward/trials
         return sum_reward
-        
+
     #mutates based on mutation rate given by experiment
     def mutate(self):
         new = Genome(self.experiment, False) #Not creating initial random, so new.genotype is an empty list
@@ -73,9 +73,9 @@ class Genome():
             new.genotype.append(self.genotype[i] + (torch.randn(self.genotype[i].size()) * (self.mutate_effect)))
         new.rebuildModel()
         return new
-        
+
 class Genome_network(nn.Module):
-    
+
     def __init__(self, genotype, device):
         super().__init__()
         self.device = device
@@ -90,5 +90,3 @@ class Genome_network(nn.Module):
             inputs = relu((inputs @ self.genotype[2*i]) + self.genotype[2*i + 1])
         soft = nn.Softmax(dim=0)
         return soft(inputs)
-        
-        

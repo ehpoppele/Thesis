@@ -16,7 +16,7 @@ if __name__ == "__main__":
     fit_pop = basic_evolve.evolve(experiment)
     print("fittest:", fit_pop[0].fitness)
     fittest = fit_pop[0]
-    env = gym.make(experiment.name)
+    env = gym.make(experiment.name, frameskip=4)
     observation = env.reset()
     sum_reward = 0
     input("press enter to continue to animation")
@@ -32,8 +32,6 @@ if __name__ == "__main__":
             if rand_select < 0:
                 action = i
                 break
-        print(action)
-        time.sleep(.2)
         observation, reward, done, info = env.step(action)
         sum_reward += reward
         if done:
