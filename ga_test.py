@@ -3,14 +3,15 @@ import torch
 import gym
 import random
 import experiments
+import time
 
 #experiment = {"name" : 'CartPole-v0', "inputs" : 4, "outputs" : 2, "layers" : 3, "layer_size" : 16, "trials" : 20}
 torch.set_default_tensor_type(torch.DoubleTensor)
 
 if __name__ == "__main__":
     #experiment = experiments.cart_pole
-    #experiment = experiments.frostbite_1
-    experiment = experiments.venture_1
+    experiment = experiments.frostbite_1
+    #experiment = experiments.venture_1
     #experiment.device = 'cpu'
     fit_pop = basic_evolve.evolve(experiment)
     print("fittest:", fit_pop[0].fitness)
@@ -31,6 +32,8 @@ if __name__ == "__main__":
             if rand_select < 0:
                 action = i
                 break
+        print(action)
+        time.sleep(.2)
         observation, reward, done, info = env.step(action)
         sum_reward += reward
         if done:

@@ -16,7 +16,12 @@ def evolve(experiment):
     mutate_range = experiment.mutate_range
     #Create new random population, sort by starting fitness
     population = Population(pop_size)
+    sys.stdout.write("Evaluating Intial Fitness:")
+    sys.stdout.flush()
     for i in range(pop_size):
+        if (10*i % pop_size < 1):
+            sys.stdout.write(".")
+            sys.stdout.flush()
         new_net = Genome(experiment)
         new_net.evalFitness()
         #Maybe have fitness auto-evaled when new genome is made? maybe not
@@ -25,18 +30,27 @@ def evolve(experiment):
         population.add(new_net)
     for g in range(generation_count):
         #Print with sys so we can see output while running (sometimes won't show otherwise)
-        sys.stdout.write(str(population.fittest(1).fitness) + "\n")
+        sys.stdout.write("\nGeneration " +str(g) + " highest fitness: " + str(population.fittest(1).fitness) + "\n")
         sys.stdout.flush()
         new_pop = Population(pop_size)
         #Crossover would go right here
         #for now I only have mutation
+        sys.stdout.write("Mutating:")
+        sys.stdout.flush()
         for i in range(experiment.mutate_count):
+            if (10*i % experiment.mutate_count < 1):
+                sys.stdout.write(".")
+                sys.stdout.flush()
             parent = population.fittest(mutate_range)
             new_net = parent.mutate()
             new_net.evalFitness()
             new_pop.add(new_net)
         #Elite Crossover; re-evaluates fitness first before selection
+        sys.stdout.write("\nSelecting Elite")
+        sys.stdout.flush()
         for i in range(experiment.elite_count):
+            sys.stdout.write(".")
+            sys.stdout.flush()
             best_fitness = float('-inf')
             fittest = None
             for i in range(experiment.elite_range):
@@ -49,4 +63,3 @@ def evolve(experiment):
             new_pop.add(fittest)
         population = new_pop
     return population
-                        

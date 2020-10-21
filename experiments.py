@@ -2,10 +2,10 @@
 #Also creates experiment instances and assigns the appropriate values to them
 
 class Experiment():
-    
+
     def __init__(self, name):
         self.name = name
-        
+
 #Cart pole config, pretty much solves the problem
 #might not be optimal, but final solution about 200 (max score) each time
 cart_pole = Experiment('CartPole-v0')
@@ -15,7 +15,7 @@ cart_pole.outputs       = 2
 cart_pole.layers        = 4 #seems that only 2 are necessary?
 cart_pole.layer_size    = 4
 cart_pole.trials        = 10
-cart_pole.population    = 100 
+cart_pole.population    = 100
 cart_pole.generations   = 10    #needs 35 for stable no-oscillation
 cart_pole.child_count   = 0     #Experiment is basic GA, so no crossover
 cart_pole.mutate_range  = 10
@@ -33,8 +33,8 @@ frostbite_1.outputs         = 18
 frostbite_1.layers          = 2
 frostbite_1.layer_size      = 256
 frostbite_1.trials          = 1
-frostbite_1.population      = 1001
-frostbite_1.generations     = 10
+frostbite_1.population      = 100 #1001
+frostbite_1.generations     = 1
 frostbite_1.child_count     = 0
 frostbite_1.mutate_range    = 20
 frostbite_1.mutate_count    = frostbite_1.population - 1
@@ -49,10 +49,10 @@ venture_1.device          = 'cuda'
 venture_1.inputs          = 128
 venture_1.outputs         = 18
 venture_1.layers          = 2
-venture_1.layer_size      = 256
+venture_1.layer_size      = 512
 venture_1.trials          = 1
 venture_1.population      = 1001
-venture_1.generations     = 1
+venture_1.generations     = 10
 venture_1.child_count     = 0
 venture_1.mutate_range    = 20
 venture_1.mutate_count    = venture_1.population - 1
@@ -60,6 +60,3 @@ venture_1.mutate_effect   = 0.002
 venture_1.elite_count     = venture_1.population - (venture_1.child_count + venture_1.mutate_count)
 venture_1.elite_range     = 10
 venture_1.elite_evals     = 30
-
-
-

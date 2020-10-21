@@ -12,12 +12,12 @@ Takes parameters as inputs (pop size, mutation rates, fitness function? etc)
             take highest fitness of these, add to new gen
     Print last gen into file?
     return best genome
-    
-    
+
+
 Issues to consider:
     Should tensors be float or double? Is there a significant cost to double?
-    
-    
+
+
 Params to fiddle with:
 
 
@@ -38,3 +38,8 @@ frostbite cpu:
 venture cpu
 13790 evalFitness
 10800 ale
+
+
+Notes:
+Should list dependencies/installs in readme
+pytorch torchvision, gym, gym[atari]
