@@ -28,14 +28,14 @@ cart_pole.elite_evals   = 30
 #---------------------------
 #Frostbite
 frostbite_1 = Experiment('Frostbite-ram-v0')
-frostbite_1.device          = 'cuda'
+frostbite_1.device          = 'cpu'
 frostbite_1.inputs          = 128
 frostbite_1.outputs         = 18
 frostbite_1.layers          = 2
 frostbite_1.layer_size      = 256
 frostbite_1.trials          = 1
 frostbite_1.population      = 1001
-frostbite_1.generations     = 100
+frostbite_1.generations     = 10
 frostbite_1.child_count     = 0
 frostbite_1.mutate_range    = 20
 frostbite_1.mutate_count    = frostbite_1.population - 1
