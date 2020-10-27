@@ -43,3 +43,72 @@ venture cpu
 Notes:
 Should list dependencies/installs in readme
 pytorch torchvision, gym, gym[atari]
+
+Ways to speed up:
+Improve ALE use? (or fewer steps?)
+Repeat tests to see if evalFitness itself is actually an issue; if so:
+    try reworking action selection
+    make env attached to genome? (no rebuilding each time)
+    
+    
+More gpu times:
+
+Frostbite:
+1368 total, some in input/waiting
+444 seconds in make? Might be calls to load ROM (502 calls, so yes)
+1285/236 in evalFitness
+443 ALE load ROM -only 502 calls; try to find/reduce these?
+453 ALE step (act?)
+19 on reset
+236 + 443 + 453 + 19 = 1151 of evalFitness; also 66 in forward, only 68 unaccounted
+
+Frostbite with envs created when genome is (only reset on evalFitness)
+1456 total, some in waiting (less?)
+1393/241.5 in evalFitness (slightly better?)
+79 in forward
+21 on reset
+474 on ALE ROM
+493 on ALE act
+
+As above, but now envs copied from parent in mutation (maybe faster?)
+928/242 in evalFitness
+84 in forward
+97 on ROM (no longer in eval)
+493 on Act
+23.5 on reset
+242 + 84 + 97 + 493 + 23.5 = 876.5 in evalFitness, 51.5 unaccounted (find this- mayb just torch making/moving tensors?)
+This is much faster and better; only concern is how much memory this takes up with a larger population (each env is kept in RAM the whole time now)
+Not sure if I can improve ALE act at all... but where is the evalFitness bottleneck?!
+options:
+    use floats as torch default for everything here
+    random action select to deterministic based on greatest value
+    Could wrap each part of evalFitness in a sub-function, so cProfile points more directly to the issue
+
+Next attempt:
+5744/2026 in evalFitness??
+447 on forward
+2645 on Act
+99 on ROM
+24 on reset
+seems pretty off
+
+***ReLU before or after bias is added? Also, allow bias added to first layer?
+Fix naming convetion for classes (Genome_network??)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

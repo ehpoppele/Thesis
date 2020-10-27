@@ -19,11 +19,11 @@ if __name__ == "__main__":
     env = gym.make(experiment.name, frameskip=4)
     observation = env.reset()
     sum_reward = 0
-    input("press enter to continue to animation")
+    #input("press enter to continue to animation")
     for t in range(20000):
-        env.render()
+        #env.render()
         inputs = torch.from_numpy(observation)
-        inputs = (inputs.double()).to(torch.device(experiment.device))
+        inputs = (inputs.double()).to(torch.device(fittest.device))
         outputs = fittest.model(inputs)
         action = 0
         rand_select = random.random()
@@ -37,5 +37,5 @@ if __name__ == "__main__":
         if done:
             break
     env.close()
-    fittest.fitness = sum_reward
     print(sum_reward)
+    

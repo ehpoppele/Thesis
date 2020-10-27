@@ -5,6 +5,7 @@ class Experiment():
 
     def __init__(self, name):
         self.name = name
+        self.outfile = 'terminal' #default output writes to terminal rather than a file
 
 #Cart pole config, pretty much solves the problem
 #might not be optimal, but final solution about 200 (max score) each time
@@ -33,8 +34,8 @@ frostbite_1.outputs         = 18
 frostbite_1.layers          = 2
 frostbite_1.layer_size      = 256
 frostbite_1.trials          = 1
-frostbite_1.population      = 101 #1001
-frostbite_1.generations     = 5
+frostbite_1.population      = 1001
+frostbite_1.generations     = 100
 frostbite_1.child_count     = 0
 frostbite_1.mutate_range    = 20
 frostbite_1.mutate_count    = frostbite_1.population - 1
@@ -42,6 +43,7 @@ frostbite_1.mutate_effect   = 0.002
 frostbite_1.elite_count     = frostbite_1.population - (frostbite_1.child_count + frostbite_1.mutate_count)
 frostbite_1.elite_range     = 10
 frostbite_1.elite_evals     = 30
+frostbite_1.outfile         = "frostbite.txt"
 #---------------------------
 #Venture
 venture_1 = Experiment('Venture-ram-v0')
