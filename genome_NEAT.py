@@ -21,6 +21,9 @@ class NEATGenome(Genome):
         self.experiment = experiment
         self.fitness = float("-inf") 
         self.mutate_effect = experiment.mutate_effect
+        self.m_weight_chance = experiment.mutate_odds[0]
+        self.m_node_chance = experiment.mutate_odds[1]
+        self.m_connection_chance = experiment.mutate_odds[2]
         self.model = None
         self.device = experiment.device
         self.env = None 
@@ -112,7 +115,19 @@ class NEATGenome(Genome):
         
         #Placeholder mutate so I can test other things first
         def mutate(self):
-            new = Genome(self.experiment)
+            #add one new node x percent of the time
+            #add new connection y percent of the time
+            new = Genome(self.experiment, False)
+            new.nodes = self.nodes
+            new.weights = self.weights
+            for weight in new.weights:
+                if random.random() < new.m_weight_chance:
+                    weight.value += (random.random() * self.mutate_effect) - (self.mutate_effect/2)
+            if random.random() < new.m_node:
+                to_change = new.weights[random.randrange(len(new.weights))]
+                
+            if random.random() < new.m_connection_chance
+            new.env = self.env
             return new
             
         

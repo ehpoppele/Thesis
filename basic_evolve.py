@@ -35,9 +35,9 @@ def evolve(experiment):
         #if outfile == 'terminal':
         sys.stdout.write("Generation " +str(g) + " highest fitness: " + str(population.fittest(1).fitness) + "\n")
         sys.stdout.flush()
-        else:
+        if outfile != 'terminal':
             f = open(outfile, "a")
-            f.write(str(g) +'\t' + str(population.fittest(1).fitness))
+            f.write(str(g) +'\t' + str(population.fittest(1).fitness) + "\n")
             f.close()
         new_pop = Population(pop_size)
         #Crossover would go right here

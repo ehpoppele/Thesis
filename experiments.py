@@ -26,6 +26,10 @@ cart_pole.elite_count   = cart_pole.population - (cart_pole.child_count + cart_p
 cart_pole.elite_range   = 10
 cart_pole.elite_evals   = 30
 #---------------------------
+c_p_NEAT = cart_pole
+c_p_NEAT.mutate_odds = [0.5, 0.3, 0.4] #Percent of time that a mutation will occur in the mutate function
+#First is odds for each weight to change, second is odds to add 1 node, third is to add 1 connection
+#---------------------------
 #Frostbite
 frostbite_1 = Experiment('Frostbite-ram-v0')
 frostbite_1.device          = 'cuda'
@@ -62,3 +66,4 @@ venture_1.mutate_effect   = 0.002
 venture_1.elite_count     = venture_1.population - (venture_1.child_count + venture_1.mutate_count)
 venture_1.elite_range     = 10
 venture_1.elite_evals     = 30
+

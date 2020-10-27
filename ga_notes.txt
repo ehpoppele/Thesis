@@ -94,6 +94,15 @@ seems pretty off
 
 ***ReLU before or after bias is added? Also, allow bias added to first layer?
 Fix naming convetion for classes (Genome_network??)
+!***Do I even need more than 1 env per thread? Do genomes need their own env?
+
+
+ssh poppelee@fries.reed.edu
+scp -r mydir poppelee@fries.reed.edu:
+nohup my process > results.txt
+tmux
+
+warning that scripts futurize and pasteurize are not installed on PATH (and convert-caffe2-to-onnx and vcvsa)
 
 
 
