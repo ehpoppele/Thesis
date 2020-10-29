@@ -15,7 +15,7 @@ class Genome():
         self.env = None #gym.make(self.experiment.name, frameskip=4)
         #Now initialize the random genotype
         if randomize:
-            self.env = gym.make(self.experiment.name, frameskip=4)
+            self.env = experiment.env
             if experiment.layers == 0:
                 self.genotype.append((torch.randn(experiment.inputs, experiment.outputs)) * (1/experiment.inputs)) #Weights
                 self.genotype.append(torch.zeros(experiment.outputs)) #Bias
@@ -74,6 +74,7 @@ class Genome():
             sum_reward += reward
             if done:
                 break
+        env.close()
         return sum_reward
     
     def evalFitness(self):
@@ -82,7 +83,7 @@ class Genome():
         for _ in range(trials):
             sum_reward += self.evalTrial()
         self.fitness = sum_reward/trials
-        return sum_reward
+        return sum_reward/trials
     
     """
     #Both sets and returns the new fitness of the model

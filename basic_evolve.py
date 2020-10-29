@@ -3,6 +3,7 @@
 import random
 import sys
 from genome import *
+from genome_NEAT import *
 from population import *
 
 #Runs basic evolution on the given experiment and params
@@ -25,7 +26,11 @@ def evolve(experiment):
             if (10*i % pop_size < 1): #This and other prints are not working right; need to modify to be one-tenth more precisely
                 sys.stdout.write(".")
                 sys.stdout.flush()
-        new_net = Genome(experiment)
+        new_net = "placeholder string because isn't python funny"
+        if experiment.genome == 'NEAT':
+            new_net = NEATGenome(experiment)
+        else:
+            new_net = Genome(experiment)
         new_net.evalFitness()
         #Maybe have fitness auto-evaled when new genome is made? maybe not
         #Add new genome to the population, keeping population sorted by fitness
@@ -33,7 +38,7 @@ def evolve(experiment):
         population.add(new_net)
     for g in range(generation_count):
         #if outfile == 'terminal':
-        sys.stdout.write("Generation " +str(g) + " highest fitness: " + str(population.fittest(1).fitness) + "\n")
+        sys.stdout.write("\nGeneration " +str(g) + " highest fitness: " + str(population.fittest(1).fitness) + "\n")
         sys.stdout.flush()
         if outfile != 'terminal':
             f = open(outfile, "a")
