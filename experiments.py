@@ -47,7 +47,7 @@ frostbite_1.mutate_effect   = 0.002
 frostbite_1.elite_count     = frostbite_1.population - (frostbite_1.child_count + frostbite_1.mutate_count)
 frostbite_1.elite_range     = 10
 frostbite_1.elite_evals     = 30
-frostbite_1.outfile         = "frostbite.txt"
+frostbite_1.outfile         = 'terminal'
 #---------------------------
 #Venture
 venture_1 = Experiment('Venture-ram-v0')
