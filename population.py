@@ -25,12 +25,3 @@ class Population():
         
     def __getitem__(self, index):
         return self.genomes[index]
-        
-
-
-
-
-
-#needs:
-#queue for holding genomes, sorted by fitness
-#
