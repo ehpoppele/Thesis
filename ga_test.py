@@ -10,8 +10,8 @@ torch.set_default_tensor_type(torch.DoubleTensor)
 
 if __name__ == "__main__":
     #experiment = experiments.cart_pole
-    #experiment = experiments.frostbite_1
-    experiment = experiments.c_p_NEAT
+    experiment = experiments.frostbite_1
+    #experiment = experiments.c_p_NEAT
     #experiment.device = 'cpu'
     fit_pop = basic_evolve.evolve(experiment)
     print("fittest:", fit_pop[0].fitness)
