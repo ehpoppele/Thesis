@@ -4,7 +4,7 @@ import random
 #Doesn't use python queue since I also need to index it
 class Population():
 
-    def __init__(self, size):
+    def __init__(self, size=0):
         self.genomes = []
         self.total_size = size #size of full starting population; not always equal to len of genomes (as one can see here)
         

@@ -2,6 +2,7 @@
 #camelCaps is for func names, snake_case is variables/objects
 import random
 import sys
+import pickle
 from genome import *
 from genome_NEAT import *
 from population import *
@@ -18,6 +19,7 @@ def evolve(experiment):
     outfile = experiment.outfile        
     #Create new random population, sort by starting fitness
     population = Population(pop_size)
+    saved = [] #Saving fittest from each gen to pickle file
     if outfile == 'terminal':
         sys.stdout.write("Evaluating Intial Fitness:")
         sys.stdout.flush()
@@ -37,6 +39,7 @@ def evolve(experiment):
         #If population becomes a class, this would be moved into a method for it (pop push something etc)
         population.add(new_net)
     for g in range(generation_count):
+        print(torch.cuda.memory_summary())
         #if outfile == 'terminal':
         sys.stdout.write("\nGeneration " +str(g) + " highest fitness: " + str(population.fittest(1).fitness) + "\n")
         sys.stdout.flush()
@@ -78,5 +81,10 @@ def evolve(experiment):
             new_pop.add(fittest)
             if outfile == 'terminal':
                 print("\nBest elite fitness is: ", best_fitness)
+            #Save each elite carryover to list
+            saved.append(fittest)
         population = new_pop
+    if experiment.genome_file:
+        file = open(experiment.genome_file, 'wb')
+        pickle.dump(saved, file)
     return population
