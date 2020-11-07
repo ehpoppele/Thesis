@@ -117,6 +117,6 @@ class Genome_network(nn.Module):
         for i in range(len(self.genotype)//2): #int division, but genotype should always be even length
             relu = nn.ReLU()
             inputs = relu((inputs @ self.genotype[2*i]) + self.genotype[2*i + 1])
-            inputs.to(torch.device(self.device)) #Is this needed?
+            #inputs.to(torch.device(self.device)) #Is this needed?
         soft = nn.Softmax(dim=0)
         return soft(inputs)
