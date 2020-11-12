@@ -105,6 +105,7 @@ tmux
 
 warning that scripts futurize and pasteurize are not installed on PATH (and convert-caffe2-to-onnx and vcvsa)
 
+To Finish NEAT:
 
 
 

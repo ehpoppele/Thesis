@@ -2,6 +2,7 @@ import gym
 import torch
 import torch.nn as nn
 import random
+import time
 
 class Genome():
 
@@ -41,6 +42,7 @@ class Genome():
             observation = env.reset()
             for t in range(20000):
                 if render:
+                    time.sleep(0.02)
                     env.render()
                 inputs = torch.from_numpy(observation)
                 inputs = (inputs.double()).to(torch.device(self.device))

@@ -11,6 +11,7 @@ class Experiment():
         self.outfile = 'terminal' #default output writes to terminal rather than a file
         self.genome = 'Basic'
         self.genome_file = None
+        self.thread_count = 1
 
 #Cart pole config, pretty much solves the problem
 #might not be optimal, but final solution about 200 (max score) each time
@@ -20,10 +21,10 @@ cart_pole.device        = 'cuda'
 cart_pole.inputs        = 4
 cart_pole.outputs       = 2
 cart_pole.layers        = 4 #seems that only 2 are necessary?
-cart_pole.layer_size    = 50
+cart_pole.layer_size    = 4
 cart_pole.trials        = 10
-cart_pole.population    = 51
-cart_pole.generations   = 35    #needs 35 for stable no-oscillation
+cart_pole.population    = 101
+cart_pole.generations   = 10    #needs 35 for stable no-oscillation
 cart_pole.child_count   = 0     #Experiment is basic GA, so no crossover
 cart_pole.mutate_range  = 10
 cart_pole.mutate_count  = cart_pole.population - 1
@@ -80,3 +81,22 @@ c_p_NEAT.genome      = 'NEAT'
 c_p_NEAT.mutate_odds = [0.7, 0.6, 0.8] #Percent of time that a mutation will occur in the mutate function
 #First is odds for each weight to change, second is odds to add 1 node, third is to add 1 connection
 """
+#---------------------------
+cart_multithread = Experiment('CartPole-v0')
+cart_multithread.env = gym.make('CartPole-v0')
+cart_multithread.device        = 'cpu'
+cart_multithread.inputs        = 4
+cart_multithread.outputs       = 2
+cart_multithread.layers        = 4 #seems that only 2 are necessary?
+cart_multithread.layer_size    = 4
+cart_multithread.trials        = 10
+cart_multithread.population    = 101
+cart_multithread.generations   = 10    #needs 35 for stable no-oscillation
+cart_multithread.child_count   = 0     #Experiment is basic GA, so no crossover
+cart_multithread.mutate_range  = 10
+cart_multithread.mutate_count  = cart_multithread.population - 1
+cart_multithread.mutate_effect = 10/4
+cart_multithread.elite_count   = cart_multithread.population - (cart_multithread.child_count + cart_multithread.mutate_count)
+cart_multithread.elite_range   = 10
+cart_multithread.elite_evals   = 1
+cart_multithread.thread_count  = 2

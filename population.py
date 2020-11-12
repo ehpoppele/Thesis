@@ -1,12 +1,13 @@
 import random
+import multiprocessing
 
 #Population class is a sorted list to hold genomes
 #Doesn't use python queue since I also need to index it
 class Population():
 
-    def __init__(self, size=0):
+    def __init__(self):
         self.genomes = []
-        self.total_size = size #size of full starting population; not always equal to len of genomes (as one can see here)
+        self.lock = multiprocessing.Lock()
         
     #Adds to the population queue, maintaining order
     def add(self, genome):
@@ -25,3 +26,6 @@ class Population():
         
     def __getitem__(self, index):
         return self.genomes[index]
+        
+    def size(self):
+        return len(self.genomes)
