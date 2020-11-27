@@ -9,26 +9,13 @@ from genome import *
 from genome_NEAT import *
 from population import *
 
-def addMutate(new_pop, old_pop, lock, experiment):
-    done = False
-    while not done:
-        parent = old_pop.fittest(experiment.mutate_range)
-        new_net = parent.mutate()
-        new_net.evalFitness()
-        #get lock
-        new_pop.lock.acquire()
-        if new_pop.size() < experiment.mutate_count:
-            new_pop.add(new_net)
-        else:
-            done = True
-        new_pop.lock.release()
-
-
 #Runs basic evolution on the given experiment and params
 #Creates a new generation through a combination of methods:
 #Crossover from two parents, mutation from one parent, or elitism
 #Ratios of this are specified by exp. and currently can't apply mutation to crossover
 def evolve(experiment):
+    experiment.NODE_INNOVATION_NUMBER = -1
+    experiment.WEIGHT_INNOVATION_NUMBER = -1
     time_start = time.perf_counter()
     #Set params based on the current experiment (so no experiment. everywhere)
     pop_size = experiment.population
@@ -36,7 +23,7 @@ def evolve(experiment):
     mutate_range = experiment.mutate_range
     outfile = experiment.outfile        
     #Create new random population, sort by starting fitness
-    population = Population(pop_size)
+    population = Population()
     saved = [] #Saving fittest from each gen to pickle file
     if outfile == 'terminal':
         sys.stdout.write("Evaluating Intial Fitness:")
@@ -66,9 +53,39 @@ def evolve(experiment):
             f = open(outfile, "a")
             f.write(str(g) +'\t' + str(population.fittest(1).fitness) + "\n")
             f.close()
-        new_pop = Population(pop_size)
-        #Crossover would go right here
-        #for now I only have mutation
+        new_pop = Population()
+        #Crossover! With speciation checking
+        sys.stdout.write("Crossover")
+        sys.stdout.flush()
+        assert (experiment.crossover_range > 1) #To avoid infinite loops below; I need to update this now that Speciation checking makes this work differently
+        i = 0
+        set_prime = population.fitSet(experiment.crossover_range)
+        while i < experiment.crossover_count and len(set_prime) > 1:
+            #Select two without replacement
+            fit_set = population.fitSet(experiment.crossover_range)
+            parent1 = random.choice(tuple(set_prime))
+            fit_set.remove(parent1)
+            parent2 = random.choice(tuple(fit_set)) #This can be speeded up if we don't allow it to pick things missing from set_prime; but at present it should still be correct at least
+            fit_set.remove(parent2)
+            #Reselect until same species or out of genomes
+            while not(parent1.sameSpecies(parent2)) and bool(fit_set):
+                parent2 = random.choice(tuple(fit_set))
+                fit_set.remove(parent2)
+            #if out of 
+            if not (parent1.sameSpecies(parent2)):
+                set_prime.remove(parent1)
+            else:
+                new_net = parent1.crossover(parent2)
+                new_net.evalFitness()
+                new_pop.add(new_net)
+                i += 1
+        if i < experiment.crossover_count:
+            print("Top individuals are all of different species and crossover is impossible. Ending the experiment early.")
+            if experiment.genome_file:
+                file = open(experiment.genome_file, 'wb')
+                pickle.dump(saved, file)
+            return population
+        #Mutation second; maybe should be first?
         sys.stdout.write("Mutating")
         sys.stdout.flush()
         for i in range(experiment.mutate_count):
@@ -80,7 +97,7 @@ def evolve(experiment):
             new_net = parent.mutate()
             new_net.evalFitness()
             new_pop.add(new_net)
-        #Elite Crossover; re-evaluates fitness first before selection
+        #Elite Carry-over; re-evaluates fitness first before selection
         if outfile == 'terminal':
             sys.stdout.write("\nSelecting Elite")
             sys.stdout.flush()

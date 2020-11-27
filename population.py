@@ -29,3 +29,11 @@ class Population():
         
     def size(self):
         return len(self.genomes)
+        
+    #Returns a set containing the <range> top fittest individuals 
+    def fitSet(self, fit_range):
+        assert fit_range < self.size(), "Tried to get the " + str(range) + "fittest individuals in a population, but it only has " + str(self.size) + "total genomes."
+        ret = set()
+        for i in range(fit_range):
+            ret.add(self.genomes[i])
+        return ret

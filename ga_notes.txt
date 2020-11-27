@@ -103,9 +103,16 @@ scp -r mydir poppelee@fries.reed.edu:
 nohup my process > results.txt
 tmux
 
-warning that scripts futurize and pasteurize are not installed on PATH (and convert-caffe2-to-onnx and vcvsa)
+warning that scripts futurize and pasteurize are not installed on PATH (and convert-caffe2-to-onnx and vcvsa)--What was this error from again?
 
-To Finish NEAT:
+For NEAT, I am skipping the ability to re-enable genes; currently old genes are deleted. I don't think this will have a great impact; also it looks like re-enabling must be pretty conditional, as it doesn't make so much sense in the given examples (or maybe it does? page 12, 5->4 doesn't make much sense, I think...)
+
+basic_evolve --> evolve_basic to keep with m.t. convention and make things clear
+
+NEAT evolution is working, but highly favors basic architecture
+Two things possibly going wrong: crossover not adding disjoint/excess correctly, or mutations screwing something up and making fitness much worse (affecting the network more than they should)
+Test first with some crossover test, test second by observing tensors/model of mutated network
+
 
 
 

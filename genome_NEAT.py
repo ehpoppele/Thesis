@@ -2,20 +2,16 @@ import gym
 import torch
 import torch.nn as nn
 import random
+import copy
 
 from genome import *
 
-#Initialize Global Innovation Numbers
-#These will be appropriately set when the first Genome is created
-NODE_INNOVATION_NUMBER = -1
-WEIGHT_INNOVATION_NUMBER = -1
-
 #Class representing the nodes in a NEAT network
 #Go into the first part of the genotype
+
 class NEATNode():
 
-    def __init__(self, id, type, layer, bias=0, innovation_num=NODE_INNOVATION_NUMBER):
-        self.id = id #What is this used for?
+    def __init__(self, type, layer, bias=0, innovation_num=-1): #Innovation number default is only used for "shadow nodes"
         self.type = type #Is a string; 'input', 'output', or 'hidden' or 'shadow'
         self.layer = layer
         self.bias = bias
@@ -24,13 +20,12 @@ class NEATNode():
         
 class NEATWeight():
 
-    def __init__(self, origin, to, value, innovation_num=WEIGHT_INNOVATION_NUMBER):
+    def __init__(self, origin, to, value, innovation_num=-1):
         self.origin = origin #I hope this is a shallow copy
-        self.to = to
+        self.to = to #I basically want these as pointers
         self.value = value
-        self.origin_id = origin.id #Consistency across networks with same architecture but diff node objects
-        self.to_id = to.id
-        self.origin_copy = origin #Hold onto for when the origin is changed to a shadow node
+        #Change origin copy to origin backup or something
+        self.origin_copy = origin #Hold onto for when the origin is changed to a shadow node, should still be a shallow copy though
         self.innovation_num = innovation_num
         
 
@@ -38,10 +33,10 @@ class NEATGenome(Genome):
 
     #Similar to regular init, but has 2 parts to genotype
     def __init__(self, experiment, randomize=True):
-        if NODE_INNOVATION_NUMBER == -1:
-            NODE_INNOVATION_NUMBER = experiment.inputs + experiment.outputs + 1
-        if WEIGHT_INNOVATION_NUMBER == -1:
-            WEIGHT_INNOVATION_NUMBER = experiment.inputs*experiment.outputs + 1
+        if experiment.NODE_INNOVATION_NUMBER == -1:
+            experiment.NODE_INNOVATION_NUMBER = experiment.inputs + experiment.outputs + 1
+        if experiment.WEIGHT_INNOVATION_NUMBER == -1:
+            experiment.WEIGHT_INNOVATION_NUMBER = experiment.inputs*experiment.outputs + 1
         self.experiment = experiment
         self.fitness = float("-inf") 
         self.mutate_effect = experiment.mutate_effect
@@ -61,18 +56,67 @@ class NEATGenome(Genome):
             inputs = []
             outputs = []
             for i in range(experiment.inputs):
-                new_node = NEATNode(i, 'input', 0, 0, i+1)
+                new_node = NEATNode('input', 0, 0, i+1)
                 inputs.append(new_node)
             for i in range(experiment.outputs):
-                new_node = NEATNode(i, 'output', 1, random.random()*experiment.inputs, i+1+experiment.inputs)
+                new_node = NEATNode('output', 1, random.random()*experiment.inputs, i+1+experiment.inputs)
                 outputs.append(new_node)
-            for i in inputs:
+            j = 0
+            for i in inputs: #Should clarify these vars
+                k = 0
                 for o in outputs:
-                    new_weight = NEATWeight(i, o, random.random()*experiment.inputs, (i*outputs) + o + 1)
+                    new_weight = NEATWeight(i, o, random.random()*experiment.inputs, (j*experiment.outputs) + k + 1)
                     self.weights.append(new_weight)
+                    k += 1
+                j += 1
             self.nodes += inputs
             self.nodes += outputs
             self.rebuildModel()
+            
+    #Prints out all the nodes and connections for debugging
+    def printToTerminal(self):
+        print("Nodes:")
+        for node in self.nodes:
+            print(node.innovation_num, node.type, node.layer, node.bias)
+        print("Weights:")
+        for weight in self.weights:
+            print(weight.innovation_num, weight.origin.innovation_num, weight.to.innovation_num, weight.value)
+            
+    #Returns if the genome is the same species as the other
+    #Follows the speciation formula from the paper
+    def sameSpecies(self, other):
+        #Here making the assumption that nodes/weights are sorted by innovation number; I think this is true but not sure
+        primary = self
+        secondary = other
+        #Primary is the genome with the greatest innovation number on one of its weights
+        if self.weights[len(self.weights)-1].innovation_num < other.weights[len(other.weights)-1].innovation_num:
+            primary = other
+            secondary = self
+        c1 = self.experiment.species_c1
+        c2 = self.experiment.species_c2
+        c3 = self.experiment.species_c3
+        E = 0
+        D = 0
+        W = 0
+        for weight in primary.weights:
+            #Count all weights that are excess of secondary's greatest i nums
+            if weight.innovation_num > secondary.weights[len(secondary.weights)-1].innovation_num:
+                E += 1
+            disjoint = True
+            #Check for disjoint genes and add to weight difference
+            for weight_2 in secondary.weights:
+                if weight.innovation_num == weight_2.innovation_num:
+                    W += abs(weight.value - weight_2.value)
+                    disjoint == False
+                    break
+            if disjoint:
+                D += 1
+        N = max(len(self.nodes), len(other.nodes))
+        gamma = (c1*E*c2*D)/N +(c3*W)
+        if gamma < self.experiment.species_distance:
+            return True
+        else:
+            return False
     
     #Goes through the genotype and updates the layers/depth value of each node
     #Assumes input nodes are fixed as the only nodes at zero
@@ -120,7 +164,7 @@ class NEATGenome(Genome):
         for weight in self.weights:
             prev = weight.origin
             for i in range(weight.to.layer - weight.origin.layer - 1):
-                shadowNode = NEATNode((0-shadowCount), 'shadow', weight.origin.layer + 1 + i)
+                shadowNode = NEATNode('shadow', weight.origin.layer + 1 + i)
                 shadowCount += 1
                 shadowWeight = NEATWeight(prev, shadowNode, 1.0)
                 nodes[shadowNode.layer].append(shadowNode)
@@ -187,15 +231,54 @@ class NEATGenome(Genome):
         
     #Also placeholder until I write this
     def crossover(self, other):
-        return self.mutate()
+        child = NEATGenome(self.experiment, False)
+        child.env = self.env
+        #Get higher fitness genome to be the primary parent
+        primary = self
+        secondary = other
+        if other.fitness > self.fitness:
+            primary = other
+            secondary = self
+        #Iterate over primary parent; we copy any nodes which it has that the other parent doesn't
+        #For ones they both have, we select at random
+        for node in primary.nodes:
+            i_num = node.innovation_num
+            other_node = next((n for n in secondary.nodes if n.innovation_num == i_num), None)
+            if other_node is not None and random.random() > 0.5:
+                child.nodes.append(copy.deepcopy(other_node))
+            else:
+                child.nodes.append(copy.deepcopy(node))
+        #Do the same for weights
+        for weight in primary.weights:
+            i_num = weight.innovation_num
+            other_weight = next((n for n in secondary.weights if n.innovation_num == i_num), None)
+            if other_weight is not None and random.random() > 0.5:
+                child.weights.append(copy.deepcopy(other_weight))
+            else:
+                child.weights.append(copy.deepcopy(weight))
+        child.rebuildModel()
+        return child
         
     #May need to change to make more reliable; currently allows connections to be thrown in just about anywhere
     def mutate(self, innovation_num=0):
         #add one new node x percent of the time
         #add new connection y percent of the time
         new = NEATGenome(self.experiment, False)
-        new.nodes = self.nodes
-        new.weights = self.weights
+        new.nodes = []
+        #Deep copy the parent nodes
+        for node in self.nodes:
+            new.nodes.append(copy.deepcopy(node))
+        new.weights = []
+        for weight in self.weights:
+            #For weights we also need to adjust the pointers (from parent nodes to copied nodes)
+            copied = copy.deepcopy(weight)
+            for node in new.nodes:
+                if node.innovation_num == copied.origin.innovation_num:
+                    copied.origin = node
+                    copied.origin_copy = node
+                if node.innovation_num == copied.to.innovation_num:
+                    copied.to = node
+            new.weights.append(copied)
         for node in new.nodes:
             if node.type == 'input' and node.layer != 0:
                     for w in self.weights:
@@ -208,7 +291,7 @@ class NEATGenome(Genome):
         for node in new.nodes:
             if random.random() < new.m_weight_chance and node.type != 'input': #input bias is never used, so this could be removed I guess?
                 node.bias += (random.random() * self.mutate_effect) - (self.mutate_effect/2)
-        if random.random() < new.m_connection_chance:
+        if random.random() < new.m_connection_chance: #how does this work when trying to add something that already exists?
             #Select two nodes
             node_1 = new.nodes[random.randrange(len(new.nodes))]
             node_2 = new.nodes[random.randrange(len(new.nodes))]
@@ -216,29 +299,31 @@ class NEATGenome(Genome):
             while (node_1 == node_2) or ((node_1.layer == node_2.layer) and (node_1.type == 'input' or node_1.type == 'output')):
                 node_2 = new.nodes[random.randrange(len(new.nodes))]
             if node_1.layer <= node_2.layer:
-                new_weight = NEATWeight(node_1, node_2, random.random()*self.experiment.inputs)
-                WEIGHT_INNOVATION_NUMBER += 1
+                new_weight = NEATWeight(node_1, node_2, random.random()*self.experiment.inputs, self.experiment.WEIGHT_INNOVATION_NUMBER)
+                self.experiment.WEIGHT_INNOVATION_NUMBER += 1
                 new.weights.append(new_weight)
                 if node_2.type == 'input':
                     print("attempted to make a connection to an input", node_1.layer, node_1.type, node_2.layer, node_2.type)
                     assert False
             else:
-                new_weight = NEATWeight(node_2, node_1, random.random()*self.experiment.inputs)
-                WEIGHT_INNOVATION_NUMBER += 1
+                new_weight = NEATWeight(node_2, node_1, random.random()*self.experiment.inputs, self.experiment.WEIGHT_INNOVATION_NUMBER)
+                self.experiment.WEIGHT_INNOVATION_NUMBER += 1
                 new.weights.append(new_weight)
                 if node_1.type == 'input':
                     print("attempted to make a connection to an input")
                     assert False
+            print("mutating new connection")
         if random.random() < new.m_node_chance:
             to_change = new.weights[random.randrange(len(new.weights))]
-            new_node = NEATNode(innovation_num, 'hidden',  to_change.origin.layer + 1, random.random()*self.experiment.inputs)
-            NODE_INNOVATION_NUMBER += 1
-            new_weight = NEATWeight(to_change.origin, new_node, 1) #random.random()*self.experiment.inputs)
-            WEIGHT_INNOVATION_NUMBER += 1
+            new_node = NEATNode('hidden',  to_change.origin.layer + 1, random.random()*self.experiment.inputs, self.experiment.NODE_INNOVATION_NUMBER)
+            self.experiment.NODE_INNOVATION_NUMBER += 1
+            new_weight = NEATWeight(to_change.origin, new_node, 1, self.experiment.WEIGHT_INNOVATION_NUMBER)
+            self.experiment.WEIGHT_INNOVATION_NUMBER += 1
             to_change.origin = new_node
             to_change.origin_copy = new_node
             new.nodes.append(new_node)
             new.weights.append(new_weight)
+            print("mutating new node")
         new.env = self.env
         for node in new.nodes:
             if node.type == 'input' and node.layer != 0:

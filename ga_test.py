@@ -10,14 +10,22 @@ import experiments
 torch.set_default_tensor_type(torch.DoubleTensor)
 
 if __name__ == "__main__":
-    experiment = experiments.cart_multithread
+    #experiment = experiments.cart_multithread
     #experiment = experiments.frostbite_1
-    #experiment = experiments.c_p_NEAT
+    experiment = experiments.cart_NEAT
+    #experiment = experiments.frost_NEAT
     #experiment.device = 'cpu'
     #fit_pop = basic_evolve.evolve(experiment)
-    fit_pop = evolve_multithreaded.evolve(experiment)
+    fit_pop = basic_evolve.evolve(experiment)
+    #fit_pop = evolve_multithreaded.evolve(experiment)
     print("fittest:", fit_pop[0].fitness)
     fittest = fit_pop[0]
     input("press enter to continue to animation")
     fittest.experiment.trials = 1
     print(fittest.evalFitness(True))
+    print("Fittest genome")
+    fittest.printToTerminal()
+    print("Second fittest genome")
+    fit_pop[1].printToTerminal()
+    print("Third fittest genome")
+    fit_pop[2].printToTerminal()
