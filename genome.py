@@ -3,6 +3,22 @@ import torch
 import torch.nn as nn
 import random
 import time
+import multiprocessing
+
+def nextStep(action, env, queue):
+    observation, reward, done, _ = env.step(action)
+    queue.put([(observation, reward, done), env])
+    print("done")
+    
+"""
+def retNextStep():
+    def nextStep(action, env, queue):
+        print("starting")
+        observation, reward, done, _ = env.step(action)
+        queue.put([(observation, reward, done), env])
+        print("done")
+    return nextStep
+"""
 
 class Genome():
 
@@ -55,6 +71,42 @@ class Genome():
             env.close()
         self.fitness = sum_reward/trials
         return sum_reward/trials
+    
+    """
+    def evalFitness(self, render=False):
+        sum_reward = 0
+        trials = self.experiment.trials
+        for _ in range(trials):
+            env = self.env
+            observation = env.reset()
+            for t in range(20000):
+                if render:
+                    time.sleep(0.02)
+                    env.render()
+                inputs = torch.from_numpy(observation)
+                inputs = (inputs.double()).to(torch.device(self.device))
+                outputs = self.model(inputs)
+                action = (torch.max(outputs, 0)[1].item())
+                print("starting")
+                #step_func = retNextStep()
+                thread_results = multiprocessing.Queue()
+                process = multiprocessing.Process(target=nextStep, args=(action, env, thread_results))
+                process.start()
+                process.join()
+                results = thread_results.get()
+                print(results)
+                vals = results[0]
+                observation = vals[0]
+                reward = vals[1]
+                done = vals[2]
+                env = results[1]
+                sum_reward += reward
+                if done:
+                    break
+            env.close()
+        self.fitness = sum_reward/trials
+        return sum_reward/trials
+    """
     
     """
     #Both sets and returns the new fitness of the model

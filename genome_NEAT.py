@@ -312,7 +312,7 @@ class NEATGenome(Genome):
                 if node_1.type == 'input':
                     print("attempted to make a connection to an input")
                     assert False
-            print("mutating new connection")
+            #print("mutating new connection")
         if random.random() < new.m_node_chance:
             to_change = new.weights[random.randrange(len(new.weights))]
             new_node = NEATNode('hidden',  to_change.origin.layer + 1, random.random()*self.experiment.inputs, self.experiment.NODE_INNOVATION_NUMBER)
@@ -323,7 +323,7 @@ class NEATGenome(Genome):
             to_change.origin_copy = new_node
             new.nodes.append(new_node)
             new.weights.append(new_weight)
-            print("mutating new node")
+            #print("mutating new node")
         new.env = self.env
         for node in new.nodes:
             if node.type == 'input' and node.layer != 0:

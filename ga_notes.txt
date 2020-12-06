@@ -113,8 +113,40 @@ NEAT evolution is working, but highly favors basic architecture
 Two things possibly going wrong: crossover not adding disjoint/excess correctly, or mutations screwing something up and making fitness much worse (affecting the network more than they should)
 Test first with some crossover test, test second by observing tensors/model of mutated network
 
+Thesis first/second chapter outline:
+Abstract
+Intro:
+    Outline of problem/question
+Intro to ML:
+    basics
+    neural nets
+    traditional methods of training (SGD)
+Intro to GAs:
+    concept
+    applications
+Intro to Neuroevolutuion
+    basics
+    why its useful/applications
+    quick history of innovations/algorithms
+Lit review:
+    various flavors of NEAT and their uses
+    recent applications of non-NEAT algorithms
+    other recent work?
+    specific areas/problems: where NE seems better than SGD, where it's promising, where it falls short
+    details on the uber paper
+Statement of my problem:
+    use uber paper as benchmark
+    replicate code and recreate neat, apply to same problems
+    after comparison, further investigation of more successful methods
+    ideal: produce some variation/innovation that outperforms the uber results (or NEAT, if NEAT is better at the start)
 
 
+
+NEAT:
+how to control network size?
+shrinking network operator?
+disabling connections and nodes
+run on XOR
 
 
 

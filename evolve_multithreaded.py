@@ -20,6 +20,8 @@ from population import *
 def threadCreate(population, experiment, env, queue):
     done = False
     while not done:
+        sys.stdout.write(str(queue.qsize()))
+        sys.stdout.flush()
         new_net = "placeholder string because isn't python funny" #this is too hacky
         if experiment.genome == 'NEAT':
             new_net = NEATGenome(experiment)
@@ -30,11 +32,15 @@ def threadCreate(population, experiment, env, queue):
         if queue.full():
             done = True
         else:
-            queue.put(new_net)
+            var = 3
+            queue.put(var)
             sys.stdout.write("Added one new net")
             sys.stdout.flush()
     sys.stdout.write("\n Done with thread")
     sys.stdout.flush()
+    sys.stdout.write(str(queue.qsize()))
+    sys.stdout.flush()
+    return
     """
     #get lock
     population.lock.acquire()
@@ -104,7 +110,8 @@ def evolve(experiment):
         thread_list.append(new_thread)
         new_thread.start()
     for thread in thread_list:
-        print("about to join")
+        sys.stdout.write("About to join")
+        sys.stdout.flush()
         thread.join()
         print(new_nets.empty())
     while not new_nets.empty():
