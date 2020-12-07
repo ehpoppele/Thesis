@@ -1,10 +1,11 @@
 #Main file for basic GA program
 #camelCaps is for func names, snake_case is variables/objects
 import random
+import math
 import sys
 import pickle
 import time
-import multiprocessing
+from torch.multiprocessing import Pool
 import gym
 from genome import *
 from genome_NEAT import *
@@ -82,6 +83,9 @@ def getEliteFunc(genome, env):
             fitsum += genome.evalFitness()
         genome.fitness = fitsum/experiment.elite_evals
     return threadEliteEval
+    
+def multiEvalFitness(genome):
+    return genome.evalFitness()
 
 
 #Runs basic evolution on the given experiment and params
@@ -89,6 +93,10 @@ def getEliteFunc(genome, env):
 #Crossover from two parents, mutation from one parent, or elitism
 #Ratios of this are specified by exp. and currently can't apply mutation to crossover
 def evolve(experiment):
+    torch.multiprocessing.set_start_method('spawn')
+    thread_count = experiment.thread_count
+    experiment.NODE_INNOVATION_NUMBER = -1
+    experiment.WEIGHT_INNOVATION_NUMBER = -1
     time_start = time.perf_counter()
     #Set params based on the current experiment (so no experiment. everywhere)
     pop_size = experiment.population
@@ -102,22 +110,36 @@ def evolve(experiment):
         sys.stdout.write("Evaluating Intial Fitness:")
         sys.stdout.flush()
     thread_list = [] #now just a single list for threads, emptied and reused for create/mutate/crossover/elite
-    new_nets = multiprocessing.Queue(maxsize=pop_size)
-    for _ in range(experiment.thread_count):
-        new_env = gym.make(experiment.name)
-        #thread_create_func = getCreateFunc(population, experiment, new_env)
-        new_thread = multiprocessing.Process(target=threadCreate, args=(population, experiment, new_env, new_nets))
-        thread_list.append(new_thread)
-        new_thread.start()
-    for thread in thread_list:
-        sys.stdout.write("About to join")
-        sys.stdout.flush()
-        thread.join()
-        print(new_nets.empty())
-    while not new_nets.empty():
-        new_net = new_nets.get()
-        population.add(new_net)
+    new_nets = []
+    for i in range(pop_size):
+        if outfile == 'terminal':
+            if (10*i % pop_size < 1): #This and other prints are not working right; need to modify to be one-tenth more precisely
+                sys.stdout.write(".")
+                sys.stdout.flush()
+        new_net = "placeholder string because isn't python funny"
+        if experiment.genome == 'NEAT':
+            new_net = NEATGenome(experiment)
+        else:
+            new_net = Genome(experiment)
+        new_net.evalFitness()
+        new_nets.append(new_net)
+    iters_required = math.ceil(pop_size/thread_count)
+    for _ in range(iters_required):
+        threads = min(thread_count, len(new_nets))#Number of threads for this iteration; should be thread_count for all but the last, where it can be less
+        unevaled_nets = []
+        for i in range(threads):
+            unevaled_nets.append(new_nets[i])
+        for _ in range(threads):
+            del new_nets[0]
+        with Pool(threads) as pool:
+            fitnesses = pool.map(multiEvalFitness, unevaled_nets)
+        for i in range(threads):
+            unevaled_nets[i].fitness = fitnesses[i]
+        for net in unevaled_nets:
+            population.add(net)
+    assert len(new_nets) == 0
     print(population.size())
+    assert False
     for g in range(generation_count):
         #print(torch.cuda.memory_summary())
         print(str(time.perf_counter() - time_start) + " elapsed seconds")
@@ -129,41 +151,65 @@ def evolve(experiment):
             f.write(str(g) +'\t' + str(population.fittest(1).fitness) + "\n")
             f.close()
         new_pop = Population()
-        #Crossover would go right here
-        #for now I only have mutation
+        #Crossover! With speciation checking
+        sys.stdout.write("Crossover")
+        sys.stdout.flush()
+        assert (experiment.crossover_range > 1) #To avoid infinite loops below; I need to update this now that Speciation checking makes this work differently
+        i = 0
+        set_prime = population.fitSet(experiment.crossover_range)
+        while i < experiment.crossover_count and len(set_prime) > 1:
+            #Select two without replacement
+            fit_set = population.fitSet(experiment.crossover_range)
+            parent1 = random.choice(tuple(set_prime))
+            fit_set.remove(parent1)
+            parent2 = random.choice(tuple(fit_set)) #This can be speeded up if we don't allow it to pick things missing from set_prime; but at present it should still be correct at least
+            fit_set.remove(parent2)
+            #Reselect until same species or out of genomes
+            while not(parent1.sameSpecies(parent2)) and bool(fit_set):
+                parent2 = random.choice(tuple(fit_set))
+                fit_set.remove(parent2)
+            #if out of 
+            if not (parent1.sameSpecies(parent2)):
+                set_prime.remove(parent1)
+            else:
+                new_net = parent1.crossover(parent2)
+                new_net.evalFitness()
+                new_pop.add(new_net)
+                i += 1
+        if i < experiment.crossover_count:
+            print("Top individuals are all of different species and crossover is impossible. Ending the experiment early.")
+            if experiment.genome_file:
+                file = open(experiment.genome_file, 'wb')
+                pickle.dump(saved, file)
+            return population
+        #Mutation second; maybe should be first?
         sys.stdout.write("Mutating")
         sys.stdout.flush()
-        thread_list = []
-        for _ in range(experiment.thread_count):
-            new_env = gym.make(experiment.name)
-            thread_mutate_func = getMutateFunc(new_pop, population, experiment, new_env)
-            new_thread = multiprocessing.Process(target=thread_mutate_func)
-            thread_list.append(new_thread)
-            new_thread.start()
-        for thread in thread_list:
-            thread.join()
-        #Elite Crossover; re-evaluates fitness first before selection
+        for i in range(experiment.mutate_count):
+            if outfile == 'terminal':
+                if (10*i % experiment.mutate_count < 1):
+                    sys.stdout.write(".")
+                    sys.stdout.flush()
+            parent = population.fittest(mutate_range)
+            new_net = parent.mutate()
+            new_net.evalFitness()
+            new_pop.add(new_net)
+        #Elite Carry-over; re-evaluates fitness first before selection
         if outfile == 'terminal':
             sys.stdout.write("\nSelecting Elite")
             sys.stdout.flush()
         for i in range(experiment.elite_count): #This needs to be redone for elite_count > 1; currently would just take best genome twice
-            #Different approach for threads on elite; not sure if this is bad but it's at least inconsistent with the above...
-            #Since elite range should be close to/less than the number of threads, we just make that many threads, one for each genome
-            #Some threads may run on the same core, but c'est la vie
-            thread_list = []
-            for i in range(experiment.elite_range):
-                new_env = gym.make(experiment.name)
-                thread_elite_func = getEliteFunc(population[i], new_env)
-                new_thread = multiprocessing.Process(target=thread_elite_func)
-                thread_list.append(new_thread)
-                new_thread.start()
-            for thread in thread_list:
-                thread.join()
             best_fitness = float('-inf')
             fittest = None
             for i in range(experiment.elite_range):
-                if  population[i].fitness > best_fitness:
-                    best_fitness = population[i].fitness
+                if outfile == 'terminal':
+                    sys.stdout.write(".")
+                    sys.stdout.flush()
+                fitsum = 0
+                for j in range(experiment.elite_evals):
+                    fitsum += population[i].evalFitness() #eval will also return the new fitness, not just update it
+                if fitsum/experiment.elite_evals > best_fitness:
+                    best_fitness = fitsum/experiment.elite_evals
                     fittest = population[i]
             new_pop.add(fittest)
             if outfile == 'terminal':

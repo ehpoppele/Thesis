@@ -51,6 +51,7 @@ class Genome():
         self.model = model.to(torch.device(self.device))
     
     def evalFitness(self, render=False):
+        #self.rebuildModel()
         sum_reward = 0
         trials = self.experiment.trials
         for _ in range(trials):

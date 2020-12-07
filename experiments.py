@@ -18,14 +18,14 @@ class Experiment():
 #might not be optimal, but final solution about 200 (max score) each time
 cart_pole = Experiment('CartPole-v0')
 cart_pole.env = gym.make('CartPole-v0')
-cart_pole.device        = 'cpu'
+cart_pole.device        = 'cuda'
 cart_pole.inputs        = 4
 cart_pole.outputs       = 2
 cart_pole.layers        = 4 #seems that only 2 are necessary?
 cart_pole.layer_size    = 4
 cart_pole.trials        = 10
 cart_pole.population    = 101
-cart_pole.generations   = 3#10    #needs 35 for stable no-oscillation
+cart_pole.generations   = 10    #needs 35 for stable no-oscillation
 cart_pole.child_count   = 0     #Experiment is basic GA, so no crossover
 cart_pole.mutate_range  = 10
 cart_pole.mutate_count  = cart_pole.population - 1 #I should put elite count first so I can fix it at 1, and base the rest around that maybe? or maybe not
@@ -34,6 +34,7 @@ cart_pole.elite_count   = cart_pole.population - (cart_pole.child_count + cart_p
 cart_pole.elite_range   = 10
 cart_pole.elite_evals   = 30
 cart_pole.genome_file   = 'cart_genes.pjar'
+cart_pole.thread_count  = 8
 #---------------------------
 #Frostbite
 frostbite_1 = Experiment('Frostbite-ram-v0')

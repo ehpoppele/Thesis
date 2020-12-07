@@ -149,6 +149,18 @@ disabling connections and nodes
 run on XOR
 
 
+Work on multithreading:
+    I have figured out the issue with my previous attempts was that I was trying to pipe too much data across the whatnot
+    So now I no longer am moving nets through the queue, since that broke the pipes
+    Instead, nets are copied over only when a process is made, and then evalFitness is the only thing done on the thread
+    The return value is just the fitness from the experiment, which is then assigned to the corresponding net in the main thread
+    At first I made a thread for each net and did them all at once
+    This was, unsurprisingly, a terrible idea
+    Now I loop through the process several times with a maximum thread count
+    CUDA might still not work. I am hoping it is functional as long as I don't try to pipe and CUDA-assigned memory around
+    So I think the plan is then to keep all nets on CPU, then move them to GPU only in the evalFitness
+    And hopefully moving to GPU from another thread is fine? But idk what to do if/when this fails
+
 
 
 
