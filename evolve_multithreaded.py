@@ -150,7 +150,8 @@ def evolve(experiment):
             f = open(outfile, "a")
             f.write(str(g) +'\t' + str(population.fittest(1).fitness) + "\n")
             f.close()
-        new_pop = Population()
+        #new_pop = Population()
+        new_nets = []
         #Crossover! With speciation checking
         sys.stdout.write("Crossover")
         sys.stdout.flush()
@@ -173,8 +174,9 @@ def evolve(experiment):
                 set_prime.remove(parent1)
             else:
                 new_net = parent1.crossover(parent2)
-                new_net.evalFitness()
-                new_pop.add(new_net)
+                new_nets.append(new_net)
+                #new_net.evalFitness()
+                #new_pop.add(new_net)
                 i += 1
         if i < experiment.crossover_count:
             print("Top individuals are all of different species and crossover is impossible. Ending the experiment early.")
@@ -192,23 +194,45 @@ def evolve(experiment):
                     sys.stdout.flush()
             parent = population.fittest(mutate_range)
             new_net = parent.mutate()
-            new_net.evalFitness()
-            new_pop.add(new_net)
+            new_nets.append(new_net)
+            #new_net.evalFitness()
+            #new_pop.add(new_net)
         #Elite Carry-over; re-evaluates fitness first before selection
+        sys.stdout.write("Evaluating Fitness")
+        sys.stdout.flush()
+        iters_required = math.ceil((pop_size-experiment.elite_count)/thread_count)
+        for _ in range(iters_required):
+            threads = min(thread_count, len(new_nets))#Number of threads for this iteration; should be thread_count for all but the last, where it can be less
+            unevaled_nets = []
+            for i in range(threads):
+                unevaled_nets.append(new_nets[i])
+            for _ in range(threads):
+                del new_nets[0]
+            with Pool(threads) as pool:
+                fitnesses = pool.map(multiEvalFitness, unevaled_nets)
+            for i in range(threads):
+                unevaled_nets[i].fitness = fitnesses[i]
+            for net in unevaled_nets:
+                population.add(net)
+        assert len(new_nets) == 0
         if outfile == 'terminal':
             sys.stdout.write("\nSelecting Elite")
             sys.stdout.flush()
+        unevaled_nets = []
+        for i in range(elite_range):
+            unevaled_nets.append(population[i])
+        with Pool(elite_range) as pool:
+            fitnesses = pool.map(multiEvalFitness, unevaled_nets)
+        for i in range(threads):
+            population[i].fitness = fitnesses[i]
+        best_fitness = float('-inf')
         for i in range(experiment.elite_count): #This needs to be redone for elite_count > 1; currently would just take best genome twice
-            best_fitness = float('-inf')
             fittest = None
             for i in range(experiment.elite_range):
                 if outfile == 'terminal':
                     sys.stdout.write(".")
                     sys.stdout.flush()
-                fitsum = 0
-                for j in range(experiment.elite_evals):
-                    fitsum += population[i].evalFitness() #eval will also return the new fitness, not just update it
-                if fitsum/experiment.elite_evals > best_fitness:
+                if population[i].fitness > best_fitness:
                     best_fitness = fitsum/experiment.elite_evals
                     fittest = population[i]
             new_pop.add(fittest)

@@ -50,10 +50,10 @@ class Genome():
         model = Genome_network(self.genotype, self.device)
         self.model = model.to(torch.device(self.device))
     
-    def evalFitness(self, render=False):
+    def evalFitness(self, render=False, iters=1):
         #self.rebuildModel()
         sum_reward = 0
-        trials = self.experiment.trials
+        trials = self.experiment.trials*iters
         for _ in range(trials):
             env = self.env
             observation = env.reset()
