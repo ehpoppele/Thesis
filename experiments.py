@@ -13,6 +13,8 @@ class Experiment():
         self.genome = 'Basic'
         self.genome_file = None
         self.thread_count = 1
+        self.crossover_count = 0
+        self.crossover_range = 0
 
 #Cart pole config, pretty much solves the problem
 #might not be optimal, but final solution about 200 (max score) each time

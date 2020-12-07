@@ -93,7 +93,8 @@ def multiEvalFitness(genome):
 #Crossover from two parents, mutation from one parent, or elitism
 #Ratios of this are specified by exp. and currently can't apply mutation to crossover
 def evolve(experiment):
-    torch.multiprocessing.set_start_method('spawn')
+    pool = Pool(experiment.thread_count)
+    #torch.multiprocessing.set_start_method('spawn')
     thread_count = experiment.thread_count
     experiment.NODE_INNOVATION_NUMBER = -1
     experiment.WEIGHT_INNOVATION_NUMBER = -1
@@ -130,17 +131,17 @@ def evolve(experiment):
         for i in range(threads):
             unevaled_nets.append(new_nets[i])
         for _ in range(threads):
-            del new_nets[0]
-        with Pool(threads) as pool:
-            fitnesses = pool.map(multiEvalFitness, unevaled_nets)
+            del new_nets[0] #Check for bug/change line? inefficient at best
+        fitnesses = pool.map(multiEvalFitness, unevaled_nets)
         for i in range(threads):
             unevaled_nets[i].fitness = fitnesses[i]
         for net in unevaled_nets:
             population.add(net)
     assert len(new_nets) == 0
     print(population.size())
-    assert False
+    #assert False
     for g in range(generation_count):
+        new_pop = Population()
         #print(torch.cuda.memory_summary())
         print(str(time.perf_counter() - time_start) + " elapsed seconds")
         #if outfile == 'terminal':
@@ -155,7 +156,8 @@ def evolve(experiment):
         #Crossover! With speciation checking
         sys.stdout.write("Crossover")
         sys.stdout.flush()
-        assert (experiment.crossover_range > 1) #To avoid infinite loops below; I need to update this now that Speciation checking makes this work differently
+        if (experiment.crossover_count != 0):
+            assert (experiment.crossover_range > 1) #To avoid infinite loops below; I need to update this now that Speciation checking makes this work differently
         i = 0
         set_prime = population.fitSet(experiment.crossover_range)
         while i < experiment.crossover_count and len(set_prime) > 1:
@@ -208,21 +210,19 @@ def evolve(experiment):
                 unevaled_nets.append(new_nets[i])
             for _ in range(threads):
                 del new_nets[0]
-            with Pool(threads) as pool:
-                fitnesses = pool.map(multiEvalFitness, unevaled_nets)
+            fitnesses = pool.map(multiEvalFitness, unevaled_nets)
             for i in range(threads):
                 unevaled_nets[i].fitness = fitnesses[i]
             for net in unevaled_nets:
-                population.add(net)
+                new_pop.add(net)
         assert len(new_nets) == 0
         if outfile == 'terminal':
             sys.stdout.write("\nSelecting Elite")
             sys.stdout.flush()
         unevaled_nets = []
-        for i in range(elite_range):
+        for i in range(experiment.elite_range):
             unevaled_nets.append(population[i])
-        with Pool(elite_range) as pool:
-            fitnesses = pool.map(multiEvalFitness, unevaled_nets)
+        fitnesses = pool.map(multiEvalFitness, unevaled_nets)
         for i in range(threads):
             population[i].fitness = fitnesses[i]
         best_fitness = float('-inf')
@@ -233,13 +233,17 @@ def evolve(experiment):
                     sys.stdout.write(".")
                     sys.stdout.flush()
                 if population[i].fitness > best_fitness:
-                    best_fitness = fitsum/experiment.elite_evals
+                    best_fitness = population[i].fitness
                     fittest = population[i]
-            new_pop.add(fittest)
+            new_nets.append(fittest)
             if outfile == 'terminal':
                 print("\nBest elite fitness is: ", best_fitness)
             #Save each elite carryover to list
             saved.append(fittest)
+        for net in new_nets:
+            new_pop.add(net)
+        print(new_pop.size())
+        assert(new_pop.size() == pop_size)
         population = new_pop
     if experiment.genome_file:
         file = open(experiment.genome_file, 'wb')
