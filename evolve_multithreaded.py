@@ -137,6 +137,21 @@ def evolve(experiment):
             unevaled_nets[i].fitness = fitnesses[i]
         for net in unevaled_nets:
             population.add(net)
+    """
+    iters_required = math.ceil(pop_size/thread_count)
+    for _ in range(iters_required):
+        threads = min(thread_count, len(new_nets))#Number of threads for this iteration; should be thread_count for all but the last, where it can be less
+        unevaled_nets = []
+        for i in range(threads):
+            unevaled_nets.append(new_nets[i])
+        for _ in range(threads):
+            del new_nets[0] #Check for bug/change line? inefficient at best
+        fitnesses = pool.map(multiEvalFitness, unevaled_nets)
+        for i in range(threads):
+            unevaled_nets[i].fitness = fitnesses[i]
+        for net in unevaled_nets:
+            population.add(net)
+    """
     assert len(new_nets) == 0
     print(population.size())
     #assert False
