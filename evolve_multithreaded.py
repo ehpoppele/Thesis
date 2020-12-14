@@ -110,7 +110,6 @@ def evolve(experiment):
     if outfile == 'terminal':
         sys.stdout.write("Evaluating Intial Fitness:")
         sys.stdout.flush()
-    thread_list = [] #now just a single list for threads, emptied and reused for create/mutate/crossover/elite
     new_nets = []
     for i in range(pop_size):
         if outfile == 'terminal':
@@ -127,15 +126,18 @@ def evolve(experiment):
     iters_required = math.ceil(pop_size/thread_count)
     for _ in range(iters_required):
         threads = min(thread_count, len(new_nets))#Number of threads for this iteration; should be thread_count for all but the last, where it can be less
-        unevaled_nets = []
+        net_batch = [] #The nets we are evaluating this loop
+        batch_copy = [] #Copies of those nets that will get sent to the pool
+        #We run into "too many files" errors if the same nets get used, but using and discarding a deepcopy seems to fix
         for i in range(threads):
-            unevaled_nets.append(new_nets[i])
+            net_batch.append(new_nets[i])
+            batch_copy.append(copy.deepcopy(new_nets[i]))
         for _ in range(threads):
             del new_nets[0] #Check for bug/change line? inefficient at best
-        fitnesses = pool.map(multiEvalFitness, unevaled_nets)
+        fitnesses = pool.map(multiEvalFitness, batch_copy)
         for i in range(threads):
-            unevaled_nets[i].fitness = fitnesses[i]
-        for net in unevaled_nets:
+            net_batch[i].fitness = fitnesses[i]
+        for net in net_batch:
             population.add(net)
     """
     iters_required = math.ceil(pop_size/thread_count)
