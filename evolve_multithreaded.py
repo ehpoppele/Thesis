@@ -14,76 +14,7 @@ from population import *
 #-----------------------
 #Thread helper functions
 #-----------------------
-
-#Multithread Initialization Function
-#Returns a threadsafe func to continuosly create new genomes,
-#eval them, and add them to the population
-def threadCreate(population, experiment, env, queue):
-    done = False
-    while not done:
-        sys.stdout.write(str(queue.qsize()))
-        sys.stdout.flush()
-        new_net = "placeholder string because isn't python funny" #this is too hacky
-        if experiment.genome == 'NEAT':
-            new_net = NEATGenome(experiment)
-        else:
-            new_net = Genome(experiment)
-        new_net.env = env
-        new_net.evalFitness()
-        if queue.full():
-            done = True
-        else:
-            var = 3
-            queue.put(var)
-            sys.stdout.write("Added one new net")
-            sys.stdout.flush()
-    sys.stdout.write("\n Done with thread")
-    sys.stdout.flush()
-    sys.stdout.write(str(queue.qsize()))
-    sys.stdout.flush()
-    return
-    """
-    #get lock
-    population.lock.acquire()
-    if population.size() < experiment.population:
-        population.add(new_net)
-    else:
-        done = True
-    population.lock.release()
-    """
-    
-#Returns a mutate function with fixed params for the populations
-#So that threads can run them without using args
-def getMutateFunc(new_pop, old_pop, experiment, env):
-    def threadMutate():
-        done = False
-        while not done:
-            parent = old_pop.fittest(experiment.mutate_range)
-            new_net = parent.mutate()
-            new_net.env = env
-            new_net.evalFitness()
-            #get lock
-            new_pop.lock.acquire()
-            if new_pop.size() < experiment.mutate_count:
-                new_pop.add(new_net)
-                print("adding")
-            else:
-                done = True
-            new_pop.lock.release()
-    return threadMutate
-    
-#Returns a func to run elite fitness evaluation on a single genome
-#Sets that genome's fitness after wards to the result
-def getEliteFunc(genome, env):
-    def threadEliteEval():
-        experiment = genome.experiment
-        fitsum = 0
-        genome.env = env
-        for i in range(experiment.elite_evals):
-            fitsum += genome.evalFitness()
-        genome.fitness = fitsum/experiment.elite_evals
-    return threadEliteEval
-    
+ 
 def multiEvalFitness(genome):
     return genome.evalFitness()
 
@@ -139,21 +70,6 @@ def evolve(experiment):
             net_batch[i].fitness = fitnesses[i]
         for net in net_batch:
             population.add(net)
-    """
-    iters_required = math.ceil(pop_size/thread_count)
-    for _ in range(iters_required):
-        threads = min(thread_count, len(new_nets))#Number of threads for this iteration; should be thread_count for all but the last, where it can be less
-        unevaled_nets = []
-        for i in range(threads):
-            unevaled_nets.append(new_nets[i])
-        for _ in range(threads):
-            del new_nets[0] #Check for bug/change line? inefficient at best
-        fitnesses = pool.map(multiEvalFitness, unevaled_nets)
-        for i in range(threads):
-            unevaled_nets[i].fitness = fitnesses[i]
-        for net in unevaled_nets:
-            population.add(net)
-    """
     assert len(new_nets) == 0
     print(population.size())
     #assert False
@@ -222,15 +138,18 @@ def evolve(experiment):
         iters_required = math.ceil((pop_size-experiment.elite_count)/thread_count)
         for _ in range(iters_required):
             threads = min(thread_count, len(new_nets))#Number of threads for this iteration; should be thread_count for all but the last, where it can be less
-            unevaled_nets = []
+            net_batch = [] #The nets we are evaluating this loop
+            batch_copy = [] #Copies of those nets that will get sent to the pool
+            #We run into "too many files" errors if the same nets get used, but using and discarding a deepcopy seems to fix
             for i in range(threads):
-                unevaled_nets.append(new_nets[i])
+                net_batch.append(new_nets[i])
+                batch_copy.append(copy.deepcopy(new_nets[i]))
             for _ in range(threads):
-                del new_nets[0]
-            fitnesses = pool.map(multiEvalFitness, unevaled_nets)
+                del new_nets[0] #Check for bug/change line? inefficient at best
+            fitnesses = pool.map(multiEvalFitness, batch_copy)
             for i in range(threads):
-                unevaled_nets[i].fitness = fitnesses[i]
-            for net in unevaled_nets:
+                net_batch[i].fitness = fitnesses[i]
+            for net in net_batch:
                 new_pop.add(net)
         assert len(new_nets) == 0
         if outfile == 'terminal':
@@ -238,8 +157,8 @@ def evolve(experiment):
             sys.stdout.flush()
         unevaled_nets = []
         for i in range(experiment.elite_range):
-            unevaled_nets.append(population[i])
-        fitnesses = pool.map(multiEvalFitness, unevaled_nets)
+            batch_copy.append(copy.deepcopy(population[i]))
+        fitnesses = pool.map(multiEvalFitness, batch_copy)
         for i in range(threads):
             population[i].fitness = fitnesses[i]
         best_fitness = float('-inf')
