@@ -11,8 +11,9 @@ from population import *
 import experiments
     
 def multiEvalFitness(genome):
-    return genome.evalFitness()
-
+    #return genome.evalFitness()
+    return genome*genome
+    
 if __name__ == "__main__":
     torch.set_default_tensor_type(torch.DoubleTensor)
     experiment = experiments.cart_pole
@@ -36,14 +37,14 @@ if __name__ == "__main__":
         threads = min(thread_count, len(new_nets))
         unevaled_nets = []
         for i in range(threads):
-            unevaled_nets.append(new_nets[i])
+            unevaled_nets.append(3)#(new_nets[i])
         for _ in range(threads):
             del new_nets[0] #Check for bug/change line? inefficient at best
         fitnesses = pool.map(multiEvalFitness, unevaled_nets)
-        for i in range(threads):
-            unevaled_nets[i].fitness = fitnesses[i]
-        for net in unevaled_nets:
-            population.add(net)
+        #for i in range(threads):
+        #    unevaled_nets[i].fitness = fitnesses[i]
+        #for net in unevaled_nets:
+        #    population.add(net)
     print("Done!")
             
 """
