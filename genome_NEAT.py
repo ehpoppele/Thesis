@@ -84,7 +84,7 @@ class NEATGenome(Genome):
             
     #Returns if the genome is the same species as the other
     #Follows the speciation formula from the paper
-    def sameSpecies(self, other):
+    def speciesDistance(self, other):
         #Here making the assumption that nodes/weights are sorted by innovation number; I think this is true but not sure
         primary = self
         secondary = other
@@ -113,10 +113,7 @@ class NEATGenome(Genome):
                 D += 1
         N = max(len(self.nodes), len(other.nodes))
         gamma = (c1*E*c2*D)/N +(c3*W)
-        if gamma < self.experiment.species_distance:
-            return True
-        else:
-            return False
+        return gamma
     
     #Goes through the genotype and updates the layers/depth value of each node
     #Assumes input nodes are fixed as the only nodes at zero

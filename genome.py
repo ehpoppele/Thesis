@@ -30,6 +30,7 @@ class Genome():
         self.model = None
         self.device = experiment.device
         self.env = None #gym.make(self.experiment.name, frameskip=4)
+        self.species = 0 #Species are tracked numerically as integers
         #Now initialize the random genotype
         if randomize:
             self.env = experiment.env
@@ -148,6 +149,11 @@ class Genome():
         self.fitness = sum_reward/trials
         return sum_reward
     """
+    
+    #The basic genome has no speciation, but the algorithm assumes there is speciation
+    #So this func returns dist 0 for all genomes to create single-species behavior
+    def speciesDistance(self, other):
+        return 0
 
     #mutates based on mutation rate given by experiment
     def mutate(self):

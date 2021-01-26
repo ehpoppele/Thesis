@@ -15,6 +15,7 @@ class Experiment():
         self.thread_count = 1
         self.crossover_count = 0
         self.crossover_range = 0
+        self.max_species_dist = 0
 
 #Cart pole config, pretty much solves the problem
 #might not be optimal, but final solution about 200 (max score) each time
@@ -35,7 +36,7 @@ cart_pole.mutate_effect = 10/4
 cart_pole.elite_count   = cart_pole.population - (cart_pole.child_count + cart_pole.mutate_count)
 cart_pole.elite_range   = 10
 cart_pole.elite_evals   = 30
-cart_pole.genome_file   = 'cart_genes.pjar'
+cart_pole.genome_file   = '/Pickled Genomes/cart_genes.pjar'
 cart_pole.thread_count  = 8
 #---------------------------
 #Frostbite
@@ -57,7 +58,7 @@ frostbite_1.elite_count     = frostbite_1.population - (frostbite_1.child_count 
 frostbite_1.elite_range     = 10
 frostbite_1.elite_evals     = 30
 frostbite_1.outfile         = 'terminal' #"frostbite.txt"
-frostbite_1.genome_file     = 'frost_genes.pjar'
+frostbite_1.genome_file     = '/Pickled Genomes/frost_genes.pjar'
 #---------------------------
 #Venture
 venture_1 = Experiment('Venture-ram-v0')
@@ -89,7 +90,7 @@ cart_NEAT.mutate_odds = [0.7, 0.99, 0.99] #Percent of time that a mutation will 
 cart_NEAT.species_c1       =  1.0
 cart_NEAT.species_c2       =  1.0
 cart_NEAT.species_c3       =  0.4
-cart_NEAT.species_distance =  3.0
+cart_NEAT.max_species_dist =  3.0
 #First is odds for each weight to change, second is odds to add 1 node, third is to add 1 connection
 #---------------------------
 cart_multithread = Experiment('CartPole-v0')
@@ -124,6 +125,6 @@ frost_NEAT.elite_count = 1
 frost_NEAT.species_c1       =  1.0
 frost_NEAT.species_c2       =  1.0
 frost_NEAT.species_c3       =  0.4
-frost_NEAT.species_distance =  3.0
+frost_NEAT.max_species_dist =  3.0
 
 

@@ -72,6 +72,7 @@ def evolve(experiment):
             population.add(net)
     assert len(new_nets) == 0
     print(population.size())
+    species_reps = [population[0]] #List of the representatives for each species
     #assert False
     for g in range(generation_count):
         new_pop = Population()
@@ -89,6 +90,9 @@ def evolve(experiment):
         #Crossover! With speciation checking
         sys.stdout.write("Crossover")
         sys.stdout.flush()
+        population.species_memo = [] #resets the species memo before species are reassigned
+        #Assign species to all genomes
+        # Here #
         if (experiment.crossover_count != 0):
             assert (experiment.crossover_range > 1) #To avoid infinite loops below; I need to update this now that Speciation checking makes this work differently
         i = 0
@@ -101,11 +105,11 @@ def evolve(experiment):
             parent2 = random.choice(tuple(fit_set)) #This can be speeded up if we don't allow it to pick things missing from set_prime; but at present it should still be correct at least
             fit_set.remove(parent2)
             #Reselect until same species or out of genomes
-            while not(parent1.sameSpecies(parent2)) and bool(fit_set):
+            while not(parent1.species == parent2.species) and bool(fit_set):
                 parent2 = random.choice(tuple(fit_set))
                 fit_set.remove(parent2)
             #if out of 
-            if not (parent1.sameSpecies(parent2)):
+            if not (parent1.species == parent2.species):
                 set_prime.remove(parent1)
             else:
                 new_net = parent1.crossover(parent2)
@@ -180,6 +184,8 @@ def evolve(experiment):
             new_pop.add(net)
         print(new_pop.size())
         assert(new_pop.size() == pop_size)
+        for i in len(species_reps):
+            species_reps[i] = population.randOfSpecies(i)
         population = new_pop
     if experiment.genome_file:
         file = open(experiment.genome_file, 'wb')

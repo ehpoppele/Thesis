@@ -24,6 +24,8 @@ def evolve(experiment):
     outfile = experiment.outfile        
     #Create new random population, sort by starting fitness
     population = Population()
+    if experiment.genome == "NEAT":
+        population.NEATGenes = True
     saved = [] #Saving fittest from each gen to pickle file
     if outfile == 'terminal':
         sys.stdout.write("Evaluating Intial Fitness:")
@@ -43,6 +45,8 @@ def evolve(experiment):
         #Add new genome to the population, keeping population sorted by fitness
         #If population becomes a class, this would be moved into a method for it (pop push something etc)
         population.add(new_net)
+    species_reps = [population[0]] #List of the representatives for each species
+    #Since all genomes start in the same species, we just need 1 random rep
     for g in range(generation_count):
         #print(torch.cuda.memory_summary())
         print(str(time.perf_counter() - time_start) + " elapsed seconds")
@@ -57,6 +61,19 @@ def evolve(experiment):
         #Crossover! With speciation checking
         sys.stdout.write("Crossover")
         sys.stdout.flush()
+        population.species_memo = [] #resets the species memo before species are reassigned
+        # Species assignment here #
+        for g in population.genomes:
+            assigned = False
+            for r in species_reps:
+                if g.speciesDistance(r) < experiment.max_species_dist:
+                    g.species = r.species
+                    assigned = True
+                    break
+            if not assigned:
+                g.species = population.species_num + 1
+                population.species_num += 1
+        population.makeSpeciesMemo()        
         assert (experiment.crossover_range > 1) #To avoid infinite loops below; I need to update this now that Speciation checking makes this work differently
         i = 0
         set_prime = population.fitSet(experiment.crossover_range)
@@ -68,11 +85,11 @@ def evolve(experiment):
             parent2 = random.choice(tuple(fit_set)) #This can be speeded up if we don't allow it to pick things missing from set_prime; but at present it should still be correct at least
             fit_set.remove(parent2)
             #Reselect until same species or out of genomes
-            while not(parent1.sameSpecies(parent2)) and bool(fit_set):
+            while not(parent1.species == parent2.species) and bool(fit_set):
                 parent2 = random.choice(tuple(fit_set))
                 fit_set.remove(parent2)
             #if out of 
-            if not (parent1.sameSpecies(parent2)):
+            if not (parent1.species == parent2.species):
                 set_prime.remove(parent1)
             else:
                 new_net = parent1.crossover(parent2)
@@ -98,6 +115,8 @@ def evolve(experiment):
             new_net.evalFitness()
             new_pop.add(new_net)
         #Elite Carry-over; re-evaluates fitness first before selection
+        #Currently not built to carry best of each species over; this should be handled by fitness sharing
+        #And since this is typically only 1, we just want the fittest genome regardless of species
         if outfile == 'terminal':
             sys.stdout.write("\nSelecting Elite")
             sys.stdout.flush()
@@ -119,6 +138,9 @@ def evolve(experiment):
                 print("\nBest elite fitness is: ", best_fitness)
             #Save each elite carryover to list
             saved.append(fittest)
+        #Choose new species reps from the last generation to use for crossover of this newly created gen
+        for i in len(species_reps):
+            species_reps[i] = population.randOfSpecies(i)
         population = new_pop
     if experiment.genome_file:
         file = open(experiment.genome_file, 'wb')

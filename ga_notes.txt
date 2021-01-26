@@ -161,8 +161,25 @@ Work on multithreading:
     So I think the plan is then to keep all nets on CPU, then move them to GPU only in the evalFitness
     And hopefully moving to GPU from another thread is fine? But idk what to do if/when this fails
 
+To add from NEAT paper:
+    disable connections instead of removing
+    explicit fitness sharing
+    actual speciation (distinct species) rather than distance testing upon crossover
+    use top percent of each species rather than top overall
+    check how connections are re-enabled (longer paper)
 
+Currently:
+    species is done except for fitness sharing
+    Run a few times to fix bugs, then add the sharing
+    then add connection disable/re-enable methods
+    then smooth out MT and clean code
+    After that and some extensive testing/comparing results, I think this is ready for improvements/research?
 
+    Try XOR ASAP
+
+    improve multithreading to whatever is fastest
+Reorg:
+    
 
 
 
