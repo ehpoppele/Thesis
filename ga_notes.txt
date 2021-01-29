@@ -175,15 +175,29 @@ Currently:
     then smooth out MT and clean code
     After that and some extensive testing/comparing results, I think this is ready for improvements/research?
 
+Changes to make:
+Remove species if max fitness did not improve in 15 generations
+elite carrover for top of all species of 5 or greater pop
+chance that weight mutation will reset to new value instead of being perturbed
+also add re-enable chance
+replace ReLU with sigmoidal?
+-------------------------
+
+!! Find initial values and mutation effect? couldn't find in paper so borrowing from pytorch neat implementation
+
+
     Try XOR ASAP
 
     improve multithreading to whatever is fastest
 Reorg:
-    
+
+    maybe restructure species as a subclass of population and inherit as much as possible
 
 
-
-
+Important Issue:
+    Paper's phrasing is somewhat ambiguous about whether disabled connections are counted in E and D or just in W
+    (regarding the equation on page 13 (110) of the longer paper)
+    at present I have this just implemented in W since that's my guess (and also less work)
 
 
 

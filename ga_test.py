@@ -1,9 +1,10 @@
-import basic_evolve
+import evolve_basic
 import evolve_multithreaded
 import torch
 import gym
 import random
 import experiments
+import sys
 #import torch.multiprocessing
 
 #import time
@@ -20,7 +21,17 @@ if __name__ == "__main__":
     #experiment.device = 'cpu'
     #fit_pop = basic_evolve.evolve(experiment)
     #fit_pop = basic_evolve.evolve(experiment)
-    fit_pop = evolve_multithreaded.evolve(experiment)
+    if len(sys.argv) > 1:
+        found = False
+        for e in experiments.list:
+            if e.name == sys.argv[1]:
+                experiment = e
+                found = True
+        if not found:
+            print("Requested experiment not found")
+            print("Running default instead")
+    #fit_pop = evolve_multithreaded.evolve(experiment)
+    fit_pop = evolve_basic.evolve(experiment)
     print("fittest:", fit_pop[0].fitness)
     fittest = fit_pop[0]
     input("press enter to continue to animation")

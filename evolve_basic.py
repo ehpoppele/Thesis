@@ -25,7 +25,7 @@ def evolve(experiment):
     #Create new random population, sort by starting fitness
     population = Population()
     if experiment.genome == "NEAT":
-        population.NEATGenes = True
+        population.is_speciated = True
     saved = [] #Saving fittest from each gen to pickle file
     if outfile == 'terminal':
         sys.stdout.write("Evaluating Intial Fitness:")
@@ -48,6 +48,8 @@ def evolve(experiment):
     species_reps = [population[0]] #List of the representatives for each species
     #Since all genomes start in the same species, we just need 1 random rep
     for g in range(generation_count):
+        #Population is re-ordered afterwards based on new fitness
+        population.reorder()
         #print(torch.cuda.memory_summary())
         print(str(time.perf_counter() - time_start) + " elapsed seconds")
         #if outfile == 'terminal':
@@ -71,9 +73,15 @@ def evolve(experiment):
                     assigned = True
                     break
             if not assigned:
-                g.species = population.species_num + 1
-                population.species_num += 1
-        population.makeSpeciesMemo()        
+                g.species = species_reps[-1].species + 1
+                species_reps.append(g)
+                #population.species_num += 1
+        population.makeSpeciesMemo()     
+        #Adjust fitness of each individual with fitness sharing
+        #Done here so it is skipped for the final population, where plain maximum fitness is desired
+        if experiment.genome == "NEAT":
+            for g in population:
+                g.fitness = g.fitness/len(population.species_memo[g.species])
         assert (experiment.crossover_range > 1) #To avoid infinite loops below; I need to update this now that Speciation checking makes this work differently
         i = 0
         set_prime = population.fitSet(experiment.crossover_range)
@@ -139,8 +147,15 @@ def evolve(experiment):
             #Save each elite carryover to list
             saved.append(fittest)
         #Choose new species reps from the last generation to use for crossover of this newly created gen
-        for i in len(species_reps):
-            species_reps[i] = population.randOfSpecies(i)
+        #Also removes species where no rep can be found, shifting down species of other genes to match
+        shift = 0 #How many missing species there are so far (for reducing to min species count)
+        for i in range(species_reps[-1].species + 1):
+            rep = population.randOfSpecies(i) #Replace this
+            if rep is not None:
+                rep.species -= shift
+                species_reps[i] = rep
+            else:
+                shift += 1
         population = new_pop
     if experiment.genome_file:
         file = open(experiment.genome_file, 'wb')

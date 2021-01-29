@@ -41,14 +41,18 @@ class NEATGenome(Genome):
         self.fitness = float("-inf") 
         self.mutate_effect = experiment.mutate_effect
         self.m_weight_chance = experiment.mutate_odds[0]
-        self.m_node_chance = experiment.mutate_odds[1]
-        self.m_connection_chance = experiment.mutate_odds[2]
+        self.perturb_weight_chance = experiment.mutate_odds[1]
+        self.reset_weight_chance = 1.0 - experiment.mutate_odds[1]
+        self.m_node_chance = experiment.mutate_odds[2]
+        self.m_connection_chance = experiment.mutate_odds[3]
         self.model = None
         self.device = experiment.device
         self.env = None 
         self.layers = 2 #number of layers; I should rename this
         self.nodes = []
         self.weights = []
+        self.disabled = [] #holds all the connections (weights) that have been disabled, which may be re-enabled later
+        self.species = 0
         #Randomize should only be used for genomes created at the start of the experiment
         #For this reason, they have standardized innovation numbers
         if randomize:
@@ -111,6 +115,11 @@ class NEATGenome(Genome):
                     break
             if disjoint:
                 D += 1
+        for d1 in primary.disabled:
+            for d2 in secondary.disabled:
+                if d1.innovation_num == d2.innovation_num:
+                    W += abs(d1.value - d2.value)
+                    break
         N = max(len(self.nodes), len(other.nodes))
         gamma = (c1*E*c2*D)/N +(c3*W)
         return gamma
@@ -312,6 +321,7 @@ class NEATGenome(Genome):
             #print("mutating new connection")
         if random.random() < new.m_node_chance:
             to_change = new.weights[random.randrange(len(new.weights))]
+            disabled_connection = copy.deepcopy(to_change)
             new_node = NEATNode('hidden',  to_change.origin.layer + 1, random.random()*self.experiment.inputs, self.experiment.NODE_INNOVATION_NUMBER)
             self.experiment.NODE_INNOVATION_NUMBER += 1
             new_weight = NEATWeight(to_change.origin, new_node, 1, self.experiment.WEIGHT_INNOVATION_NUMBER)
@@ -320,6 +330,7 @@ class NEATGenome(Genome):
             to_change.origin_copy = new_node
             new.nodes.append(new_node)
             new.weights.append(new_weight)
+            new.disabled.append(disabled_connection)
             #print("mutating new node")
         new.env = self.env
         for node in new.nodes:
