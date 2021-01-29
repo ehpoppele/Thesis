@@ -176,11 +176,14 @@ Currently:
     After that and some extensive testing/comparing results, I think this is ready for improvements/research?
 
 Changes to make:
-Remove species if max fitness did not improve in 15 generations
 elite carrover for top of all species of 5 or greater pop
 chance that weight mutation will reset to new value instead of being perturbed
 also add re-enable chance
 replace ReLU with sigmoidal?
+
+Note:
+Either list of species need to be sorted by fitness, or there needs to be a fittest overall return function for fittest 1 function
+interspecies crossover currently not allowed (faster this way, and odds were only 0.001; will fix later?)
 -------------------------
 
 !! Find initial values and mutation effect? couldn't find in paper so borrowing from pytorch neat implementation

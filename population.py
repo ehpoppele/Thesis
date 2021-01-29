@@ -101,17 +101,25 @@ class Population():
                 else:
                     break
                 j-=1
-        
+    
+    def randOfSpecies(self, species):
+        for s in self.species:
+            if s == species:
+                return s.randSelect()
+        print("Looking for a species that could not be found")
+        assert False
+        return
     
 class Species():
 
-    def __init__(self, representative):
+    def __init__(self, representative, add_rep=True):
         self.genomes = []
         self.lock = multiprocessing.Lock() #??
         self.rep = representative
         self.gens_since_improvement = 0
         self.last_fittest = -1 #Assumes fitness scores won't be negative
-        self.add(representative)
+        if add_rep:
+            self.add(representative)
          
     def __getitem__(self, index):
         return self.genomes[index]
@@ -143,7 +151,7 @@ class Species():
         return ret
      
     #Returns a random genome from this species (for selecting species reps etc)
-    def randOfSpecies(self, species_num):
+    def randSelect(self):
         return random.choice(self.genomes)
     
     #Sorts the population by fitness again, to be used after mass changes to fitness (like with fitness sharing)
@@ -158,6 +166,18 @@ class Species():
                 else:
                     break
                 j-=1
+    
+    #Checks if the species has improved its max fitness and updates based on that
+    #after the given number of generations, the species will be stopped if it has not improved
+    #and all genomes will be set to zero fitness to avoid having them reproduce
+    def checkForImprovement(self, gen_limit):
+        if self.genomes[0].fitness > self.last_fittest:
+            self.gens_since_improvement = 0
+        else:
+            self.gens_since_improvement+=1
+            if self.gens_since_improvement >= gen_limit:
+                for g in self.genomes:
+                    g.fitness = 0
 
 
 

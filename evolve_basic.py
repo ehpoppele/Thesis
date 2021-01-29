@@ -45,11 +45,8 @@ def evolve(experiment):
         #Add new genome to the population, keeping population sorted by fitness
         #If population becomes a class, this would be moved into a method for it (pop push something etc)
         population.add(new_net)
-    species_reps = [population[0]] #List of the representatives for each species
     #Since all genomes start in the same species, we just need 1 random rep
     for g in range(generation_count):
-        #Population is re-ordered afterwards based on new fitness
-        population.reorder()
         #print(torch.cuda.memory_summary())
         print(str(time.perf_counter() - time_start) + " elapsed seconds")
         #if outfile == 'terminal':
@@ -59,32 +56,31 @@ def evolve(experiment):
             f = open(outfile, "a")
             f.write(str(g) +'\t' + str(population.fittest(1).fitness) + "\n")
             f.close()
-        new_pop = Population()
-        #Crossover! With speciation checking
-        sys.stdout.write("Crossover")
-        sys.stdout.flush()
-        population.species_memo = [] #resets the species memo before species are reassigned
-        # Species assignment here #
-        for g in population.genomes:
-            assigned = False
-            for r in species_reps:
-                if g.speciesDistance(r) < experiment.max_species_dist:
-                    g.species = r.species
-                    assigned = True
-                    break
-            if not assigned:
-                g.species = species_reps[-1].species + 1
-                species_reps.append(g)
-                #population.species_num += 1
-        population.makeSpeciesMemo()     
         #Adjust fitness of each individual with fitness sharing
         #Done here so it is skipped for the final population, where plain maximum fitness is desired
-        if experiment.genome == "NEAT":
+        if experiment.fitness_sharing:
             for g in population:
                 g.fitness = g.fitness/len(population.species_memo[g.species])
+        #Check all species and remove those that haven't improved in so many generations
+        #To avoid changing pop size, they aren't removed but have all fitness values set to zero
+        for species in population.species:
+            species.checkForImprovement(experiment.)
+        #Set whole species to zero fitness if this happens (i think that's the safest way to stop them)
+        #Population is re-ordered afterwards based on new fitness
+        population.reorder() #make sure this is only called when necessary
+        new_pop = Population()
+        #Now we select species reps for the new pop based on the old one
+        for species in population.species:
+            rep = population
+            new_species = Species(rep, False) #The genome is copied over as a rep but not added
+            new_pop.species.append(new_species)
+        #Crossover! With speciation checking
+        sys.stdout.write("Crossover")
+        sys.stdout.flush()    
         assert (experiment.crossover_range > 1) #To avoid infinite loops below; I need to update this now that Speciation checking makes this work differently
         i = 0
-        set_prime = population.fitSet(experiment.crossover_range)
+        set_prime = population.fitSet(experiment.crossover_range) #set of parent genomes to be used in crossover for whole procedure
+        #Loop creates 1 new child genome at a time
         while i < experiment.crossover_count and len(set_prime) > 1:
             #Select two without replacement
             fit_set = population.fitSet(experiment.crossover_range)
@@ -96,8 +92,8 @@ def evolve(experiment):
             while not(parent1.species == parent2.species) and bool(fit_set):
                 parent2 = random.choice(tuple(fit_set))
                 fit_set.remove(parent2)
-            #if out of 
-            if not (parent1.species == parent2.species):
+            #if we haven't found a match of the same species, then we remove parent 1 from the prime set
+            if (not (parent1.species == parent2.species)):
                 set_prime.remove(parent1)
             else:
                 new_net = parent1.crossover(parent2)
@@ -146,16 +142,6 @@ def evolve(experiment):
                 print("\nBest elite fitness is: ", best_fitness)
             #Save each elite carryover to list
             saved.append(fittest)
-        #Choose new species reps from the last generation to use for crossover of this newly created gen
-        #Also removes species where no rep can be found, shifting down species of other genes to match
-        shift = 0 #How many missing species there are so far (for reducing to min species count)
-        for i in range(species_reps[-1].species + 1):
-            rep = population.randOfSpecies(i) #Replace this
-            if rep is not None:
-                rep.species -= shift
-                species_reps[i] = rep
-            else:
-                shift += 1
         population = new_pop
     if experiment.genome_file:
         file = open(experiment.genome_file, 'wb')
