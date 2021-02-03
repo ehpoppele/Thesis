@@ -6,7 +6,8 @@ import multiprocessing
 #Doesn't use python queue since I also need to index it
 class Population():
 
-    def __init__(self):
+    def __init__(self, experiment):
+        self.experiment = experiment
         self.genomes = []
         self.species = []
         self.lock = multiprocessing.Lock() #Is this still needed?
@@ -39,7 +40,7 @@ class Population():
                     assigned = True
                     break
             if not assigned:
-                new_species = Species(genome)
+                new_species = Species(genome, self.experiment)
                 genome.species = new_species
                 self.species.append(new_species)
         
@@ -141,13 +142,15 @@ class Population():
                 total_fitness += s.sumFitness()
         for s in self.species:
             if s.can_reproduce:
-                s.offspring_proportion = s.sumFitness/total_fitness
+                s.offspring_proportion = s.sumFitness()/total_fitness
         
     
 class Species():
 
-    def __init__(self, representative, add_rep=True):
+    def __init__(self, representative, experiment, add_rep=True):
         self.genomes = []
+        self.experiment = experiment
+        self.selection_type = experiment.species_select
         self.lock = multiprocessing.Lock() #??
         self.rep = representative
         self.gens_since_improvement = 0
@@ -225,6 +228,15 @@ class Species():
         if self.selection_type == "range":
             return self.fittest(self.experiment.mutate_range)
         if self.selection_type == "weighted":
+            selection = random.uniform(0, self.sumFitness())
+            for g in self.genomes:
+                selection -= g.fitness
+                if selection <= 0:
+                    return g
+            #If we miss them all by some rounding error
+            return self.genomes[-1]
+        #Default return, though I don't need this since this isn't C
+        return self.genomes[0]
             
 
 

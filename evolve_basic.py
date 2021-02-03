@@ -24,7 +24,7 @@ def evolve(experiment):
     mutate_range = experiment.mutate_range
     outfile = experiment.outfile        
     #Create new random population, sort by starting fitness
-    population = Population()
+    population = Population(experiment)
     if experiment.genome == "NEAT":
         population.is_speciated = True
     saved = [] #Saving fittest from each gen to pickle file
@@ -81,18 +81,41 @@ def evolve(experiment):
         experiment.crossover_count = experiment.population - experiment.mutate_count - experiment.elite_count
         
         #Make the new population to fill this generation
-        new_pop = Population()
+        new_pop = Population(experiment)
         if experiment.genome == "NEAT":
             new_pop.is_speciated = True
         
         #Now we select species reps for the new pop based on the old one
         for species in population.species:
             rep = population.randOfSpecies(species)
-            new_species = Species(rep, False) #The genome is copied over as a rep but not added
+            new_species = Species(rep, experiment, False) #The genome is copied over as a rep but not added
             new_pop.species.append(new_species)
         #Crossover! With speciation checking
         sys.stdout.write("Crossover")
-        sys.stdout.flush()    
+        sys.stdout.flush()
+        #Roll the dice for interspecies
+        #Create and add them to the pop, subtract from crossover count
+        offspring = []
+        for species in population.species:
+            count = math.ceil(experiment.mutate_count * species.offspring_proportion)
+            for _ in range(count):
+                if species.size() == 1:
+                    #Just do mutation
+                    parent = species.select()
+                    new_net = parent.mutate()
+                    offspring.append(new_net)
+                else:
+                    #Do the crossover here
+        #Now remove from mutated at random until we have the right number
+        to_remove = len(offspring) - experiment.crossover_count
+        assert (to_remove >= 0)
+        for _ in range(to_remove):
+            del offspring[random.randint(0, len(offspring)-1)]
+        for n in offspring:
+            n.evalFitness()
+            new_pop.add(n)
+                
+        """
         assert (experiment.crossover_range > 1) #To avoid infinite loops below; I need to update this now that Speciation checking makes this work differently
         i = 0
         set_prime = population.fitSet(experiment.crossover_range) #set of parent genomes to be used in crossover for whole procedure
@@ -124,16 +147,21 @@ def evolve(experiment):
                 file = open(experiment.genome_file, 'wb')
                 pickle.dump(saved, file)
             return population
+        """
         #Mutation second; maybe should be first?
         sys.stdout.write("Mutating")
         sys.stdout.flush()
         mutated = []
         for species in population.species:
-            for _ in range(math.ceil(experiment.mutate_count * species.offspring_proportion))
+            for _ in range(math.ceil(experiment.mutate_count * species.offspring_proportion)):
                 parent = species.select()
                 new_net = parent.mutate()
                 mutated.append(new_net)
         #Now remove from mutated at random until we have the right number
+        to_remove = len(mutated) - experiment.mutate_count
+        assert (to_remove >= 0)
+        for _ in range(to_remove):
+            del mutated[random.randint(0, len(mutated)-1)]
         for n in mutated:
             n.evalFitness()
             new_pop.add(n)
