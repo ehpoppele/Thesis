@@ -38,13 +38,14 @@ class NEATGenome(Genome):
         if experiment.WEIGHT_INNOVATION_NUMBER == -1:
             experiment.WEIGHT_INNOVATION_NUMBER = experiment.inputs*experiment.outputs + 1
         self.experiment = experiment
-        self.fitness = float("-inf") 
+        self.fitness = float("-inf")
         self.mutate_effect = experiment.mutate_effect
         self.m_weight_chance = experiment.mutate_odds[0]
         self.perturb_weight_chance = experiment.mutate_odds[1]
         self.reset_weight_chance = 1.0 - experiment.mutate_odds[1]
         self.m_node_chance = experiment.mutate_odds[2]
         self.m_connection_chance = experiment.mutate_odds[3]
+        self.reenable_chance = experiment.reenable_chance
         self.model = None
         self.device = experiment.device
         self.env = None 
@@ -52,7 +53,7 @@ class NEATGenome(Genome):
         self.nodes = []
         self.weights = []
         self.disabled = [] #holds all the connections (weights) that have been disabled, which may be re-enabled later
-        self.species = 0
+        self.species = None
         #Randomize should only be used for genomes created at the start of the experiment
         #For this reason, they have standardized innovation numbers
         if randomize:
@@ -63,13 +64,13 @@ class NEATGenome(Genome):
                 new_node = NEATNode('input', 0, 0, i+1)
                 inputs.append(new_node)
             for i in range(experiment.outputs):
-                new_node = NEATNode('output', 1, random.random()*experiment.inputs, i+1+experiment.inputs)
+                new_node = NEATNode('output', 1, random.random()*self.mutate_effect, i+1+experiment.inputs)
                 outputs.append(new_node)
             j = 0
             for i in inputs: #Should clarify these vars
                 k = 0
                 for o in outputs:
-                    new_weight = NEATWeight(i, o, random.random()*experiment.inputs, (j*experiment.outputs) + k + 1)
+                    new_weight = NEATWeight(i, o, random.random()*self.mutate_effect, (j*experiment.outputs) + k + 1)
                     self.weights.append(new_weight)
                     k += 1
                 j += 1
@@ -79,12 +80,18 @@ class NEATGenome(Genome):
             
     #Prints out all the nodes and connections for debugging
     def printToTerminal(self):
+        print("Fitness:")
+        print(self.fitness)
         print("Nodes:")
         for node in self.nodes:
             print(node.innovation_num, node.type, node.layer, node.bias)
         print("Weights:")
         for weight in self.weights:
             print(weight.innovation_num, weight.origin.innovation_num, weight.to.innovation_num, weight.value)
+        print("Disabled Weights:")
+        for weight in self.disabled:
+            print(weight.innovation_num, weight.origin.innovation_num, weight.to.innovation_num, weight.value)
+        print()
             
     #Returns if the genome is the same species as the other
     #Follows the speciation formula from the paper
@@ -176,7 +183,12 @@ class NEATGenome(Genome):
                 nodes[shadowNode.layer].append(shadowNode)
                 weights[shadowNode.layer].append(shadowWeight)
                 prev = shadowNode
-            weight.origin = prev #!!! Need to fix this, since it needs a origin pointer and a origin id value
+            weight.origin = prev #!!! Need to fix this, since it needs a origin pointer and a origin id value <--- what does this mean?
+            if weight.to.layer >= len(weights):
+                self.printToTerminal()
+                print(weight.innovation_num, weight.origin.innovation_num, weight.to.innovation_num, weight.value)
+                node = weight.to
+                print(node.innovation_num, node.type, node.layer, node.bias)
             weights[weight.to.layer].append(weight)
         layer_counts = []
         for layer in nodes:
@@ -194,6 +206,7 @@ class NEATGenome(Genome):
         self.retraceLayers()
         working_nodes, working_weights, layer_counts = self.buildShadowElements()
         if layer_counts[-1] > self.experiment.outputs:
+            self.printToTerminal()
             for n in working_nodes[-1]:
                 print("help!", n.type)
                 for l in working_weights:
@@ -230,7 +243,7 @@ class NEATGenome(Genome):
             curr_layer += 1
             if curr_layer >= len(self.nodes):
                 break
-        model = Genome_network(tensor_list, self.device)
+        model = Genome_network(tensor_list, self.device, True)
         self.model = model.to(torch.device(self.device))
         for w in self.weights:
             w.origin = w.origin_copy
@@ -262,6 +275,40 @@ class NEATGenome(Genome):
                 child.weights.append(copy.deepcopy(other_weight))
             else:
                 child.weights.append(copy.deepcopy(weight))
+        #And do the same for disabled weights, with a chance for them to re-enabled
+        for weight in primary.disabled:
+            i_num = weight.innovation_num
+            other_weight = next((n for n in secondary.disabled if n.innovation_num == i_num), None)
+            if other_weight is not None and random.random() > 0.5:
+                if random.random() < self.reenable_chance:
+                    child.weights.append(copy.deepcopy(other_weight))
+                else:
+                    child.disabled.append(copy.deepcopy(other_weight))
+            else:
+                if random.random() < self.reenable_chance:
+                    child.weights.append(copy.deepcopy(weight))
+                else:
+                    child.disabled.append(copy.deepcopy(weight))
+        #Now we need to fix the weights so they point to the new copies of the nodes now in this network
+        #This is an expensive double loop, so might be a way to speed it up...
+        for weight in child.weights:
+            assigned = 0
+            for node in child.nodes:
+                if weight.origin.innovation_num == node.innovation_num:
+                    weight.origin = node
+                    assigned += 1
+                if weight.to.innovation_num == node.innovation_num:
+                    weight.to = node
+                    assigned += 1
+            if assigned != 2:
+                print("Issue with crossover; missing a node in the child")
+                assert False
+        for weight in child.disabled:
+            for node in child.nodes:
+                if weight.origin.innovation_num == node.innovation_num:
+                    weight.origin = node
+                if weight.to.innovation_num == node.innovation_num:
+                    weight.to = node
         child.rebuildModel()
         return child
         
@@ -293,10 +340,16 @@ class NEATGenome(Genome):
                     assert False
         for weight in new.weights:
             if random.random() < new.m_weight_chance:
-                weight.value += (random.random() * self.mutate_effect) - (self.mutate_effect/2)
+                if random.random() < new.perturb_weight_chance:
+                    weight.value += (random.random() * self.mutate_effect) - (self.mutate_effect/2) #perturb
+                else:
+                    weight.value = (random.random() * self.mutate_effect) - (self.mutate_effect/2) #reset
         for node in new.nodes:
             if random.random() < new.m_weight_chance and node.type != 'input': #input bias is never used, so this could be removed I guess?
-                node.bias += (random.random() * self.mutate_effect) - (self.mutate_effect/2)
+                if random.random() < new.perturb_weight_chance:
+                    node.bias += (random.random() * self.mutate_effect) - (self.mutate_effect/2) #perturb
+                else:
+                    node.bias = (random.random() * self.mutate_effect) - (self.mutate_effect/2) #reset
         if random.random() < new.m_connection_chance: #how does this work when trying to add something that already exists?
             #Select two nodes
             node_1 = new.nodes[random.randrange(len(new.nodes))]
@@ -328,6 +381,8 @@ class NEATGenome(Genome):
             self.experiment.WEIGHT_INNOVATION_NUMBER += 1
             to_change.origin = new_node
             to_change.origin_copy = new_node
+            to_change.innovation_num = self.experiment.WEIGHT_INNOVATION_NUMBER
+            self.experiment.WEIGHT_INNOVATION_NUMBER += 1
             new.nodes.append(new_node)
             new.weights.append(new_weight)
             new.disabled.append(disabled_connection)
@@ -342,23 +397,3 @@ class NEATGenome(Genome):
         new.rebuildModel()
         return new
             
-        
-        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-            
-        
-    

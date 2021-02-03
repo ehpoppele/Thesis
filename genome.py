@@ -65,7 +65,9 @@ class Genome():
                 inputs = torch.from_numpy(observation)
                 inputs = (inputs.double()).to(torch.device(self.device))
                 outputs = self.model(inputs)
-                action = (torch.max(outputs, 0)[1].item())
+                #output plain value if size is 1?
+                action = outputs
+                #action = (torch.max(outputs, 0)[1].item())
                 observation, reward, done, _ = env.step(action)
                 sum_reward += reward
                 if done:
@@ -166,18 +168,25 @@ class Genome():
 
 class Genome_network(nn.Module):
 
-    def __init__(self, genotype, device):
+    def __init__(self, genotype, device, is_NEAT=False):
         super().__init__()
         self.device = device
         cuda_genes = []
         for g in genotype:
             cuda_genes.append(g.to(torch.device(self.device)))
         self.genotype = cuda_genes
+        self.is_NEAT = is_NEAT
 
     def forward(self, inputs):
+        activation = nn.ReLU()
+        const = 1
+        if self.is_NEAT:
+            activation = nn.Sigmoid()
+            const = 4.9
         for i in range(len(self.genotype)//2): #int division, but genotype should always be even length
-            relu = nn.ReLU()
-            inputs = relu((inputs @ self.genotype[2*i]) + self.genotype[2*i + 1])
+            inputs = activation(((inputs @ self.genotype[2*i]) + self.genotype[2*i + 1])*const)
             #inputs.to(torch.device(self.device)) #Is this needed?
-        soft = nn.Softmax(dim=0)
-        return soft(inputs)
+        return inputs.item()
+        #Neat doesn't need softmax, but other thing does
+        #soft = nn.Softmax(dim=0)
+        #return soft(inputs)

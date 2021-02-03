@@ -32,14 +32,18 @@ if __name__ == "__main__":
             print("Running default instead")
     #fit_pop = evolve_multithreaded.evolve(experiment)
     fit_pop = evolve_basic.evolve(experiment)
-    print("fittest:", fit_pop[0].fitness)
-    fittest = fit_pop[0]
+    print("fittest:", fit_pop.top_fittest())
+    fittest = fit_pop.top_fittest()
     input("press enter to continue to animation")
     fittest.experiment.trials = 1
     print(fittest.evalFitness(True))
-    print("Fittest genome")
+    for s in fit_pop.species:
+        print("fittest genome of the next species:")
+        if s.size() > 0:
+            print(s[0].fitness)
+            s[0].printToTerminal()
+        else:
+            print("Species seems to be empty")
+        print()
     fittest.printToTerminal()
-    print("Second fittest genome")
-    fit_pop[1].printToTerminal()
-    print("Third fittest genome")
-    fit_pop[2].printToTerminal()
+    

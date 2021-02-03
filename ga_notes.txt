@@ -169,20 +169,13 @@ To add from NEAT paper:
     check how connections are re-enabled (longer paper)
 
 Currently:
-    species is done except for fitness sharing
     Run a few times to fix bugs, then add the sharing
-    then add connection disable/re-enable methods
     then smooth out MT and clean code
     After that and some extensive testing/comparing results, I think this is ready for improvements/research?
 
-Changes to make:
-elite carrover for top of all species of 5 or greater pop
-chance that weight mutation will reset to new value instead of being perturbed
-also add re-enable chance
 replace ReLU with sigmoidal?
 
 Note:
-Either list of species need to be sorted by fitness, or there needs to be a fittest overall return function for fittest 1 function
 interspecies crossover currently not allowed (faster this way, and odds were only 0.001; will fix later?)
 -------------------------
 

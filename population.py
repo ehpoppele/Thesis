@@ -10,7 +10,6 @@ class Population():
         self.genomes = []
         self.species = []
         self.lock = multiprocessing.Lock() #Is this still needed?
-        self.species_memo = []
         self.species_num = 0
         self.is_speciated = False
         
@@ -36,21 +35,22 @@ class Population():
             for species in self.species:
                 if genome.speciesDistance(species.rep) < genome.experiment.max_species_dist:
                     species.add(genome)
-                    g.species = species
+                    genome.species = species
                     assigned = True
                     break
             if not assigned:
                 new_species = Species(genome)
                 genome.species = new_species
+                self.species.append(new_species)
         
     #Returns a genome at random from the n fittest genomes in the population
     #In the case of NEAT, it returns from a random pool of all the top genes of each species
     #With each gene coming from the top (n/pop size) percentile of its species
     #Might end up with more than n genes to choose from 
-    def fittest(self, range):
+    def fittest(self, search_range):
         if self.is_speciated:
             top_genes = []
-            percentile = range/self.size()
+            percentile = search_range/self.size()
             for species in self.species:
                 target = math.ceil(percentile*species.size())
                 for i in range(target):
@@ -58,17 +58,20 @@ class Population():
             return random.choice(top_genes)
         else:
             return self.genomes[random.randint(0, range-1)]
-        
+            
+    #Returns the highest fitness individual in the population
+    def top_fittest(self):
+        return self.genomes[0]
         
     #Returns a set containing the <range> top fittest individuals 
     #Uses the same rounding method as above, but needs to return exactly fit_range number of individuals,
     #So this may drop some of the later species; might be a problem later so I'll look into fixing it
     def fitSet(self, fit_range):
-        if self.speciated:
+        if self.is_speciated:
             fit_set = set()
             size = 0
             percentile = fit_range/len(self.genomes)
-            for species in self.species_memo:
+            for species in self.species:
                 target = math.ceil(percentile*species.size())
                 for i in range(target):
                     if size < fit_range:
@@ -109,6 +112,37 @@ class Population():
         print("Looking for a species that could not be found")
         assert False
         return
+        
+    #Update species if they haven't been improved in long enough (setting all genomes' fitness to zero)
+    #Also removes empty species
+    def checkSpeciesForImprovement(self, gens_to_improve):
+        to_remove = []
+        for species in self.species:
+            if species.size() <= 0:
+                to_remove.append(species)
+            else:
+                species.checkForImprovement(gens_to_improve)
+        #Slow but shouldn't happen too often
+        for species in to_remove:
+            self.species.remove(species)
+        all_expired = True
+        for s in self.species:
+            if s.can_reproduce:
+                all_expired = False
+                break
+        if all_expired:
+            print("No species have improved recently; fix this later.")
+            assert False
+            
+    def assignOffspringProportions(self):
+        total_fitness = 0
+        for s in self.species:
+            if s.can_reproduce:
+                total_fitness += s.sumFitness()
+        for s in self.species:
+            if s.can_reproduce:
+                s.offspring_proportion = s.sumFitness/total_fitness
+        
     
 class Species():
 
@@ -117,6 +151,7 @@ class Species():
         self.lock = multiprocessing.Lock() #??
         self.rep = representative
         self.gens_since_improvement = 0
+        self.can_reproduce = True
         self.last_fittest = -1 #Assumes fitness scores won't be negative
         if add_rep:
             self.add(representative)
@@ -176,9 +211,21 @@ class Species():
         else:
             self.gens_since_improvement+=1
             if self.gens_since_improvement >= gen_limit:
-                for g in self.genomes:
-                    g.fitness = 0
+                self.can_reproduce = False
 
+    #returns the total sum of fitness of all genomes in the species
+    def sumFitness(self):
+        sum = 0
+        for g in self.genomes:
+            sum += g.fitness
+        return sum
+        
+    #Selects an individual from the population based on its fitness; may have different behavior for different algorithms    
+    def select(self):
+        if self.selection_type == "range":
+            return self.fittest(self.experiment.mutate_range)
+        if self.selection_type == "weighted":
+            
 
 
 

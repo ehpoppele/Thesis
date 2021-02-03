@@ -5,6 +5,7 @@ import sys
 import pickle
 import time
 import threading
+import math
 from genome import *
 from genome_NEAT import *
 from population import *
@@ -50,28 +51,43 @@ def evolve(experiment):
         #print(torch.cuda.memory_summary())
         print(str(time.perf_counter() - time_start) + " elapsed seconds")
         #if outfile == 'terminal':
-        sys.stdout.write("\nGeneration " +str(g) + " highest fitness: " + str(population.fittest(1).fitness) + "\n")
+        sys.stdout.write("\nGeneration " +str(g) + " highest fitness: " + str(population.top_fittest().fitness) + "\n")
         sys.stdout.flush()
         if outfile != 'terminal':
             f = open(outfile, "a")
-            f.write(str(g) +'\t' + str(population.fittest(1).fitness) + "\n")
+            f.write(str(g) +'\t' + str(population.top_fittest().fitness) + "\n")
             f.close()
         #Adjust fitness of each individual with fitness sharing
         #Done here so it is skipped for the final population, where plain maximum fitness is desired
         if experiment.fitness_sharing:
             for g in population:
-                g.fitness = g.fitness/len(population.species_memo[g.species])
+                g.fitness = g.fitness/g.species.size()
         #Check all species and remove those that haven't improved in so many generations
         #To avoid changing pop size, they aren't removed but have all fitness values set to zero
-        for species in population.species:
-            species.checkForImprovement(experiment.)
+        population.checkSpeciesForImprovement(experiment.gens_to_improve)
+        population.assignOffspringProportions()
+        
         #Set whole species to zero fitness if this happens (i think that's the safest way to stop them)
         #Population is re-ordered afterwards based on new fitness
         population.reorder() #make sure this is only called when necessary
+        
+        #Now we set the crossover/mutate counts for NEAT; since speciated evolution has a varying count of elite genomes retained
+        elite_count = 0
+        for species in population.species:
+            if species.size() >= experiment.elite_threshold and species.gens_since_improvement < experiment.gens_to_improve:
+                elite_count += experiment.elite_per_species
+        experiment.elite_count = elite_count
+        experiment.mutate_count = math.floor(experiment.mutate_ratio*(experiment.population - experiment.elite_count))
+        experiment.crossover_count = experiment.population - experiment.mutate_count - experiment.elite_count
+        
+        #Make the new population to fill this generation
         new_pop = Population()
+        if experiment.genome == "NEAT":
+            new_pop.is_speciated = True
+        
         #Now we select species reps for the new pop based on the old one
         for species in population.species:
-            rep = population
+            rep = population.randOfSpecies(species)
             new_species = Species(rep, False) #The genome is copied over as a rep but not added
             new_pop.species.append(new_species)
         #Crossover! With speciation checking
@@ -102,6 +118,8 @@ def evolve(experiment):
                 i += 1
         if i < experiment.crossover_count:
             print("Top individuals are all of different species and crossover is impossible. Ending the experiment early.")
+            print("Created only " + str(i) + " genomes through crossover out of " + str(experiment.crossover_count) + " needed.")
+            print(population.species)
             if experiment.genome_file:
                 file = open(experiment.genome_file, 'wb')
                 pickle.dump(saved, file)
@@ -109,39 +127,42 @@ def evolve(experiment):
         #Mutation second; maybe should be first?
         sys.stdout.write("Mutating")
         sys.stdout.flush()
-        for i in range(experiment.mutate_count):
-            if outfile == 'terminal':
-                if (10*i % experiment.mutate_count < 1):
-                    sys.stdout.write(".")
-                    sys.stdout.flush()
-            parent = population.fittest(mutate_range)
-            new_net = parent.mutate()
-            new_net.evalFitness()
-            new_pop.add(new_net)
+        mutated = []
+        for species in population.species:
+            for _ in range(math.ceil(experiment.mutate_count * species.offspring_proportion))
+                parent = species.select()
+                new_net = parent.mutate()
+                mutated.append(new_net)
+        #Now remove from mutated at random until we have the right number
+        for n in mutated:
+            n.evalFitness()
+            new_pop.add(n)
         #Elite Carry-over; re-evaluates fitness first before selection
         #Currently not built to carry best of each species over; this should be handled by fitness sharing
         #And since this is typically only 1, we just want the fittest genome regardless of species
         if outfile == 'terminal':
             sys.stdout.write("\nSelecting Elite")
             sys.stdout.flush()
-        for i in range(experiment.elite_count): #This needs to be redone for elite_count > 1; currently would just take best genome twice
-            best_fitness = float('-inf')
-            fittest = None
-            for i in range(experiment.elite_range):
-                if outfile == 'terminal':
-                    sys.stdout.write(".")
-                    sys.stdout.flush()
-                fitsum = 0
-                for j in range(experiment.elite_evals):
-                    fitsum += population[i].evalFitness() #eval will also return the new fitness, not just update it
-                if fitsum/experiment.elite_evals > best_fitness:
-                    best_fitness = fitsum/experiment.elite_evals
-                    fittest = population[i]
-            new_pop.add(fittest)
-            if outfile == 'terminal':
-                print("\nBest elite fitness is: ", best_fitness)
-            #Save each elite carryover to list
-            saved.append(fittest)
+        for species in population.species:
+            if species.size() >= experiment.elite_threshold and species.gens_since_improvement < experiment.gens_to_improve:
+                for i in range(experiment.elite_per_species): #This needs to be redone for elite_count > 1; currently would just take best genome twice
+                    best_fitness = float('-inf')
+                    fittest = None
+                    for i in range(experiment.elite_range):
+                        if outfile == 'terminal':
+                            sys.stdout.write(".")
+                            sys.stdout.flush()
+                        fitsum = 0
+                        for j in range(experiment.elite_evals):
+                            fitsum += species[i].evalFitness() #eval will also return the new fitness, not just update it
+                        if fitsum/experiment.elite_evals > best_fitness:
+                            best_fitness = fitsum/experiment.elite_evals
+                            fittest = species[i]
+                    new_pop.add(fittest)
+                    if outfile == 'terminal':
+                        print("\nBest elite fitness is: ", best_fitness)
+                    #Save each elite carryover to list
+                    saved.append(fittest)
         population = new_pop
     if experiment.genome_file:
         file = open(experiment.genome_file, 'wb')
