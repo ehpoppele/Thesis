@@ -1,3 +1,7 @@
+#Another basic test file for genome functionality
+#This is not a unit test nor should its ability or inability to run be taken as a sign that the genome class is actually working
+#Not any longer, anyways
+
 import population
 import gym
 import experiments

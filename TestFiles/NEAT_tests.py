@@ -1,3 +1,7 @@
+#This file has served its purpose of initially testing NEAT to confirm that it was working and debugging it outside of the experiment environment
+#If you actually need this file then things must have become quite screwed up in the NEAT algorithms
+#Good luck
+
 from genome_NEAT import *
 import experiments
 import copy

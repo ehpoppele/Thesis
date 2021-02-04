@@ -1,3 +1,9 @@
+#An attempt to build a correct/optimal network for the XOR circuit problem
+#Due to the way in which my networks are constructed and run as matrices rather than plain connections, the ideal solution the NEAT paper uses is impossible
+#While I was unable to find an optimal (fitness near 4.0) solution, I could hand-craft a network with fitness > 3.7
+#NEAT was mostly stuck with 3.5 as the maximum
+#Since this problem is inherently different from the one in the paper, despite my best efforts, I have abandoned it as a benchmark for NEAT
+
 import experiments
 import torch
 from genome_NEAT import *

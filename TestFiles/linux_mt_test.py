@@ -1,4 +1,7 @@
 import random
+#Test file used to debug parts of the multithreading algorithm on for linux
+#Previously I had many errors with too many open files; python seemed to want to pipe back the whole genome between processes after fitness was evaluated
+
 import math
 import sys
 import pickle
@@ -46,19 +49,3 @@ if __name__ == "__main__":
         #for net in unevaled_nets:
         #    population.add(net)
     print("Done!")
-            
-"""
-def doSomething(x):
-    return x*x
-
-if __name__ == "__main__":
-    threads = 8
-    pool = Pool(threads)
-    iterations = 101
-    for _ in range(iterations):
-        inputs = []
-        for i in range(threads):
-            inputs.append(i)
-        results = pool.map(doSomething, inputs)
-    print(results)
-"""

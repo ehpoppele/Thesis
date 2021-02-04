@@ -1,3 +1,5 @@
+#Very basic early test file for genome class
+
 from genome import *
 import gym
 

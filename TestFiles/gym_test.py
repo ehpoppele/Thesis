@@ -1,3 +1,5 @@
+#Test file for tinkering about in Open AI gym. Also useful to check input/output spaces of environments
+
 import gym
 
 env = gym.make('Frostbite-ram-v0')
