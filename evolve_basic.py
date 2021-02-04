@@ -55,11 +55,11 @@ def evolve(experiment):
         #print(torch.cuda.memory_summary())
         print(str(time.perf_counter() - time_start) + " elapsed seconds")
         #if outfile == 'terminal':
-        sys.stdout.write("\nGeneration " +str(g) + " highest fitness: " + str(population.top_fittest().fitness) + "\n")
+        sys.stdout.write("\nGeneration " +str(g) + " highest fitness: " + str(population.fittest().fitness) + "\n")
         sys.stdout.flush()
         if outfile != 'terminal':
             f = open(outfile, "a")
-            f.write(str(g) +'\t' + str(population.top_fittest().fitness) + "\n")
+            f.write(str(g) +'\t' + str(population.fittest().fitness) + "\n")
             f.close()
         #Adjust fitness of each individual with fitness sharing
         #Done here so it is skipped for the final population, where plain maximum fitness is desired
@@ -92,7 +92,7 @@ def evolve(experiment):
         #Now we select species reps for the new pop based on the old one
         for species in population.species:
             rep = population.randOfSpecies(species)
-            new_species = Species(rep, experiment, False) #The genome is copied over as a rep but not added
+            new_species = Species(experiment, rep, False) #The genome is copied over as a rep but not added
             new_pop.species.append(new_species)
         #Crossover! With speciation checking
         sys.stdout.write("Crossover")

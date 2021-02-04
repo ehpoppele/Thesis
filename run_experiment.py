@@ -32,8 +32,8 @@ if __name__ == "__main__":
     print()
     print("#-------------------------------#")
     print("Experiment has concluded normally")
-    fittest = fit_pop.top_fittest()
-    print("Highest Fitness:", fit_pop.top_fittest().fitness)
+    fittest = fit_pop.fittest()
+    print("Highest Fitness:", fit_pop.fittest().fitness)
     input("Press enter to continue to animation")
     fittest.experiment.trials = 1
     fittest.evalFitness(True)

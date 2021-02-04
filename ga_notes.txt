@@ -194,6 +194,21 @@ Important Issue:
     Paper's phrasing is somewhat ambiguous about whether disabled connections are counted in E and D or just in W
     (regarding the equation on page 13 (110) of the longer paper)
     at present I have this just implemented in W since that's my guess (and also less work)
+    
+Combining Population and Species:
+    Identical:
+        select
+        sum fitness
+        get item
+        size
+    pop similar but invokes species:
+        add
+        fit set
+        reorder
+        randOfSpecies/rand select
+        check for improvement
+    disjoint:
+        assign offspring
 
 
 

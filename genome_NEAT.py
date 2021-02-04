@@ -260,7 +260,7 @@ class NEATGenome(Genome):
             curr_layer += 1
             if curr_layer >= len(self.nodes):
                 break
-        model = Genome_network(tensor_list, self.device, True)
+        model = GenomeNetwork(tensor_list, self.device, True)
         self.model = model.to(torch.device(self.device))
         for w in self.weights:
             w.origin = w.origin_copy

@@ -48,7 +48,7 @@ class Genome():
             self.rebuildModel()
 
     def rebuildModel(self):
-        model = Genome_network(self.genotype, self.device)
+        model = GenomeNetwork(self.genotype, self.device)
         self.model = model.to(torch.device(self.device))
     
     def evalFitness(self, render=False, iters=1):
@@ -166,7 +166,7 @@ class Genome():
         new.rebuildModel()
         return new
 
-class Genome_network(nn.Module):
+class GenomeNetwork(nn.Module):
 
     def __init__(self, genotype, device, is_NEAT=False):
         super().__init__()
