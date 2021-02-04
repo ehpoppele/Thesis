@@ -20,7 +20,35 @@ class Experiment():
         self.max_species_dist = 0
         self.fitness_sharing = False #default true for NEAT
         self.gens_to_improve = 15
-
+        
+class NEATExperiment(Experiment):
+    
+    def __init__(self, name):
+        self.name = name
+        self.outfile = 'terminal' #file to write output to; default simply prints to terminal
+        self.genome = 'NEAT'
+        self.genome_file = None #File to save top genomes to through pickling
+        self.fitness_sharing = True #Fitness sharing between members of a species (fitness = fitness/pop of species)
+        self.species_select = 'weighted' #Selecting randomly from all genomes, biases towards higher fitness
+        self.thread_count = 1 
+        self.device = 'cpu' 
+        self.population = 150
+        self.generations = 100
+        self.gens_to_improve = 15 #Gens for a species to improve before it is removed
+        self.reenable_chance = 0.25 #Chance for a connection to be re-enabled during crossover
+        self.species_c1       =  1.0 #params for species-distance algorithm
+        self.species_c2       =  1.0
+        self.species_c3       =  0.4
+        self.max_species_dist =  3.0 #distance for genomes to be considered different species
+        self.interspecies_crossover = 0.001
+        self.mutate_ratio = 0.25 #ratio of mutations/population for each generation
+        self.mutate_effect = 1 #Size of the mutations that occur; uniform random with this range centered on zero
+        self.mutate_odds = [0.8, 0.9, 0.03, 0.05] #odds for mutating weights, perturbing values, add nodes, and adding connections
+        self.elite_per_species   = 1 #Number of elite copied unchanged from each species
+        self.elite_threshold   = 5 #Min size of species to get an elite copied over
+        self.elite_range   = 3 #number of genomes checked for elite copy over (should be <= threshold, always)
+        self.elite_evals   = 5 #Evaluations done on each genome in the elite range to find a more accurate fitness value
+        
 #Cart pole config, pretty much solves the problem
 #might not be optimal, but final solution about 200 (max score) each time
 cart_pole = Experiment('CartPole')
@@ -83,21 +111,16 @@ venture_1.elite_count     = venture_1.population - (venture_1.child_count + vent
 venture_1.elite_range     = 10
 venture_1.elite_evals     = 30
 #---------------------------
-cart_NEAT = copy.deepcopy(cart_pole) #Issue in shallow copying!
-cart_NEAT.name            = 'CartPole_NEAT'
-cart_NEAT.env             = gym.make('CartPole-v0')
-cart_NEAT.genome          = 'NEAT'
-cart_NEAT.fitness_sharing = True
-cart_NEAT.generations     = 5
-cart_NEAT.crossover_count = 0
-cart_NEAT.crossover_range = 20
-cart_NEAT.mutate_count    = 100
-cart_NEAT.mutate_odds = [0.7, 0.99, 0.99] #Percent of time that a mutation will occur in the mutate function
-cart_NEAT.species_c1       =  1.0
-cart_NEAT.species_c2       =  1.0
-cart_NEAT.species_c3       =  0.4
-cart_NEAT.max_species_dist =  3.0
-#First is odds for each weight to change, second is odds to add 1 node, third is to add 1 connection
+cart_NEAT = NEATExperiment('CartPole_NEAT')
+cart_NEAT.env         = gym.make('CartPole-v0')
+cart_NEAT.device      = 'cuda'
+cart_NEAT.inputs      = 4
+cart_NEAT.outputs     = 2
+cart_NEAT.trials      = 10
+cart_NEAT.population  = 50
+cart_NEAT.generations = 5
+cart_NEAT.elite_range = 1
+cart_NEAT.elite_evals = 1
 #---------------------------
 cart_multithread = Experiment('CartPole_mt')
 cart_multithread.env = gym.make('CartPole-v0')
@@ -150,37 +173,15 @@ cart_NEAT_mt.species_c2       =  1.0
 cart_NEAT_mt.species_c3       =  0.4
 cart_NEAT_mt.max_species_dist =  3.0
 #---------------------------
-xor = Experiment("XOR")
+xor = NEATExperiment("XOR")
 xor.env = XOR_env()
-xor.device        = 'cpu'
 xor.inputs        = 2
 xor.outputs       = 1
 xor.trials        = 1
 xor.population    = 150
-xor.generations   = 10
-xor.gens_to_improve = 15
-xor.mutate_ratio = 0.25 #ratio of mutations/population for each generation
-xor.mutate_range  = 10
-xor.mutate_effect = 1
-xor.elite_per_species   = 1 #In NEAT we take this many per species
-xor.elite_count   = 1
-xor.elite_threshold   = 5 #So long as the species has at least this many networks
+xor.generations   = 50
 xor.elite_range   = 1
 xor.elite_evals   = 1 #Deterministic, so no need for multiple evals
-xor.thread_count  = 8
-xor.genome          = 'NEAT'
-xor.fitness_sharing = True
-xor.species_select = 'weighted'
-xor.crossover_count = 0
-xor.crossover_range = 20
-xor.mutate_count    = 100
-xor.mutate_odds = [0.8, 0.9, 0.03, 0.05] #Percent of time that a mutation will occur in the mutate function
-xor.reenable_chance = 0.25
-xor.species_c1       =  1.0
-xor.species_c2       =  1.0
-xor.species_c3       =  0.4
-xor.max_species_dist =  3.0
-xor.interspecies_crossover = 0.001
 #---------------------------
 list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, cart_NEAT_mt, xor]
 

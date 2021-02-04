@@ -8,6 +8,7 @@ class Population():
 
     def __init__(self, experiment):
         self.experiment = experiment
+        self.selection_type = experiment.species_select
         self.genomes = []
         self.species = []
         self.lock = multiprocessing.Lock() #Is this still needed?
@@ -49,6 +50,7 @@ class Population():
     #With each gene coming from the top (n/pop size) percentile of its species
     #Might end up with more than n genes to choose from 
     def fittest(self, search_range):
+        """
         if self.is_speciated:
             top_genes = []
             percentile = search_range/self.size()
@@ -58,7 +60,8 @@ class Population():
                     top_genes.append(species[i])
             return random.choice(top_genes)
         else:
-            return self.genomes[random.randint(0, range-1)]
+        """
+        return self.genomes[random.randint(0, range-1)]
             
     #Returns the highest fitness individual in the population
     def top_fittest(self):
@@ -143,6 +146,30 @@ class Population():
         for s in self.species:
             if s.can_reproduce:
                 s.offspring_proportion = s.sumFitness()/total_fitness
+            else:
+                s.offspring_proportion = 0
+                
+    #returns the total sum of fitness of all genomes in the species
+    def sumFitness(self):
+        sum = 0
+        for g in self.genomes:
+            sum += g.fitness
+        return sum            
+                
+    #Selects an individual from the population based on its fitness; may have different behavior for different algorithms    
+    def select(self):
+        if self.selection_type == "range":
+            return self.fittest(self.experiment.mutate_range)
+        if self.selection_type == "weighted":
+            selection = random.uniform(0, self.sumFitness())
+            for g in self.genomes:
+                selection -= g.fitness
+                if selection <= 0:
+                    return g
+            #If we miss them all by some rounding error
+            return self.genomes[-1]
+        #Default return, though I don't need this since this isn't C
+        return self.genomes[0]
         
     
 class Species():
@@ -158,6 +185,11 @@ class Species():
         self.last_fittest = -1 #Assumes fitness scores won't be negative
         if add_rep:
             self.add(representative)
+        #If not, then we are copying over an old species, so we retain the same data
+        else:
+            self.gens_since_improvement = representative.species.gens_since_improvement
+            self.last_fittest = representative.species.last_fittest
+            self.can_reproduce = representative.species.can_reproduce
          
     def __getitem__(self, index):
         return self.genomes[index]
@@ -211,8 +243,9 @@ class Species():
     def checkForImprovement(self, gen_limit):
         if self.genomes[0].fitness > self.last_fittest:
             self.gens_since_improvement = 0
+            self.last_fittest = self.genomes[0].fitness
         else:
-            self.gens_since_improvement+=1
+            self.gens_since_improvement += 1
             if self.gens_since_improvement >= gen_limit:
                 self.can_reproduce = False
 

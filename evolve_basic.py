@@ -21,7 +21,6 @@ def evolve(experiment):
     #Set params based on the current experiment (so no experiment. everywhere)
     pop_size = experiment.population
     generation_count = experiment.generations
-    mutate_range = experiment.mutate_range
     outfile = experiment.outfile        
     #Create new random population, sort by starting fitness
     population = Population(experiment)
@@ -48,6 +47,11 @@ def evolve(experiment):
         population.add(new_net)
     #Since all genomes start in the same species, we just need 1 random rep
     for g in range(generation_count):
+        if g%20 == 0:
+            print("Species Report: size, gens_since_improvement, record fitness, current fitnes")
+            for s in population.species:
+                if s.size() > 0:
+                    print(s.size(), s.gens_since_improvement, s.last_fittest, s.genomes[0].fitness)
         #print(torch.cuda.memory_summary())
         print(str(time.perf_counter() - time_start) + " elapsed seconds")
         #if outfile == 'terminal':
@@ -59,12 +63,12 @@ def evolve(experiment):
             f.close()
         #Adjust fitness of each individual with fitness sharing
         #Done here so it is skipped for the final population, where plain maximum fitness is desired
+        population.checkSpeciesForImprovement(experiment.gens_to_improve)
         if experiment.fitness_sharing:
             for g in population:
                 g.fitness = g.fitness/g.species.size()
         #Check all species and remove those that haven't improved in so many generations
         #To avoid changing pop size, they aren't removed but have all fitness values set to zero
-        population.checkSpeciesForImprovement(experiment.gens_to_improve)
         population.assignOffspringProportions()
         
         #Set whole species to zero fitness if this happens (i think that's the safest way to stop them)
@@ -93,22 +97,39 @@ def evolve(experiment):
         #Crossover! With speciation checking
         sys.stdout.write("Crossover")
         sys.stdout.flush()
-        #Roll the dice for interspecies
+        #Roll the dice for interspecies; limit to one per gen to make this calculation simpler
+        if random.random() < experiment.interspecies_crossover*experiment.crossover_count:
+            parent1 = population.select()
+            parent2 = population.select()
+            while parent1 == parent2:
+                parent2 = population.select()
+            new_net = parent1.crossover(parent2)
+            new_net.evalFitness()
+            new_pop.add(new_net)
+            experiment.crossover_count -= 1
         #Create and add them to the pop, subtract from crossover count
         offspring = []
         for species in population.species:
-            count = math.ceil(experiment.mutate_count * species.offspring_proportion)
+            count = math.ceil(experiment.crossover_count * species.offspring_proportion)
             for _ in range(count):
                 if species.size() == 1:
                     #Just do mutation
                     parent = species.select()
                     new_net = parent.mutate()
                     offspring.append(new_net)
-                else:
+                else: #It's possible that this has to repeat a lot if there's only a few with a large fit diff, but unlikely
+                    parent1 = species.select()
+                    parent2 = species.select()
+                    while parent1 == parent2:
+                        parent2 = species.select()
+                    new_net = parent1.crossover(parent2)
+                    offspring.append(new_net)
                     #Do the crossover here
         #Now remove from mutated at random until we have the right number
         to_remove = len(offspring) - experiment.crossover_count
-        assert (to_remove >= 0)
+        if to_remove < 0:
+            print(to_remove)
+            assert False
         for _ in range(to_remove):
             del offspring[random.randint(0, len(offspring)-1)]
         for n in offspring:

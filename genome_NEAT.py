@@ -136,7 +136,6 @@ class NEATGenome(Genome):
     #This is very inefficient...
     def retraceLayers(self):
         layer = 0
-        max_layer = 0
         while True:
             nodes_found = 0
             for node in self.nodes:
@@ -150,12 +149,25 @@ class NEATGenome(Genome):
                     for weight in self.weights:
                         if weight.origin.layer == layer:
                             weight.to.layer = layer + 1
-                if node.layer > max_layer:
-                    max_layer = node.layer
             if nodes_found == 0:
                 break
             layer += 1
+        #Now that all nodes should have the proper layer, we find the maximum one
+        max_layer = 0
+        for node in self.nodes:
+            if node.layer > max_layer:
+                    max_layer = node.layer
         self.layers = max_layer + 1
+        #Debugging:
+        found_max_layer = False
+        for node in self.nodes:
+            if node.layer+1 == self.layers:
+                found_max_layer = True
+                break
+        if not found_max_layer:
+            print("Max layer has disappeared")
+            self.printToTerminal()
+            assert False
         
     #Returns a altered genotype that includes the extra nodes necessary to make complete connections
     #For the nodes and weights to be converted effectively into tensors, we need connections to stop at each layer
@@ -219,6 +231,11 @@ class NEATGenome(Genome):
         prev_layer = 0
         curr_layer = 1
         while curr_layer < self.layers:
+            if (layer_counts[curr_layer] <= 0):
+                print("Empty layers found in the network:")
+                print(layer_counts)
+                self.printToTerminal()
+                assert False
             weight_tensor = torch.zeros(layer_counts[curr_layer-1], layer_counts[curr_layer])
             bias_tensor = torch.zeros(layer_counts[curr_layer])
             for weight in working_weights[curr_layer]:
@@ -247,6 +264,7 @@ class NEATGenome(Genome):
         self.model = model.to(torch.device(self.device))
         for w in self.weights:
             w.origin = w.origin_copy
+        
         
     #Also placeholder until I write this
     def crossover(self, other):
