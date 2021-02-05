@@ -2,6 +2,8 @@
 #Also creates experiment instances and assigns the appropriate values to them
 import gym #currently here so I can create envs associated with each experiment
 import copy
+import torch
+import torch.nn as nn #For activation functions
 from TestFiles.XOR_env import * #Custom environment; has similar functions to a gym env but more limited since I only need a few functions
 
 #This lets me do things like frameskip here, and constructor params that vary by more than name without case checking in genome
@@ -20,6 +22,8 @@ class Experiment():
         self.max_species_dist = 0
         self.fitness_sharing = False #default true for NEAT
         self.gens_to_improve = 15
+        self.activation_func = nn.ReLU()
+        self.activation_const = 1 #Layers are multiplied by this value before being run through the activation function
         
 class NEATExperiment(Experiment):
     
@@ -48,6 +52,8 @@ class NEATExperiment(Experiment):
         self.elite_threshold   = 5 #Min size of species to get an elite copied over
         self.elite_range   = 3 #number of genomes checked for elite copy over (should be <= threshold, always)
         self.elite_evals   = 5 #Evaluations done on each genome in the elite range to find a more accurate fitness value
+        self.activation_func = nn.Sigmoid()
+        self.activation_const = 4.9
         
 #Cart pole config, pretty much solves the problem
 #might not be optimal, but final solution about 200 (max score) each time

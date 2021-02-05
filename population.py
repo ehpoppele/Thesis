@@ -1,15 +1,21 @@
+#Defines the Species and Population classes, which track and organize the genomes
+#The population class builds on the species class, and so species is defined first
+
 import random
 import math
 import multiprocessing 
     
+#Tracks all genomes that are of the same species, sorted by fitness
 class Species():
 
+    #Defined with a representative to which other genomes are compared to see if they fall in the species
     def __init__(self, experiment, representative, add_rep=True):
         self.genomes = []
         self.experiment = experiment
-        self.selection_type = experiment.species_select
-        self.select_range = experiment.mutate_range #This may need to change later
-        self.lock = multiprocessing.Lock() #??
+        self.selection_type = experiment.species_select #How fit genomes are selected for mutation/crossover
+        if self.selection_type == "range":
+            self.select_range = experiment.mutate_range #This may need to change later
+        self.lock = multiprocessing.Lock() #will review if this is needed once I fix MT
         self.rep = representative
         self.gens_since_improvement = 0
         self.can_reproduce = True
@@ -32,7 +38,7 @@ class Species():
     def fittest(self):
         return self.genomes[0]
         
-        #returns the total sum of fitness of all genomes in the species
+    #returns the total sum of fitness of all genomes in the species
     def sumFitness(self):
         sum = 0
         for g in self.genomes:
@@ -42,7 +48,7 @@ class Species():
     #Selects an individual from the population based on its fitness; may have different behavior for different algorithms    
     def select(self):
         if self.selection_type == "range":
-            return self.genomes[random.randint(0, self.select range)]
+            return self.genomes[random.randint(0, self.select_range)]
         if self.selection_type == "weighted":
             selection = random.uniform(0, self.sumFitness())
             for g in self.genomes:
@@ -65,7 +71,7 @@ class Species():
         if not added:
             self.genomes.append(genome)
      
-    #Returns a random genome from this species (for selecting species reps etc)
+    #Returns a random genome from this species (for selecting species reps in a new generation)
     def randOfSpecies(self):
         return random.choice(self.genomes)
     
@@ -95,7 +101,7 @@ class Species():
                 self.can_reproduce = False
 
 
-            
+#The population tracks all genomes in one array but also tracks each individual species
 class Population(Species):
 
     def __init__(self, experiment):
@@ -161,6 +167,9 @@ class Population(Species):
             print("No species have improved recently; fix this later.") #NEAT paper at this point refocuses into top 2 species I believe; I'll code that up if I ever see this happen
             assert False
             
+    #Assigns a percentage to each species to track how many offspring they will get for the next generation
+    #This is based on the total sum of the species fitness
+    #If fitness sharing is used, it is effectively based on the average fitness
     def assignOffspringProportions(self):
         total_fitness = 0
         for s in self.species:

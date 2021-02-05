@@ -1,3 +1,7 @@
+#Defines the basic genome class used for the genetic algorithms
+#This is designed to function like the genomes described in the Such et al paper
+#But is also general enough that all variants should be able to easily inherit from it
+
 import gym
 import torch
 import torch.nn as nn
@@ -5,6 +9,8 @@ import random
 import time
 import multiprocessing
 
+
+#Might be needed for MT
 def nextStep(action, env, queue):
     observation, reward, done, _ = env.step(action)
     queue.put([(observation, reward, done), env])
@@ -27,10 +33,10 @@ class Genome():
         self.genotype = [] #Genotype will be filled with at least 2 entries, and will always be pairs of weight/bias tensors
         self.fitness = float("-inf") #default fitness is minimum before any evaluation
         self.mutate_effect = experiment.mutate_effect
+        self.device = experiment.device #Device that network is evaluated on
+        self.env = None
+        self.species = None
         self.model = None
-        self.device = experiment.device
-        self.env = None #gym.make(self.experiment.name, frameskip=4)
-        self.species = 0 #Species are tracked numerically as integers
         #Now initialize the random genotype
         if randomize:
             self.env = experiment.env
@@ -47,12 +53,13 @@ class Genome():
                 self.genotype.append(torch.zeros(experiment.outputs))
             self.rebuildModel()
 
+    #Makes a new neural network for the genome based on its current genotype
     def rebuildModel(self):
-        model = GenomeNetwork(self.genotype, self.device)
+        model = GenomeNetwork(self.genotype, self.device, self.experiment)
         self.model = model.to(torch.device(self.device))
     
+    #Runs the environment with the network selecting actions to evaluate fitness
     def evalFitness(self, render=False, iters=1):
-        #self.rebuildModel()
         sum_reward = 0
         trials = self.experiment.trials*iters
         for _ in range(trials):
@@ -65,8 +72,6 @@ class Genome():
                 inputs = torch.from_numpy(observation)
                 inputs = (inputs.double()).to(torch.device(self.device))
                 outputs = self.model(inputs)
-                #output plain value if size is 1?
-                #action = outputs
                 action = (torch.max(outputs, 0)[1].item())
                 observation, reward, done, _ = env.step(action)
                 sum_reward += reward
@@ -76,83 +81,7 @@ class Genome():
         self.fitness = sum_reward/trials
         return sum_reward/trials
     
-    """
-    def evalFitness(self, render=False):
-        sum_reward = 0
-        trials = self.experiment.trials
-        for _ in range(trials):
-            env = self.env
-            observation = env.reset()
-            for t in range(20000):
-                if render:
-                    time.sleep(0.02)
-                    env.render()
-                inputs = torch.from_numpy(observation)
-                inputs = (inputs.double()).to(torch.device(self.device))
-                outputs = self.model(inputs)
-                action = (torch.max(outputs, 0)[1].item())
-                print("starting")
-                #step_func = retNextStep()
-                thread_results = multiprocessing.Queue()
-                process = multiprocessing.Process(target=nextStep, args=(action, env, thread_results))
-                process.start()
-                process.join()
-                results = thread_results.get()
-                print(results)
-                vals = results[0]
-                observation = vals[0]
-                reward = vals[1]
-                done = vals[2]
-                env = results[1]
-                sum_reward += reward
-                if done:
-                    break
-            env.close()
-        self.fitness = sum_reward/trials
-        return sum_reward/trials
-    """
-    
-    """
-    #Both sets and returns the new fitness of the model
-    def evalFitness(self):
-        sum_reward = 0
-        trials = self.experiment.trials
-        for _ in range(trials):
-            env = self.env #gym.make(self.experiment.name, frameskip=4)
-            observation = env.reset()
-            for t in range(20000): #Should this just be while true?
-                inputs = torch.from_numpy(observation)
-                inputs = (inputs.double()).to(torch.device(self.device))
-                outputs = self.model(inputs)
-                action = 0
-                highest = 0
-                ""
-                #It seems this is an atrociously slow change??
-                for i in range(len(outputs)):
-                    if outputs[i] > highest:
-                        highest = outputs[i]
-                        action = i
-                    #if highest > 0.5:
-                    #    break
-                ""
-                action = 0
-                rand_select = random.random()
-                #Select an index i based on the output array distribution
-                for i in range(len(outputs)):
-                    rand_select -= outputs[i]
-                    if rand_select < 0:
-                        action = i
-                        break
-                observation, reward, done, _ = env.step(action)
-                sum_reward += reward
-                if done:
-                    break
-            #env.close()
-        self.fitness = sum_reward/trials
-        return sum_reward
-    """
-    
-    #The basic genome has no speciation, but the algorithm assumes there is speciation
+    #This basic genome has no speciation, but the algorithm assumes there is speciation
     #So this func returns dist 0 for all genomes to create single-species behavior
     def speciesDistance(self, other):
         return 0
@@ -166,25 +95,23 @@ class Genome():
         new.rebuildModel()
         return new
 
+#Pytorch neural net class to serve as the actual phenotype
+#A new one is created each time the genotype is changed (old nets are discarded)
 class GenomeNetwork(nn.Module):
 
-    def __init__(self, genotype, device, is_NEAT=False):
+    def __init__(self, genotype, device, experiment):
         super().__init__()
         self.device = device
         cuda_genes = []
         for g in genotype:
             cuda_genes.append(g.to(torch.device(self.device)))
         self.genotype = cuda_genes
-        self.is_NEAT = is_NEAT
+        self.activation = experiment.activation_func
+        self.const = experiment.activation_const
 
     def forward(self, inputs):
-        activation = nn.ReLU()
-        const = 1
-        if self.is_NEAT:
-            activation = nn.Sigmoid()
-            const = 4.9
         for i in range(len(self.genotype)//2): #int division, but genotype should always be even length
-            inputs = activation(((inputs @ self.genotype[2*i]) + self.genotype[2*i + 1])*const)
+            inputs = self.activation(((inputs @ self.genotype[2*i]) + self.genotype[2*i + 1])*self.const)
             #inputs.to(torch.device(self.device)) #Is this needed?
         #Neat doesn't need softmax, but other thing does
         soft = nn.Softmax(dim=0)
