@@ -119,7 +119,7 @@ venture_1.elite_evals     = 30
 #---------------------------
 cart_NEAT = NEATExperiment('CartPole_NEAT')
 cart_NEAT.env         = gym.make('CartPole-v0')
-cart_NEAT.device      = 'cuda'
+cart_NEAT.device      = 'cpu'
 cart_NEAT.inputs      = 4
 cart_NEAT.outputs     = 2
 cart_NEAT.trials      = 10
@@ -127,6 +127,7 @@ cart_NEAT.population  = 50
 cart_NEAT.generations = 5
 cart_NEAT.elite_range = 1
 cart_NEAT.elite_evals = 1
+cart_NEAT.thread_count = 1
 #---------------------------
 cart_multithread = Experiment('CartPole_mt')
 cart_multithread.env = gym.make('CartPole-v0')
@@ -144,25 +145,20 @@ cart_multithread.mutate_count  = cart_multithread.population - 1
 cart_multithread.mutate_effect = 10/4
 cart_multithread.elite_count   = cart_multithread.population - (cart_multithread.child_count + cart_multithread.mutate_count)
 cart_multithread.elite_range   = 10
-cart_multithread.elite_evals   = 1
+cart_multithread.elite_evals   = 1  
 cart_multithread.thread_count  = 2
 #---------------------------
-frost_NEAT = copy.deepcopy(frostbite_1)
-frost_NEAT.name = 'Frostbite_NEAT'
-frost_NEAT.genome = 'NEAT'
-frost_NEAT.fitness_sharing = True
-frost_NEAT.crossover_count = 50
-frost_NEAT.crossover_range = 15
-frost_NEAT.mutate_count = 50
-frost_NEAT.mutate_range = 15
-frost_NEAT.mutate_odds = [0.7, 0.03, 0.05]
-frost_NEAT.population = 101
-frost_NEAT.generations = 5
-frost_NEAT.elite_count = 1
-frost_NEAT.species_c1       =  1.0
-frost_NEAT.species_c2       =  1.0
-frost_NEAT.species_c3       =  0.4
-frost_NEAT.max_species_dist =  3.0
+frost_NEAT = NEATExperiment('Frostbite_NEAT')
+frost_NEAT.env         = gym.make('Frostbite-ram-v0', frameskip=4)
+frost_NEAT.device      = 'cpu'
+frost_NEAT.inputs      = 128
+frost_NEAT.outputs     = 18
+frost_NEAT.trials      = 1
+frost_NEAT.population  = 10
+frost_NEAT.generations = 3
+frost_NEAT.elite_range = 1
+frost_NEAT.elite_evals = 3
+frost_NEAT.thread_count = 1
 #---------------------------
 cart_NEAT_mt = copy.deepcopy(cart_multithread) #Issue in shallow copying!
 cart_NEAT_mt.name            = 'CartPole_NEAT_mt'

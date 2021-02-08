@@ -31,7 +31,7 @@ class XOR_env():
         done = False
         obs = numpy.array([0,0])
         difference = abs(action - self.values[self.iteration][1])
-        reward = 1/(difference+1) #This could be adjusted; at present getting 3/4 gives a pretty close reward to 4/4 correct
+        reward = (1 - difference)
         self.iteration += 1
         if self.iteration > 3:
             done = True

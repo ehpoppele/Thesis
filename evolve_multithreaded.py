@@ -1,193 +1,210 @@
 #Main file for basic GA program
-#camelCaps is for func names, snake_case is variables/objects
+#Runs evolution for any genome class
+
 import random
-import math
 import sys
 import pickle
 import time
+import threading
+import math
 from torch.multiprocessing import Pool
-import gym
 from genome import *
 from genome_NEAT import *
 from population import *
 
-#-----------------------
-#Thread helper functions
-#-----------------------
- 
 def multiEvalFitness(genome):
     return genome.evalFitness()
-
 
 #Runs basic evolution on the given experiment and params
 #Creates a new generation through a combination of methods:
 #Crossover from two parents, mutation from one parent, or elitism
-#Ratios of this are specified by exp. and currently can't apply mutation to crossover
+#Ratios of this are specified by experiment
 def evolve(experiment):
     pool = Pool(experiment.thread_count)
     #torch.multiprocessing.set_start_method('spawn')
     thread_count = experiment.thread_count
-    experiment.NODE_INNOVATION_NUMBER = -1
-    experiment.WEIGHT_INNOVATION_NUMBER = -1
+    if experiment.genome == 'NEAT':
+        experiment.NODE_INNOVATION_NUMBER = -1
+        experiment.WEIGHT_INNOVATION_NUMBER = -1
     time_start = time.perf_counter()
-    #Set params based on the current experiment (so no experiment. everywhere)
+    #Set params based on the current experiment
     pop_size = experiment.population
     generation_count = experiment.generations
-    mutate_range = experiment.mutate_range
-    outfile = experiment.outfile        
-    #Create new random population, sort by starting fitness
-    population = Population()
+    outfile = experiment.outfile
+    
+    #Create new random population, sorted by starting fitness
+    population = Population(experiment)
+    new_nets = []
+    if experiment.genome == "NEAT":
+        population.is_speciated = True
     saved = [] #Saving fittest from each gen to pickle file
     if outfile == 'terminal':
         sys.stdout.write("Evaluating Intial Fitness:")
         sys.stdout.flush()
-    new_nets = []
     for i in range(pop_size):
-        if outfile == 'terminal':
-            if (10*i % pop_size < 1): #This and other prints are not working right; need to modify to be one-tenth more precisely
-                sys.stdout.write(".")
-                sys.stdout.flush()
-        new_net = "placeholder string because isn't python funny"
+        new_net = "Maybe I can write a function to make a new net of type specified by the experiment"
         if experiment.genome == 'NEAT':
             new_net = NEATGenome(experiment)
         else:
             new_net = Genome(experiment)
-        new_net.evalFitness()
         new_nets.append(new_net)
-    iters_required = math.ceil(pop_size/thread_count)
-    for _ in range(iters_required):
-        threads = min(thread_count, len(new_nets))#Number of threads for this iteration; should be thread_count for all but the last, where it can be less
-        net_batch = [] #The nets we are evaluating this loop
-        batch_copy = [] #Copies of those nets that will get sent to the pool
-        #We run into "too many files" errors if the same nets get used, but using and discarding a deepcopy seems to fix
-        for i in range(threads):
-            net_batch.append(new_nets[i])
-            batch_copy.append(copy.deepcopy(new_nets[i]))
-        for _ in range(threads):
-            del new_nets[0] #Check for bug/change line? inefficient at best
-        fitnesses = pool.map(multiEvalFitness, batch_copy)
-        for i in range(threads):
-            net_batch[i].fitness = fitnesses[i]
-        for net in net_batch:
-            population.add(net)
-    assert len(new_nets) == 0
-    print(population.size())
-    species_reps = [population[0]] #List of the representatives for each species
-    #assert False
+        
+    #Multithreaded fitness evaluation
+    net_copies = []
+    for net in new_nets:
+        net_copies.append(copy.deepcopy(net))
+    fitnesses = pool.map(multiEvalFitness, net_copies)
+    for i in range(pop_size):
+        new_nets[i].fitness = fitnesses[i]
+    for net in new_nets:
+        population.add(net)
+        
+    #Run the main algorithm over many generations
     for g in range(generation_count):
-        new_pop = Population()
-        #print(torch.cuda.memory_summary())
-        print(str(time.perf_counter() - time_start) + " elapsed seconds")
-        #if outfile == 'terminal':
-        sys.stdout.write("\nGeneration " +str(g) + " highest fitness: " + str(population.fittest(1).fitness) + "\n")
+    
+        #First print reports on generation:
+        #Debugging report I hope to remove soon
+        if g%20 == 0:
+            print("Species Report: size, gens_since_improvement, record fitness, current fitnes")
+            for s in population.species:
+                if s.size() > 0:
+                    print(s.size(), s.gens_since_improvement, s.last_fittest, s.genomes[0].fitness)
+            #print(torch.cuda.memory_summary())
+        gen_report_string = "\nGeneration " + str(g) +"\nHighest Fitness: "+ str(population.fittest().fitness) + "\nTotal elapsed time:" + str(time.perf_counter() - time_start) + " seconds"
+        sys.stdout.write(gen_report_string)
         sys.stdout.flush()
         if outfile != 'terminal':
             f = open(outfile, "a")
-            f.write(str(g) +'\t' + str(population.fittest(1).fitness) + "\n")
+            f.write(gen_report_string)
             f.close()
-        #new_pop = Population()
-        new_nets = []
-        #Crossover! With speciation checking
-        sys.stdout.write("Crossover")
-        sys.stdout.flush()
-        population.species_memo = [] #resets the species memo before species are reassigned
-        #Assign species to all genomes
-        # Here #
-        if (experiment.crossover_count != 0):
-            assert (experiment.crossover_range > 1) #To avoid infinite loops below; I need to update this now that Speciation checking makes this work differently
-        i = 0
-        set_prime = population.fitSet(experiment.crossover_range)
-        while i < experiment.crossover_count and len(set_prime) > 1:
-            #Select two without replacement
-            fit_set = population.fitSet(experiment.crossover_range)
-            parent1 = random.choice(tuple(set_prime))
-            fit_set.remove(parent1)
-            parent2 = random.choice(tuple(fit_set)) #This can be speeded up if we don't allow it to pick things missing from set_prime; but at present it should still be correct at least
-            fit_set.remove(parent2)
-            #Reselect until same species or out of genomes
-            while not(parent1.species == parent2.species) and bool(fit_set):
-                parent2 = random.choice(tuple(fit_set))
-                fit_set.remove(parent2)
-            #if out of 
-            if not (parent1.species == parent2.species):
-                set_prime.remove(parent1)
-            else:
-                new_net = parent1.crossover(parent2)
-                new_nets.append(new_net)
-                #new_net.evalFitness()
-                #new_pop.add(new_net)
-                i += 1
-        if i < experiment.crossover_count:
-            print("Top individuals are all of different species and crossover is impossible. Ending the experiment early.")
-            if experiment.genome_file:
-                file = open(experiment.genome_file, 'wb')
-                pickle.dump(saved, file)
-            return population
-        #Mutation second; maybe should be first?
-        sys.stdout.write("Mutating")
-        sys.stdout.flush()
-        for i in range(experiment.mutate_count):
-            if outfile == 'terminal':
-                if (10*i % experiment.mutate_count < 1):
-                    sys.stdout.write(".")
-                    sys.stdout.flush()
-            parent = population.fittest(mutate_range)
-            new_net = parent.mutate()
+            
+        #Next do the speciation work
+        #Check all species and remove those that haven't improved in so many generations
+        population.checkSpeciesForImprovement(experiment.gens_to_improve)
+        #Adjust fitness of each individual with fitness sharing
+        #Done here so it is skipped for the final population, where plain maximum fitness is desired
+        if experiment.fitness_sharing:
+            for g in population:
+                g.fitness = g.fitness/g.species.size()
+        #Population is re-ordered afterwards based on new fitness
+        population.reorder() #make sure this is only called when necessary
+        #Assign how many offspring each species gets based on fitness of the species
+        population.assignOffspringProportions()
+        #Now we set the crossover/mutate counts for NEAT; since speciated evolution has a varying count of elite genomes retained
+        elite_count = 0
+        for species in population.species:
+            if species.size() >= experiment.elite_threshold and species.gens_since_improvement < experiment.gens_to_improve:
+                elite_count += experiment.elite_per_species
+        experiment.elite_count = elite_count
+        experiment.mutate_count = math.floor(experiment.mutate_ratio*(experiment.population - experiment.elite_count))
+        experiment.crossover_count = experiment.population - experiment.mutate_count - experiment.elite_count
+        #Make the new population to fill this generation
+        new_pop = Population(experiment)
+        if experiment.genome == "NEAT":
+            new_pop.is_speciated = True
+        #Now we select species reps for the new pop based on the old one
+        for species in population.species:
+            rep = population.randOfSpecies(species)
+            new_species = Species(experiment, rep, False) #The genome is copied over as a rep but not added
+            new_pop.species.append(new_species)
+            
+        new_nets = []  
+            
+        #Crossover is done first
+        print("Crossover")
+        #Roll the dice for interspecies; limit to one per gen to make this calculation simpler
+        if random.random() < experiment.interspecies_crossover*experiment.crossover_count:
+            parent1 = population.select()
+            parent2 = population.select()
+            while parent1 == parent2:
+                parent2 = population.select()
+            new_net = parent1.crossover(parent2)
             new_nets.append(new_net)
-            #new_net.evalFitness()
-            #new_pop.add(new_net)
+            experiment.crossover_count -= 1
+        #Create and add them to the pop, subtract from crossover count
+        #Since we round up to the nearest integer to find how many to take from each species, the total number at the end will likely exceed the desired number
+        #We fix this at the end through random pruning
+        offspring = []
+        for species in population.species:
+            count = math.ceil(experiment.crossover_count * species.offspring_proportion)
+            for _ in range(count):
+                if species.size() == 1:
+                    #Just do mutation
+                    parent = species.select()
+                    new_net = parent.mutate()
+                    offspring.append(new_net)
+                else: #It's possible that this has to repeat a lot if there's only a few with a large fit diff, but unlikely
+                    parent1 = species.select()
+                    parent2 = species.select()
+                    while parent1 == parent2:
+                        parent2 = species.select()
+                    new_net = parent1.crossover(parent2)
+                    offspring.append(new_net)
+                    #Do the crossover here
+        #Now remove from mutated at random until we have the right number
+        to_remove = len(offspring) - experiment.crossover_count
+        if to_remove < 0:
+            print(to_remove)
+            assert False
+        for _ in range(to_remove):
+            del offspring[random.randint(0, len(offspring)-1)]
+        for n in offspring:
+            new_nets.append(n)
+                
+        #Mutation to create offspring is done next; the same pruning method is used
+        print("Mutating")
+        mutated = []
+        for species in population.species:
+            for _ in range(math.ceil(experiment.mutate_count * species.offspring_proportion)):
+                parent = species.select()
+                new_net = parent.mutate()
+                mutated.append(new_net)
+        #Now remove from mutated at random until we have the right number
+        to_remove = len(mutated) - experiment.mutate_count
+        assert (to_remove >= 0)
+        for _ in range(to_remove):
+            del mutated[random.randint(0, len(mutated)-1)]
+        for n in mutated:
+            new_nets.append(n)
+            
+        net_copies = []
+        for net in new_nets:
+            net_copies.append(copy.deepcopy(net))
+        fitnesses = pool.map(multiEvalFitness, net_copies)
+        for i in range(len(new_nets)):
+            new_nets[i].fitness = fitnesses[i]
+        for net in new_nets:
+            new_pop.add(net)
+        
         #Elite Carry-over; re-evaluates fitness first before selection
-        sys.stdout.write("Evaluating Fitness")
-        sys.stdout.flush()
-        iters_required = math.ceil((pop_size-experiment.elite_count)/thread_count)
-        for _ in range(iters_required):
-            threads = min(thread_count, len(new_nets))#Number of threads for this iteration; should be thread_count for all but the last, where it can be less
-            net_batch = [] #The nets we are evaluating this loop
-            batch_copy = [] #Copies of those nets that will get sent to the pool
-            #We run into "too many files" errors if the same nets get used, but using and discarding a deepcopy seems to fix
-            for i in range(threads):
-                net_batch.append(new_nets[i])
-                batch_copy.append(copy.deepcopy(new_nets[i]))
-            for _ in range(threads):
-                del new_nets[0] #Check for bug/change line? inefficient at best
-            fitnesses = pool.map(multiEvalFitness, batch_copy)
-            for i in range(threads):
-                net_batch[i].fitness = fitnesses[i]
-            for net in net_batch:
-                new_pop.add(net)
-        assert len(new_nets) == 0
+        #Currently not built to carry best of each species over; this should be handled by fitness sharing
+        #And since this is typically only 1, we just want the fittest genome regardless of species
         if outfile == 'terminal':
             sys.stdout.write("\nSelecting Elite")
             sys.stdout.flush()
-        unevaled_nets = []
-        for i in range(experiment.elite_range):
-            batch_copy.append(copy.deepcopy(population[i]))
-        fitnesses = pool.map(multiEvalFitness, batch_copy)
-        for i in range(threads):
-            population[i].fitness = fitnesses[i]
-        best_fitness = float('-inf')
-        for i in range(experiment.elite_count): #This needs to be redone for elite_count > 1; currently would just take best genome twice
-            fittest = None
-            for i in range(experiment.elite_range):
-                if outfile == 'terminal':
-                    sys.stdout.write(".")
-                    sys.stdout.flush()
-                if population[i].fitness > best_fitness:
-                    best_fitness = population[i].fitness
-                    fittest = population[i]
-            new_nets.append(fittest)
-            if outfile == 'terminal':
-                print("\nBest elite fitness is: ", best_fitness)
-            #Save each elite carryover to list
-            saved.append(fittest)
-        for net in new_nets:
-            new_pop.add(net)
-        print(new_pop.size())
-        assert(new_pop.size() == pop_size)
-        for i in len(species_reps):
-            species_reps[i] = population.randOfSpecies(i)
+        for species in population.species:
+            if species.size() >= experiment.elite_threshold and species.gens_since_improvement < experiment.gens_to_improve:
+                for i in range(experiment.elite_per_species): #This needs to be redone for elite_count > 1; currently would just take best genome twice
+                    best_fitness = float('-inf')
+                    fittest = None
+                    for i in range(experiment.elite_range):
+                        if outfile == 'terminal':
+                            sys.stdout.write(".")
+                            sys.stdout.flush()
+                        fitsum = 0
+                        for j in range(experiment.elite_evals):
+                            fitsum += species[i].evalFitness() #eval will also return the new fitness, not just update it
+                        if fitsum/experiment.elite_evals > best_fitness:
+                            best_fitness = fitsum/experiment.elite_evals
+                            fittest = species[i]
+                    new_pop.add(fittest)
+                    if outfile == 'terminal':
+                        print("\nBest elite fitness is: ", best_fitness)
+                    #Save each elite carryover to pickle file
+                    saved.append(fittest)
         population = new_pop
     if experiment.genome_file:
         file = open(experiment.genome_file, 'wb')
         pickle.dump(saved, file)
     return population
+    

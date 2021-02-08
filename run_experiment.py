@@ -25,6 +25,7 @@ if __name__ == "__main__":
     fit_pop = None
     #These may be joined eventually (multithreaded algorithm should run fine with 1 thread) but basic evolve is better for testing things
     if experiment.thread_count > 1:
+        print("multithreading!")
         fit_pop = evolve_multithreaded.evolve(experiment)
     else:
         fit_pop = evolve_basic.evolve(experiment)

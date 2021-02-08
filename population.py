@@ -175,9 +175,14 @@ class Population(Species):
         for s in self.species:
             if s.can_reproduce:
                 total_fitness += s.sumFitness()
+        if total_fitness == 0:
+            total_fitness = 1 #Avoid division by zero
         for s in self.species:
             if s.can_reproduce:
-                s.offspring_proportion = s.sumFitness()/total_fitness
+                if total_fitness == 0:
+                    s.offspring_proportion = s.size()/self.size()
+                else:
+                    s.offspring_proportion = s.sumFitness()/total_fitness
             else:
                 s.offspring_proportion = 0
     
