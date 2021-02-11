@@ -47,12 +47,15 @@ def evolve(experiment):
     
         #First print reports on generation:
         #Debugging report I hope to remove soon
+        
+        """
         if g%20 == 0:
             print("Species Report: size, gens_since_improvement, record fitness, current fitnes")
             for s in population.species:
                 if s.size() > 0:
                     print(s.size(), s.gens_since_improvement, s.last_fittest, s.genomes[0].fitness)
             #print(torch.cuda.memory_summary())
+        """
         gen_report_string = "\nGeneration " + str(g) +"\nHighest Fitness: "+ str(population.fittest().fitness) + "\nTotal elapsed time:" + str(time.perf_counter() - time_start) + " seconds"
         sys.stdout.write(gen_report_string)
         sys.stdout.flush()
@@ -60,6 +63,7 @@ def evolve(experiment):
             f = open(outfile, "a")
             f.write(gen_report_string)
             f.close()
+        print("Number of species:", len(population.species))
             
         #Next do the speciation work
         #Check all species and remove those that haven't improved in so many generations
@@ -87,9 +91,10 @@ def evolve(experiment):
             new_pop.is_speciated = True
         #Now we select species reps for the new pop based on the old one
         for species in population.species:
-            rep = population.randOfSpecies(species)
-            new_species = Species(experiment, rep, False) #The genome is copied over as a rep but not added
-            new_pop.species.append(new_species)
+            if species.size() > 0 and species.can_reproduce:
+                rep = population.randOfSpecies(species)
+                new_species = Species(experiment, rep, False) #The genome is copied over as a rep but not added
+                new_pop.species.append(new_species)
             
         #Crossover is done first
         print("Crossover")

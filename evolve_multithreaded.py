@@ -2,11 +2,12 @@
 #Runs evolution for any genome class
 
 import random
+import copy
 import sys
-import pickle
 import time
 import threading
 import math
+import pickle
 from torch.multiprocessing import Pool
 from genome import *
 from genome_NEAT import *
@@ -161,6 +162,7 @@ def evolve(experiment):
                 mutated.append(new_net)
         #Now remove from mutated at random until we have the right number
         to_remove = len(mutated) - experiment.mutate_count
+        print(len(mutated), experiment.mutate_count)
         assert (to_remove >= 0)
         for _ in range(to_remove):
             del mutated[random.randint(0, len(mutated)-1)]

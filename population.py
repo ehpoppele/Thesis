@@ -15,7 +15,7 @@ class Species():
         self.selection_type = experiment.species_select #How fit genomes are selected for mutation/crossover
         if self.selection_type == "range":
             self.select_range = experiment.mutate_range #This may need to change later
-        self.lock = multiprocessing.Lock() #will review if this is needed once I fix MT
+        #self.lock = multiprocessing.Lock() #will review if this is needed once I fix MT
         self.rep = representative
         self.gens_since_improvement = 0
         self.can_reproduce = True
@@ -109,9 +109,9 @@ class Population(Species):
         self.selection_type = experiment.species_select
         self.genomes = []
         self.species = []
-        self.lock = multiprocessing.Lock() #Is this still needed?
+        #self.lock = multiprocessing.Lock() #Is this still needed?
         self.species_num = 0
-        self.is_speciated = False
+        self.is_speciated = True
         
     #Works as above, adding in sorted position to genome list
     #And also adds genome to the appropriate species, or creates a new one when needed
@@ -164,8 +164,19 @@ class Population(Species):
                 all_expired = False
                 break
         if all_expired:
-            print("No species have improved recently; fix this later.") #NEAT paper at this point refocuses into top 2 species I believe; I'll code that up if I ever see this happen
-            assert False
+            #Repopulate from top two species
+            highest_avg_fitness = -1
+            top = None
+            second = None
+            for s in self.species:
+                avg = s.sumFitness/s.size()
+                if avg >= highest_avg_fitness:
+                    highest_avg_fitness = avg
+                    top = s
+                    second = top
+                top.can_reproduce = True #This should never be None so we're okay with crashing if it gets there
+                if second is not None:
+                    second.can_reproduce = True
             
     #Assigns a percentage to each species to track how many offspring they will get for the next generation
     #This is based on the total sum of the species fitness

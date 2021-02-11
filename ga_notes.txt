@@ -212,6 +212,75 @@ Combining Population and Species:
 
 Maybe rename weights in NEAT to connections? goes better with nodes and makes more sense
 
+XOR worked once:
+break through at gen 272, 15 at 370, continued to slowly gain until 500
+!!!#------------------------#!!!
+Experiment has concluded normally
+Highest Fitness: 15.807660765013633
+Press enter to continue to animation
+Network output was: 0.0001022449650046387
+Now checking on input: (0,1)
+Network output was: 0.9952144977928111
+Now checking on input: (1,0)
+Network output was: 0.9919596231735874
+Now checking on input: (1,1)
+Network output was: 0.011186972610246293
+Now checking on input: (0,0)
+Fitness:
+15.807660765013633
+Nodes:
+1 input 0 0
+2 input 0 0
+3 output 2 1.4096764446327414
+314 hidden 1 -0.3874290058011651
+Weights:
+1 1 3 -4.1928734974729975
+631 314 3 5.6608999882537265
+630 2 314 1.3079756743815274
+2 2 3 -3.851809327769589
+685 1 314 2.631616349032996
+Disabled Weights:
+
+with:
+Generation 499
+Highest Fitness: 15.807660765013633
+Total elapsed time:61.935682 secondsNumber of species: 29
+Crossover
+Mutating
+
+Selecting Elite.
+Best elite fitness is:  8.999330743570368
+.
+Best elite fitness is:  4.00000000265614
+.
+Best elite fitness is:  4.076899819573063
+.
+Best elite fitness is:  4.000000000002794
+.
+Best elite fitness is:  15.807660765013633
+.
+Best elite fitness is:  7.95777192013957
+.
+Best elite fitness is:  4.000587744408473
+.
+Best elite fitness is:  5.132619089414405
+.
+Best elite fitness is:  6.614049245311067
+.
+Best elite fitness is:  4.000628590136979
+.
+Best elite fitness is:  9.40838876106223
+.
+Best elite fitness is:  4.004154325162117
+.
+Best elite fitness is:  4.11267433689341
+.
+Best elite fitness is:  4.047907842000562
+
+#---------------------------------------
+Figures needed for thesis:
+    
+
 
 
 

@@ -107,32 +107,48 @@ class NEATGenome(Genome):
         c3 = self.experiment.species_c3
         E = 0 #excess
         D = 0 #disjoint
-        W = 0 #disabled
+        W = 0 #average weight differences
         for weight in primary.weights:
             #Count all weights that are excess of secondary's greatest innovation nums
             if weight.innovation_num > secondary.weights[len(secondary.weights)-1].innovation_num:
                 E += 1
-            disjoint = True
-            #Check for disjoint genes and add to weight difference
-            for weight_2 in secondary.weights:
-                if weight.innovation_num == weight_2.innovation_num:
-                    W += abs(weight.value - weight_2.value)
-                    disjoint == False
-                    break
-            if disjoint:
-                D += 1
+            else:
+                disjoint = True
+                #Check for disjoint genes and add to weight difference
+                for weight_2 in secondary.weights:
+                    if weight.innovation_num == weight_2.innovation_num:
+                        W += abs(weight.value - weight_2.value)
+                        disjoint == False
+                        break
+                if disjoint:
+                    D += 1
+        #repeat for nodes
+        for node in primary.nodes:
+            if node.innovation_num > secondary.nodes[-1].innovation_num:
+                E += 1
+            else:
+                disjoint = True
+                for node_2 in secondary.nodes:
+                    if node.innovation_num == node_2.innovation_num:
+                        W += abs(node.bias - node_2.bias)
+                        disjoint == False
+                        break
+                if disjoint:
+                    D += 1
         for d1 in primary.disabled:
             for d2 in secondary.disabled:
                 if d1.innovation_num == d2.innovation_num:
                     W += abs(d1.value - d2.value)
                     break
-        N = max(len(self.nodes), len(other.nodes))
-        gamma = (c1*E*c2*D)/N +(c3*W)
+        N = max(len(self.nodes)+len(self.weights), len(other.nodes)+len(other.weights))
+        gamma = (c1*E)/N + (c2*D)/N +(c3*W)
         return gamma
     
     #Goes through the genotype and updates the layers/depth value of each node
     #Assumes input nodes are fixed as the only nodes at layer zero
     def retraceLayers(self):
+        for node in self.nodes:
+            node.layer = 0
         layer = 0
         #Starting at layer zero, we loop over all the weights and find the connections out of a node at this layer
         #We then ensure the layer of the connections destination is higher than that of its origin
@@ -375,20 +391,27 @@ class NEATGenome(Genome):
             #Confirm they are unique and are not both in a fixed(I/O) layer
             while (node_1 == node_2) or ((node_1.layer == node_2.layer) and (node_1.type == 'input' or node_1.type == 'output')):
                 node_2 = new.nodes[random.randrange(len(new.nodes))]
-            #Find the lower layer one or default if equal layers, then make the connection
-            if node_1.layer <= node_2.layer:
-                new_weight = NEATWeight(node_1, node_2, random.random()*self.experiment.inputs, self.experiment.WEIGHT_INNOVATION_NUMBER)
-                self.experiment.WEIGHT_INNOVATION_NUMBER += 1
-                new.weights.append(new_weight)
-            else:
-                new_weight = NEATWeight(node_2, node_1, random.random()*self.experiment.inputs, self.experiment.WEIGHT_INNOVATION_NUMBER)
-                self.experiment.WEIGHT_INNOVATION_NUMBER += 1
-                new.weights.append(new_weight)
+            #Quick solution to making the same connection again; just block the mutation from happening
+            duplicate = False
+            for w in new.weights:
+                if (w.origin == node_1 and w.destination == node_2) or (w.origin == node_2 and w.destination == node_1):
+                    duplicate = True
+            if not duplicate:
+                #Find the lower layer one or default if equal layers, then make the connection
+                if node_1.layer <= node_2.layer:
+                    new_weight = NEATWeight(node_1, node_2, random.random()*self.experiment.inputs, self.experiment.WEIGHT_INNOVATION_NUMBER)
+                    self.experiment.WEIGHT_INNOVATION_NUMBER += 1
+                    new.weights.append(new_weight)
+                else:
+                    new_weight = NEATWeight(node_2, node_1, random.random()*self.experiment.inputs, self.experiment.WEIGHT_INNOVATION_NUMBER)
+                    self.experiment.WEIGHT_INNOVATION_NUMBER += 1
+                    new.weights.append(new_weight)
         #A new node is added on an existing connection, shifting the original connection 'up', to connect the new node to the original destination node
+        node_added = False
         if random.random() < new.m_node_chance:
             to_change = new.weights[random.randrange(len(new.weights))]
             disabled_connection = copy.deepcopy(to_change)
-            new_node = NEATNode('hidden',  to_change.origin.layer + 1, random.random()*self.experiment.inputs, self.experiment.NODE_INNOVATION_NUMBER)
+            new_node = NEATNode('hidden',  to_change.origin.layer + 1, 0, self.experiment.NODE_INNOVATION_NUMBER)
             self.experiment.NODE_INNOVATION_NUMBER += 1
             new_weight = NEATWeight(to_change.origin, new_node, 1, self.experiment.WEIGHT_INNOVATION_NUMBER)
             self.experiment.WEIGHT_INNOVATION_NUMBER += 1
@@ -399,6 +422,7 @@ class NEATGenome(Genome):
             new.nodes.append(new_node)
             new.weights.append(new_weight)
             new.disabled.append(disabled_connection)
+            node_added = True
         new.rebuildModel()
         return new
             

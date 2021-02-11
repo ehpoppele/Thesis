@@ -16,14 +16,25 @@ class Experiment():
         self.outfile = 'terminal' #default output writes to terminal rather than a file
         self.genome = 'Basic'
         self.genome_file = None
+        self.fitness_sharing = False
+        self.species_select = 'range'
         self.thread_count = 1
-        self.crossover_count = 0
-        self.crossover_range = 0
-        self.max_species_dist = 0
-        self.fitness_sharing = False #default true for NEAT
-        self.gens_to_improve = 15
+        self.device = 'cpu'
+        self.population = 101
+        self.generations = 100
+        self.gens_to_improve = self.generations #To effectively ignore species constraints
+        self.max_species_dist =  1.0 #Basic genomes should always be considered same species, but this is dealt with in distance function
+        self.interspecies_crossover = 0.0 #No crossover in general
+        self.mutate_ratio = 1.0 #All offspring from mutation, none from crossover
+        self.mutate_range = 10
+        self.mutate_effect = 1.0 #Size of the mutations that occur; uniform random with this range centered on zero
+        self.elite_per_species   = 1 #Only 1 species, but only 1 genome copied by default
+        self.elite_threshold   = 1 #Should only ever be 1 species
+        self.elite_range   = 10 #number of genomes checked for elite copy over (should be <= threshold, always)
+        self.elite_evals   = 30 #Evaluations done on each genome in the elite range to find a more accurate fitness value
         self.activation_func = nn.ReLU()
-        self.activation_const = 1 #Layers are multiplied by this value before being run through the activation function
+        self.activation_const = 1.
+        self.thread_count = 1
         
 class NEATExperiment(Experiment):
     
@@ -34,19 +45,19 @@ class NEATExperiment(Experiment):
         self.genome_file = None #File to save top genomes to through pickling
         self.fitness_sharing = True #Fitness sharing between members of a species (fitness = fitness/pop of species)
         self.species_select = 'weighted' #Selecting randomly from all genomes, biases towards higher fitness
-        self.thread_count = 1 
+        self.thread_count = 1
         self.device = 'cpu' 
         self.population = 150
         self.generations = 100
-        self.gens_to_improve = 15 #Gens for a species to improve before it is removed
+        self.gens_to_improve = 50 #Gens for a species to improve before it is removed
         self.reenable_chance = 0.25 #Chance for a connection to be re-enabled during crossover
         self.species_c1       =  1.0 #params for species-distance algorithm
         self.species_c2       =  1.0
-        self.species_c3       =  0.4
-        self.max_species_dist =  3.0 #distance for genomes to be considered different species
+        self.species_c3       =  0.1
+        self.max_species_dist =  1.5 #distance for genomes to be considered different species
         self.interspecies_crossover = 0.001
-        self.mutate_ratio = 0.25 #ratio of mutations/population for each generation
-        self.mutate_effect = 1 #Size of the mutations that occur; uniform random with this range centered on zero
+        self.mutate_ratio = 0.25 #percent of offspring made from mutation
+        self.mutate_effect = 0.5 #Size of the mutations that occur; uniform random with this range centered on zero
         self.mutate_odds = [0.8, 0.9, 0.03, 0.05] #odds for mutating weights, perturbing values, add nodes, and adding connections
         self.elite_per_species   = 1 #Number of elite copied unchanged from each species
         self.elite_threshold   = 5 #Min size of species to get an elite copied over
@@ -67,14 +78,8 @@ cart_pole.layer_size    = 4
 cart_pole.trials        = 10
 cart_pole.population    = 101
 cart_pole.generations   = 5 #20    #needs 35 for stable no-oscillation
-cart_pole.child_count   = 0     #Experiment is basic GA, so no crossover
-cart_pole.mutate_range  = 10
-cart_pole.mutate_count  = cart_pole.population - 1 #I should put elite count first so I can fix it at 1, and base the rest around that maybe? or maybe not
-cart_pole.mutate_effect = 10/4
-cart_pole.elite_count   = cart_pole.population - (cart_pole.child_count + cart_pole.mutate_count)
-cart_pole.elite_range   = 10
-cart_pole.elite_evals   = 30
-cart_pole.genome_file   = '/Pickled Genomes/cart_genes.pjar'
+cart_pole.mutate_effect = 1.0/cart_pole.inputs
+cart_pole.genome_file   = '/Pickled Genomes/cart_genes.pjar' #'/Pickled Genomes/cart_genes.pjar'
 cart_pole.thread_count  = 8
 #---------------------------
 #Frostbite
@@ -160,31 +165,16 @@ frost_NEAT.elite_range = 1
 frost_NEAT.elite_evals = 3
 frost_NEAT.thread_count = 1
 #---------------------------
-cart_NEAT_mt = copy.deepcopy(cart_multithread) #Issue in shallow copying!
-cart_NEAT_mt.name            = 'CartPole_NEAT_mt'
-cart_NEAT_mt.env             = gym.make('CartPole-v0')
-cart_NEAT_mt.genome          = 'NEAT'
-cart_NEAT_mt.fitness_sharing = True
-cart_NEAT_mt.generations     = 5
-cart_NEAT_mt.crossover_count = 0
-cart_NEAT_mt.crossover_range = 20
-cart_NEAT_mt.mutate_count    = 100
-cart_NEAT_mt.mutate_odds = [0.7, 0.99, 0.99] #Percent of time that a mutation will occur in the mutate function
-cart_NEAT_mt.species_c1       =  1.0
-cart_NEAT_mt.species_c2       =  1.0
-cart_NEAT_mt.species_c3       =  0.4
-cart_NEAT_mt.max_species_dist =  3.0
-#---------------------------
 xor = NEATExperiment("XOR")
 xor.env = XOR_env()
 xor.inputs        = 2
 xor.outputs       = 1
 xor.trials        = 1
 xor.population    = 150
-xor.generations   = 50
+xor.generations   = 500
 xor.elite_range   = 1
 xor.elite_evals   = 1 #Deterministic, so no need for multiple evals
 #---------------------------
-list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, cart_NEAT_mt, xor]
+list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor]
 
 
