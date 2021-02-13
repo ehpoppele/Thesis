@@ -76,7 +76,7 @@ class Species():
         return random.choice(self.genomes)
     
     #Sorts the population by fitness again, to be used after mass changes to fitness (like with fitness sharing)
-    def reorder(self):
+    def reorder(self): #use python library sort
         for i in range(self.size()):
             genome = self.genomes[i]
             j = i - 1

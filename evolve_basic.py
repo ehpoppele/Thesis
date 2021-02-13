@@ -17,17 +17,17 @@ from population import *
 #Ratios of this are specified by experiment
 def evolve(experiment):
     if experiment.genome == 'NEAT':
-        experiment.NODE_INNOVATION_NUMBER = -1
+        experiment.NODE_INNOVATION_NUMBER = -1 #Move this to experiment
         experiment.WEIGHT_INNOVATION_NUMBER = -1
     time_start = time.perf_counter()
     #Set params based on the current experiment
-    pop_size = experiment.population
+    pop_size = experiment.population #use with experiment?
     generation_count = experiment.generations
     outfile = experiment.outfile
     
     #Create new random population, sorted by starting fitness
     population = Population(experiment)
-    if experiment.genome == "NEAT":
+    if experiment.genome == "NEAT": #move to population file
         population.is_speciated = True
     saved = [] #Saving fittest from each gen to pickle file
     if outfile == 'terminal':
@@ -43,7 +43,7 @@ def evolve(experiment):
         population.add(new_net)
         
     #Run the main algorithm over many generations
-    for g in range(generation_count):
+    for g in range(generation_count): #change to 'while termination condition'? export 'done' function from experiment
     
         #First print reports on generation:
         #Debugging report I hope to remove soon
@@ -80,7 +80,7 @@ def evolve(experiment):
         #Now we set the crossover/mutate counts for NEAT; since speciated evolution has a varying count of elite genomes retained
         elite_count = 0
         for species in population.species:
-            if species.size() >= experiment.elite_threshold and species.gens_since_improvement < experiment.gens_to_improve:
+            if species.size() >= experiment.elite_threshold and species.can_reproduce:
                 elite_count += experiment.elite_per_species
         experiment.elite_count = elite_count
         experiment.mutate_count = math.floor(experiment.mutate_ratio*(experiment.population - experiment.elite_count))

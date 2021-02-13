@@ -77,9 +77,9 @@ cart_pole.layers        = 4 #seems that only 2 are necessary?
 cart_pole.layer_size    = 4
 cart_pole.trials        = 10
 cart_pole.population    = 101
-cart_pole.generations   = 5 #20    #needs 35 for stable no-oscillation
+cart_pole.generations   = 1 #20    #needs 35 for stable no-oscillation
 cart_pole.mutate_effect = 1.0/cart_pole.inputs
-cart_pole.genome_file   = '/Pickled Genomes/cart_genes.pjar' #'/Pickled Genomes/cart_genes.pjar'
+cart_pole.genome_file   = './Pickled Genomes/cart_genes.pjar' #'/Pickled Genomes/cart_genes.pjar'
 cart_pole.thread_count  = 8
 #---------------------------
 #Frostbite
