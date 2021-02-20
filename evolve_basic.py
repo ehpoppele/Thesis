@@ -16,9 +16,6 @@ from population import *
 #Crossover from two parents, mutation from one parent, or elitism
 #Ratios of this are specified by experiment
 def evolve(experiment):
-    if experiment.genome == 'NEAT':
-        experiment.NODE_INNOVATION_NUMBER = -1 #Move this to experiment
-        experiment.WEIGHT_INNOVATION_NUMBER = -1
     time_start = time.perf_counter()
     #Set params based on the current experiment
     pop_size = experiment.population #use with experiment?

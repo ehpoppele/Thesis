@@ -281,6 +281,7 @@ Best elite fitness is:  4.047907842000562
 Figures needed for thesis:
     Neuron and/or network
 
+Change innovation nums to stop using all caps
 
 
 

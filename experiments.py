@@ -44,6 +44,7 @@ class NEATExperiment(Experiment):
         self.genome = 'NEAT'
         self.genome_file = None #File to save top genomes to through pickling
         self.fitness_sharing = True #Fitness sharing between members of a species (fitness = fitness/pop of species)
+        self.is_speciated = True
         self.species_select = 'weighted' #Selecting randomly from all genomes, biases towards higher fitness
         self.thread_count = 1
         self.device = 'cpu' 
@@ -65,6 +66,8 @@ class NEATExperiment(Experiment):
         self.elite_evals   = 5 #Evaluations done on each genome in the elite range to find a more accurate fitness value
         self.activation_func = nn.Sigmoid()
         self.activation_const = 4.9
+        self.NODE_INNOVATION_NUMBER = -1
+        self.WEIGHT_INNOVATION_NUMBER = -1
         
 #Cart pole config, pretty much solves the problem
 #might not be optimal, but final solution about 200 (max score) each time

@@ -24,9 +24,6 @@ def evolve(experiment):
     pool = Pool(experiment.thread_count)
     #torch.multiprocessing.set_start_method('spawn')
     thread_count = experiment.thread_count
-    if experiment.genome == 'NEAT':
-        experiment.NODE_INNOVATION_NUMBER = -1
-        experiment.WEIGHT_INNOVATION_NUMBER = -1
     time_start = time.perf_counter()
     #Set params based on the current experiment
     pop_size = experiment.population

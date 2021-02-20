@@ -78,8 +78,11 @@ class Genome():
                 if done:
                     break
             env.close()
-        self.fitness = (sum_reward/trials)
-        return (sum_reward/trials)
+        fitness = (sum_reward/trials)
+        if fitness == 0:
+            fitness = 0.01
+        self.fitness = fitness
+        return fitness
     
     #This basic genome has no speciation, but the algorithm assumes there is speciation
     #So this func returns dist 0 for all genomes to create single-species behavior
