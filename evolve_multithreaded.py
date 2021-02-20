@@ -8,7 +8,7 @@ import time
 import threading
 import math
 import pickle
-from torch.multiprocessing import Pool
+from torch.multiprocessing import Pool, set_start_method
 from genome import *
 from genome_NEAT import *
 from population import *
@@ -21,6 +21,7 @@ def multiEvalFitness(genome):
 #Crossover from two parents, mutation from one parent, or elitism
 #Ratios of this are specified by experiment
 def evolve(experiment):
+    set_start_method('spawn')
     pool = Pool(experiment.thread_count)
     #torch.multiprocessing.set_start_method('spawn')
     thread_count = experiment.thread_count
