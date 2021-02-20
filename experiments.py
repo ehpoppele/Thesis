@@ -159,11 +159,15 @@ frost_NEAT.device      = 'cpu'
 frost_NEAT.inputs      = 128
 frost_NEAT.outputs     = 18
 frost_NEAT.trials      = 1
-frost_NEAT.population  = 10
+frost_NEAT.population  = 150
 frost_NEAT.generations = 3
 frost_NEAT.elite_range = 1
 frost_NEAT.elite_evals = 3
-frost_NEAT.thread_count = 1
+frost_NEAT.thread_count = 16
+frost_NEAT.species_c1 = 5.
+frost_NEAT.species_c2 = 5.
+frost_NEAT.species_c3 = 0.01
+frost_NEAT.max_species_dist = 30.0
 #---------------------------
 xor = NEATExperiment("XOR")
 xor.env = XOR_env()
