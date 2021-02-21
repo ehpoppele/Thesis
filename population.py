@@ -169,7 +169,7 @@ class Population(Species):
             top = None
             second = None
             for s in self.species:
-                avg = s.sumFitness/s.size()
+                avg = s.sumFitness()/s.size()
                 if avg >= highest_avg_fitness:
                     highest_avg_fitness = avg
                     top = s
