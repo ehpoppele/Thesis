@@ -170,7 +170,8 @@ frost_NEAT.thread_count = 16
 frost_NEAT.species_c1 = 5.
 frost_NEAT.species_c2 = 5.
 frost_NEAT.species_c3 = 0.01
-frost_NEAT.max_species_dist = 30.0
+frost_NEAT.max_species_dist = 50.0
+frost_NEAT.mutate_odds = [0.8, 0.9, 0.06, 0.1]
 #---------------------------
 xor = NEATExperiment("XOR")
 xor.env = XOR_env()
