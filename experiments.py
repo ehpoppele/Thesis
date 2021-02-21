@@ -158,15 +158,15 @@ cart_multithread.thread_count  = 2
 #---------------------------
 frost_NEAT = NEATExperiment('Frostbite_NEAT')
 frost_NEAT.env         = gym.make('Frostbite-ram-v0', frameskip=4)
-frost_NEAT.device      = 'cpu'
+frost_NEAT.device      = 'cuda'
 frost_NEAT.inputs      = 128
 frost_NEAT.outputs     = 18
 frost_NEAT.trials      = 1
 frost_NEAT.population  = 101
-frost_NEAT.generations = 200
+frost_NEAT.generations = 500
 frost_NEAT.elite_range = 1
 frost_NEAT.elite_evals = 3
-frost_NEAT.thread_count = 16
+frost_NEAT.thread_count = 1
 frost_NEAT.species_c1 = 5.
 frost_NEAT.species_c2 = 5.
 frost_NEAT.species_c3 = 0.01
