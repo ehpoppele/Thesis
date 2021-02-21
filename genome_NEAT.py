@@ -76,7 +76,7 @@ class NEATGenome(Genome):
                 j += 1
             self.nodes += inputs
             self.nodes += outputs
-            self.rebuildModel()
+            #self.rebuildModel()
             
     #Prints out all the nodes and connections for debugging
     def printToTerminal(self):
@@ -341,7 +341,7 @@ class NEATGenome(Genome):
             if assigned != 2:
                 print("Issue with crossover; missing a node in the child")
                 assert False
-        child.rebuildModel()
+        #child.rebuildModel()
         return child
         
     #Mutation function perturbs and resets values on weights and biases and can add new nodes or connections
@@ -423,6 +423,6 @@ class NEATGenome(Genome):
             new.weights.append(new_weight)
             new.disabled.append(disabled_connection)
             node_added = True
-        new.rebuildModel()
+        #new.rebuildModel()
         return new
             

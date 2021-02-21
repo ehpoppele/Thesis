@@ -69,7 +69,7 @@ def evolve(experiment):
                 if s.size() > 0:
                     print(s.size(), s.gens_since_improvement, s.last_fittest, s.genomes[0].fitness)
             #print(torch.cuda.memory_summary())
-        gen_report_string = "\nGeneration " + str(g) +"\nHighest Fitness: "+ str(population.fittest().fitness) + "\nTotal elapsed time:" + str(time.perf_counter() - time_start) + " seconds"
+        gen_report_string = "\nGeneration " + str(g) +"\nHighest Fitness: "+ str(population.fittest().fitness) + "\nTotal elapsed time:" + str(time.perf_counter() - time_start) + " seconds\n"
         sys.stdout.write(gen_report_string)
         sys.stdout.flush()
         if outfile != 'terminal':
@@ -110,7 +110,6 @@ def evolve(experiment):
         new_nets = []  
             
         #Crossover is done first
-        print("Crossover")
         #Roll the dice for interspecies; limit to one per gen to make this calculation simpler
         if random.random() < experiment.interspecies_crossover*experiment.crossover_count:
             parent1 = population.select()
@@ -151,7 +150,6 @@ def evolve(experiment):
             new_nets.append(n)
                 
         #Mutation to create offspring is done next; the same pruning method is used
-        print("Mutating")
         mutated = []
         for species in population.species:
             for _ in range(math.ceil(experiment.mutate_count * species.offspring_proportion)):
@@ -160,7 +158,6 @@ def evolve(experiment):
                 mutated.append(new_net)
         #Now remove from mutated at random until we have the right number
         to_remove = len(mutated) - experiment.mutate_count
-        print(len(mutated), experiment.mutate_count)
         assert (to_remove >= 0)
         for _ in range(to_remove):
             del mutated[random.randint(0, len(mutated)-1)]
@@ -179,9 +176,6 @@ def evolve(experiment):
         #Elite Carry-over; re-evaluates fitness first before selection
         #Currently not built to carry best of each species over; this should be handled by fitness sharing
         #And since this is typically only 1, we just want the fittest genome regardless of species
-        if outfile == 'terminal':
-            sys.stdout.write("\nSelecting Elite")
-            sys.stdout.flush()
         for species in population.species:
             if species.size() >= experiment.elite_threshold and species.gens_since_improvement < experiment.gens_to_improve:
                 for i in range(experiment.elite_per_species): #This needs to be redone for elite_count > 1; currently would just take best genome twice
@@ -198,8 +192,6 @@ def evolve(experiment):
                             best_fitness = fitsum/experiment.elite_evals
                             fittest = species[i]
                     new_pop.add(fittest)
-                    if outfile == 'terminal':
-                        print("\nBest elite fitness is: ", best_fitness)
                     #Save each elite carryover to pickle file
                     saved.append(fittest)
         population = new_pop

@@ -51,7 +51,7 @@ class Genome():
                     self.genotype.append(torch.zeros(experiment.layer_size))
                 self.genotype.append((torch.randn(experiment.layer_size, experiment.outputs)) * (1/experiment.layer_size))
                 self.genotype.append(torch.zeros(experiment.outputs))
-            self.rebuildModel()
+            #self.rebuildModel()
 
     #Makes a new neural network for the genome based on its current genotype
     def rebuildModel(self):
@@ -60,6 +60,7 @@ class Genome():
     
     #Runs the environment with the network selecting actions to evaluate fitness
     def evalFitness(self, render=False, iters=1):
+        self.rebuildModel()
         sum_reward = 0
         trials = self.experiment.trials*iters
         for _ in range(trials):
@@ -95,7 +96,7 @@ class Genome():
         new.env = self.env
         for i in range(len(self.genotype)):
             new.genotype.append(self.genotype[i] + (torch.randn(self.genotype[i].size()) * (self.mutate_effect)))
-        new.rebuildModel()
+        #new.rebuildModel()
         return new
 
 #Pytorch neural net class to serve as the actual phenotype
