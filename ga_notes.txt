@@ -282,6 +282,8 @@ Figures needed for thesis:
     Neuron and/or network
 
 Change innovation nums to stop using all caps
+standardize child and new to offspring
+remove outfile system and just use prints?
 
 
 
