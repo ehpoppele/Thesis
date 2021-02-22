@@ -5,4 +5,5 @@ This readme is a work in progress
 
 ## Installation
 pip install gym
-
+pip install gym[atari]
+install pytorch as desired, following instructions on page (pip install torch torchvision); cuda if you want to use gpu
