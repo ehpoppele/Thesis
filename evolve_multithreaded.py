@@ -8,12 +8,14 @@ import time
 import threading
 import math
 import pickle
+import torch
 from torch.multiprocessing import Pool, set_start_method
 from genome import *
 from genome_NEAT import *
 from population import *
 
 def multiEvalFitness(genome):
+    torch.set_default_tensor_type(torch.DoubleTensor)
     return genome.evalFitness()
 
 #Runs basic evolution on the given experiment and params

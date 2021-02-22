@@ -267,7 +267,7 @@ class NEATGenome(Genome):
             if curr_layer >= len(self.nodes):
                 break
         model = GenomeNetwork(tensor_list, self.device, self.experiment)
-        self.model = model.to(torch.device(self.device))
+        self.model = model#.to(torch.device(self.device))
         #Now reset all the connections to have the proper origin, as it may have been shifted to a shadow node
         for w in self.weights:
             w.origin = w.origin_backup

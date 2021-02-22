@@ -1,0 +1,2059 @@
+multithreading!
+Evaluating Intial Fitness:Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 0 -1 0.01
+
+Generation 0
+Highest Fitness: 0.01
+Total elapsed time:74.81090402201517 seconds
+.
+Generation 1
+Highest Fitness: 0.01
+Total elapsed time:181.31028860801598 seconds
+.
+Generation 2
+Highest Fitness: 0.01
+Total elapsed time:292.27258633298334 seconds
+.
+Generation 3
+Highest Fitness: 0.01
+Total elapsed time:402.6225845339941 seconds
+.
+Generation 4
+Highest Fitness: 0.01
+Total elapsed time:516.6288521349779 seconds
+.
+Generation 5
+Highest Fitness: 160.0
+Total elapsed time:623.11494300497 seconds
+.
+Generation 6
+Highest Fitness: 160.0
+Total elapsed time:721.8361791539937 seconds
+.
+Generation 7
+Highest Fitness: 160.0
+Total elapsed time:816.6153651099885 seconds
+.
+Generation 8
+Highest Fitness: 160.0
+Total elapsed time:915.7861125589698 seconds
+.
+Generation 9
+Highest Fitness: 160.0
+Total elapsed time:1012.8927531559602 seconds
+.
+Generation 10
+Highest Fitness: 160.0
+Total elapsed time:1111.9782918170094 seconds
+.
+Generation 11
+Highest Fitness: 160.0
+Total elapsed time:1208.5863434950006 seconds
+.
+Generation 12
+Highest Fitness: 160.0
+Total elapsed time:1305.1734694429906 seconds
+.
+Generation 13
+Highest Fitness: 160.0
+Total elapsed time:1403.9026439159643 seconds
+.
+Generation 14
+Highest Fitness: 160.0
+Total elapsed time:1505.0647050549742 seconds
+.
+Generation 15
+Highest Fitness: 160.0
+Total elapsed time:1606.0438233169843 seconds
+.
+Generation 16
+Highest Fitness: 160.0
+Total elapsed time:1704.754266567994 seconds
+.
+Generation 17
+Highest Fitness: 160.0
+Total elapsed time:1807.1945169069804 seconds
+.
+Generation 18
+Highest Fitness: 160.0
+Total elapsed time:1906.7205868639867 seconds
+.
+Generation 19
+Highest Fitness: 160.0
+Total elapsed time:2010.6687399679795 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 14 160.0 160.0
+
+Generation 20
+Highest Fitness: 160.0
+Total elapsed time:2105.201237462985 seconds
+.
+Generation 21
+Highest Fitness: 160.0
+Total elapsed time:2204.574153969006 seconds
+.
+Generation 22
+Highest Fitness: 160.0
+Total elapsed time:2300.275325073977 seconds
+.
+Generation 23
+Highest Fitness: 160.0
+Total elapsed time:2403.225329943991 seconds
+.
+Generation 24
+Highest Fitness: 160.0
+Total elapsed time:2500.561407491972 seconds
+.
+Generation 25
+Highest Fitness: 160.0
+Total elapsed time:2605.425037182984 seconds
+.
+Generation 26
+Highest Fitness: 160.0
+Total elapsed time:2701.4703466609935 seconds
+.
+Generation 27
+Highest Fitness: 160.0
+Total elapsed time:2799.466482379008 seconds
+.
+Generation 28
+Highest Fitness: 160.0
+Total elapsed time:2902.3535357739893 seconds
+.
+Generation 29
+Highest Fitness: 160.0
+Total elapsed time:2998.7461899049813 seconds
+.
+Generation 30
+Highest Fitness: 160.0
+Total elapsed time:3092.787145267008 seconds
+.
+Generation 31
+Highest Fitness: 160.0
+Total elapsed time:3196.7304555120063 seconds
+.
+Generation 32
+Highest Fitness: 160.0
+Total elapsed time:3291.119033262017 seconds
+.
+Generation 33
+Highest Fitness: 160.0
+Total elapsed time:3389.5507815119927 seconds
+.
+Generation 34
+Highest Fitness: 160.0
+Total elapsed time:3493.3768385850126 seconds
+.
+Generation 35
+Highest Fitness: 160.0
+Total elapsed time:3590.976203611004 seconds
+.
+Generation 36
+Highest Fitness: 160.0
+Total elapsed time:3687.7713646359625 seconds
+.
+Generation 37
+Highest Fitness: 160.0
+Total elapsed time:3786.1645868219784 seconds
+.
+Generation 38
+Highest Fitness: 160.0
+Total elapsed time:3890.9764868440107 seconds
+.
+Generation 39
+Highest Fitness: 160.0
+Total elapsed time:3986.3234638589784 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 34 160.0 160.0
+
+Generation 40
+Highest Fitness: 160.0
+Total elapsed time:4083.299469853984 seconds
+.
+Generation 41
+Highest Fitness: 160.0
+Total elapsed time:4180.86453952099 seconds
+.
+Generation 42
+Highest Fitness: 160.0
+Total elapsed time:4284.4215459749685 seconds
+.
+Generation 43
+Highest Fitness: 160.0
+Total elapsed time:4381.734849673987 seconds
+.
+Generation 44
+Highest Fitness: 160.0
+Total elapsed time:4479.391026878962 seconds
+.
+Generation 45
+Highest Fitness: 160.0
+Total elapsed time:4577.83007212996 seconds
+.
+Generation 46
+Highest Fitness: 160.0
+Total elapsed time:4681.3609023059835 seconds
+.
+Generation 47
+Highest Fitness: 160.0
+Total elapsed time:4779.814799449989 seconds
+.
+Generation 48
+Highest Fitness: 160.0
+Total elapsed time:4875.045076284965 seconds
+.
+Generation 49
+Highest Fitness: 160.0
+Total elapsed time:4974.224945420981 seconds
+.
+Generation 50
+Highest Fitness: 160.0
+Total elapsed time:5073.756529498962 seconds
+.
+Generation 51
+Highest Fitness: 160.0
+Total elapsed time:5183.484394510975 seconds
+.
+Generation 52
+Highest Fitness: 160.0
+Total elapsed time:5281.021767013997 seconds
+.
+Generation 53
+Highest Fitness: 160.0
+Total elapsed time:5380.436833176005 seconds
+.
+Generation 54
+Highest Fitness: 160.0
+Total elapsed time:5477.779516563984 seconds
+.
+Generation 55
+Highest Fitness: 160.0
+Total elapsed time:5578.746472308994 seconds
+
+Generation 56
+Highest Fitness: 0.01
+Total elapsed time:5688.413146322011 seconds
+
+Generation 57
+Highest Fitness: 0.01
+Total elapsed time:5785.501823837985 seconds
+
+Generation 58
+Highest Fitness: 0.01
+Total elapsed time:5883.124616710993 seconds
+
+Generation 59
+Highest Fitness: 0.01
+Total elapsed time:5984.144801669987 seconds
+Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 54 160.0 0.01
+
+Generation 60
+Highest Fitness: 0.01
+Total elapsed time:6082.710751272971 seconds
+
+Generation 61
+Highest Fitness: 0.01
+Total elapsed time:6196.995281728974 seconds
+
+Generation 62
+Highest Fitness: 0.01
+Total elapsed time:6296.782425493002 seconds
+
+Generation 63
+Highest Fitness: 0.01
+Total elapsed time:6396.63535782299 seconds
+
+Generation 64
+Highest Fitness: 0.01
+Total elapsed time:6496.328633352998 seconds
+
+Generation 65
+Highest Fitness: 0.01
+Total elapsed time:6596.511192906008 seconds
+
+Generation 66
+Highest Fitness: 0.01
+Total elapsed time:6691.189045878011 seconds
+
+Generation 67
+Highest Fitness: 0.01
+Total elapsed time:6803.3820795969805 seconds
+
+Generation 68
+Highest Fitness: 0.01
+Total elapsed time:6898.6378903539735 seconds
+
+Generation 69
+Highest Fitness: 0.01
+Total elapsed time:6996.781320067996 seconds
+
+Generation 70
+Highest Fitness: 0.01
+Total elapsed time:7094.653593515977 seconds
+
+Generation 71
+Highest Fitness: 0.01
+Total elapsed time:7187.984864446975 seconds
+
+Generation 72
+Highest Fitness: 0.01
+Total elapsed time:7287.858914488985 seconds
+
+Generation 73
+Highest Fitness: 0.01
+Total elapsed time:7384.976285488985 seconds
+
+Generation 74
+Highest Fitness: 0.01
+Total elapsed time:7498.953774460009 seconds
+
+Generation 75
+Highest Fitness: 0.01
+Total elapsed time:7597.953657725011 seconds
+
+Generation 76
+Highest Fitness: 0.01
+Total elapsed time:7694.56897357601 seconds
+
+Generation 77
+Highest Fitness: 0.01
+Total elapsed time:7792.730918812973 seconds
+
+Generation 78
+Highest Fitness: 0.01
+Total elapsed time:7891.644523090974 seconds
+
+Generation 79
+Highest Fitness: 0.01
+Total elapsed time:7991.057948450965 seconds
+Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 74 160.0 0.01
+
+Generation 80
+Highest Fitness: 0.01
+Total elapsed time:8091.009708697966 seconds
+
+Generation 81
+Highest Fitness: 0.01
+Total elapsed time:8205.98456419597 seconds
+
+Generation 82
+Highest Fitness: 0.01
+Total elapsed time:8305.236777272017 seconds
+
+Generation 83
+Highest Fitness: 0.01
+Total elapsed time:8404.700959097012 seconds
+
+Generation 84
+Highest Fitness: 0.01
+Total elapsed time:8504.250629215967 seconds
+
+Generation 85
+Highest Fitness: 0.01
+Total elapsed time:8606.258299360983 seconds
+
+Generation 86
+Highest Fitness: 0.01
+Total elapsed time:8707.686235247995 seconds
+
+Generation 87
+Highest Fitness: 0.01
+Total elapsed time:8808.406546689977 seconds
+
+Generation 88
+Highest Fitness: 0.01
+Total elapsed time:8907.673669996962 seconds
+
+Generation 89
+Highest Fitness: 0.01
+Total elapsed time:9028.791660965013 seconds
+
+Generation 90
+Highest Fitness: 0.01
+Total elapsed time:9131.46274180198 seconds
+
+Generation 91
+Highest Fitness: 0.01
+Total elapsed time:9236.204037103977 seconds
+
+Generation 92
+Highest Fitness: 0.01
+Total elapsed time:9340.083016144985 seconds
+
+Generation 93
+Highest Fitness: 0.01
+Total elapsed time:9443.499038798967 seconds
+
+Generation 94
+Highest Fitness: 0.01
+Total elapsed time:9546.119545351015 seconds
+
+Generation 95
+Highest Fitness: 0.01
+Total elapsed time:9636.682281987974 seconds
+
+Generation 96
+Highest Fitness: 0.01
+Total elapsed time:9738.801840360975 seconds
+
+Generation 97
+Highest Fitness: 0.01
+Total elapsed time:9840.162317364011 seconds
+
+Generation 98
+Highest Fitness: 0.01
+Total elapsed time:9961.338184209017 seconds
+
+Generation 99
+Highest Fitness: 0.01
+Total elapsed time:10060.201479136012 seconds
+Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 94 160.0 0.01
+
+Generation 100
+Highest Fitness: 0.01
+Total elapsed time:10160.784912511997 seconds
+
+Generation 101
+Highest Fitness: 0.01
+Total elapsed time:10258.791504441004 seconds
+
+Generation 102
+Highest Fitness: 0.01
+Total elapsed time:10361.005884904007 seconds
+
+Generation 103
+Highest Fitness: 0.01
+Total elapsed time:10465.733730693988 seconds
+
+Generation 104
+Highest Fitness: 0.01
+Total elapsed time:10570.169497657975 seconds
+
+Generation 105
+Highest Fitness: 60.0
+Total elapsed time:10671.618181271013 seconds
+
+Generation 106
+Highest Fitness: 180.0
+Total elapsed time:10770.091232036008 seconds
+.
+Generation 107
+Highest Fitness: 200.0
+Total elapsed time:10861.169695104007 seconds
+.
+Generation 108
+Highest Fitness: 200.0
+Total elapsed time:10930.415888941963 seconds
+.
+Generation 109
+Highest Fitness: 200.0
+Total elapsed time:11000.77710079297 seconds
+.
+Generation 110
+Highest Fitness: 200.0
+Total elapsed time:11064.838653710962 seconds
+.
+Generation 111
+Highest Fitness: 210.0
+Total elapsed time:11135.362083467015 seconds
+.
+Generation 112
+Highest Fitness: 200.0
+Total elapsed time:11200.212281218963 seconds
+.
+Generation 113
+Highest Fitness: 200.0
+Total elapsed time:11265.501792274008 seconds
+.
+Generation 114
+Highest Fitness: 160.0
+Total elapsed time:11331.176470696984 seconds
+.
+Generation 115
+Highest Fitness: 180.0
+Total elapsed time:11397.027589956007 seconds
+.
+Generation 116
+Highest Fitness: 180.0
+Total elapsed time:11456.876505960012 seconds
+.
+Generation 117
+Highest Fitness: 200.0
+Total elapsed time:11520.833155094006 seconds
+.
+Generation 118
+Highest Fitness: 190.0
+Total elapsed time:11612.525883504015 seconds
+.
+Generation 119
+Highest Fitness: 190.0
+Total elapsed time:11674.270671305014 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 8 210.0 180.0
+
+Generation 120
+Highest Fitness: 180.0
+Total elapsed time:11737.649142684997 seconds
+.
+Generation 121
+Highest Fitness: 180.0
+Total elapsed time:11795.855089738965 seconds
+.
+Generation 122
+Highest Fitness: 180.0
+Total elapsed time:11859.959641086985 seconds
+.
+Generation 123
+Highest Fitness: 870.0
+Total elapsed time:11922.494134512963 seconds
+.
+Generation 124
+Highest Fitness: 840.0
+Total elapsed time:11981.652634460013 seconds
+.
+Generation 125
+Highest Fitness: 1440.0
+Total elapsed time:12042.802946901007 seconds
+.
+Generation 126
+Highest Fitness: 230.0
+Total elapsed time:12099.76823741896 seconds
+.
+Generation 127
+Highest Fitness: 860.0
+Total elapsed time:12162.278510395961 seconds
+.
+Generation 128
+Highest Fitness: 200.0
+Total elapsed time:12218.292376876983 seconds
+.
+Generation 129
+Highest Fitness: 200.0
+Total elapsed time:12296.558679951995 seconds
+.
+Generation 130
+Highest Fitness: 190.0
+Total elapsed time:12352.859294807015 seconds
+.
+Generation 131
+Highest Fitness: 1270.0
+Total elapsed time:12403.693589981005 seconds
+.
+Generation 132
+Highest Fitness: 1470.0
+Total elapsed time:12464.037084486976 seconds
+.
+Generation 133
+Highest Fitness: 1470.0
+Total elapsed time:12525.30642220896 seconds
+.
+Generation 134
+Highest Fitness: 200.0
+Total elapsed time:12585.141833736969 seconds
+.
+Generation 135
+Highest Fitness: 200.0
+Total elapsed time:12644.916129890014 seconds
+.
+Generation 136
+Highest Fitness: 890.0
+Total elapsed time:12696.29447358998 seconds
+.
+Generation 137
+Highest Fitness: 1340.0
+Total elapsed time:12758.214375003998 seconds
+.
+Generation 138
+Highest Fitness: 1250.0
+Total elapsed time:12814.557972898008 seconds
+.
+Generation 139
+Highest Fitness: 1450.0
+Total elapsed time:12877.171684716013 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 7 1470.0 1850.0
+
+Generation 140
+Highest Fitness: 1850.0
+Total elapsed time:12937.592023862002 seconds
+.
+Generation 141
+Highest Fitness: 1850.0
+Total elapsed time:13001.316134775 seconds
+.
+Generation 142
+Highest Fitness: 1850.0
+Total elapsed time:13102.00069653499 seconds
+.
+Generation 143
+Highest Fitness: 1400.0
+Total elapsed time:13167.280319224985 seconds
+.
+Generation 144
+Highest Fitness: 1550.0
+Total elapsed time:13231.006867994962 seconds
+.
+Generation 145
+Highest Fitness: 1940.0
+Total elapsed time:13296.510017049965 seconds
+.
+Generation 146
+Highest Fitness: 1800.0
+Total elapsed time:13368.738846907974 seconds
+.
+Generation 147
+Highest Fitness: 1800.0
+Total elapsed time:13441.62496488099 seconds
+.
+Generation 148
+Highest Fitness: 1800.0
+Total elapsed time:13518.586902807001 seconds
+.
+Generation 149
+Highest Fitness: 1800.0
+Total elapsed time:13592.299257334962 seconds
+.
+Generation 150
+Highest Fitness: 2310.0
+Total elapsed time:13660.223479043983 seconds
+.
+Generation 151
+Highest Fitness: 2310.0
+Total elapsed time:13734.571709204 seconds
+.
+Generation 152
+Highest Fitness: 2360.0
+Total elapsed time:13801.59166962601 seconds
+.
+Generation 153
+Highest Fitness: 1940.0
+Total elapsed time:13873.195766485995 seconds
+.
+Generation 154
+Highest Fitness: 2560.0
+Total elapsed time:13946.150111416995 seconds
+.
+Generation 155
+Highest Fitness: 1960.0
+Total elapsed time:14051.249077107 seconds
+.
+Generation 156
+Highest Fitness: 2560.0
+Total elapsed time:14124.886925547966 seconds
+.
+Generation 157
+Highest Fitness: 2560.0
+Total elapsed time:14194.414811352966 seconds
+.
+Generation 158
+Highest Fitness: 1960.0
+Total elapsed time:14267.236925009987 seconds
+.
+Generation 159
+Highest Fitness: 2450.0
+Total elapsed time:14340.748679909972 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 5 2560.0 2480.0
+
+Generation 160
+Highest Fitness: 2480.0
+Total elapsed time:14412.79374406999 seconds
+.
+Generation 161
+Highest Fitness: 2180.0
+Total elapsed time:14490.29186353297 seconds
+.
+Generation 162
+Highest Fitness: 2340.0
+Total elapsed time:14571.926719011972 seconds
+.
+Generation 163
+Highest Fitness: 2430.0
+Total elapsed time:14651.407027789974 seconds
+.
+Generation 164
+Highest Fitness: 2020.0
+Total elapsed time:14734.52045709797 seconds
+.
+Generation 165
+Highest Fitness: 2040.0
+Total elapsed time:14814.256365665002 seconds
+.
+Generation 166
+Highest Fitness: 2240.0
+Total elapsed time:14895.788818470959 seconds
+.
+Generation 167
+Highest Fitness: 2350.0
+Total elapsed time:14990.553892245982 seconds
+.
+Generation 168
+Highest Fitness: 2250.0
+Total elapsed time:15082.349834040971 seconds
+.
+Generation 169
+Highest Fitness: 2480.0
+Total elapsed time:15172.980988199997 seconds
+.
+Generation 170
+Highest Fitness: 2150.0
+Total elapsed time:15279.179537017015 seconds
+.
+Generation 171
+Highest Fitness: 2300.0
+Total elapsed time:15352.909369144007 seconds
+.
+Generation 172
+Highest Fitness: 1920.0
+Total elapsed time:15432.81399172399 seconds
+.
+Generation 173
+Highest Fitness: 1720.0
+Total elapsed time:15508.169382521999 seconds
+.
+Generation 174
+Highest Fitness: 2580.0
+Total elapsed time:15568.461987543968 seconds
+.
+Generation 175
+Highest Fitness: 3250.0
+Total elapsed time:15635.262441897008 seconds
+.
+Generation 176
+Highest Fitness: 1680.0
+Total elapsed time:15717.452548064 seconds
+.
+Generation 177
+Highest Fitness: 2580.0
+Total elapsed time:15797.792868172983 seconds
+.
+Generation 178
+Highest Fitness: 1980.0
+Total elapsed time:15867.590354137996 seconds
+.
+Generation 179
+Highest Fitness: 2100.0
+Total elapsed time:15937.676083866972 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 4 3250.0 2330.0
+
+Generation 180
+Highest Fitness: 2330.0
+Total elapsed time:16013.999104285962 seconds
+.
+Generation 181
+Highest Fitness: 2630.0
+Total elapsed time:16084.442778888973 seconds
+.
+Generation 182
+Highest Fitness: 2660.0
+Total elapsed time:16167.624763812986 seconds
+.
+Generation 183
+Highest Fitness: 3120.0
+Total elapsed time:16237.712460856012 seconds
+.
+Generation 184
+Highest Fitness: 3150.0
+Total elapsed time:16309.895990915014 seconds
+.
+Generation 185
+Highest Fitness: 1940.0
+Total elapsed time:16386.870862308017 seconds
+.
+Generation 186
+Highest Fitness: 3030.0
+Total elapsed time:16470.202753563004 seconds
+.
+Generation 187
+Highest Fitness: 3180.0
+Total elapsed time:16582.30515266297 seconds
+.
+Generation 188
+Highest Fitness: 3060.0
+Total elapsed time:16658.010149421985 seconds
+.
+Generation 189
+Highest Fitness: 2630.0
+Total elapsed time:16731.987587806012 seconds
+.
+Generation 190
+Highest Fitness: 3000.0
+Total elapsed time:16807.875735546986 seconds
+.
+Generation 191
+Highest Fitness: 2710.0
+Total elapsed time:16880.39176917699 seconds
+.
+Generation 192
+Highest Fitness: 2710.0
+Total elapsed time:16958.829608660017 seconds
+.
+Generation 193
+Highest Fitness: 2500.0
+Total elapsed time:17044.697821330978 seconds
+.
+Generation 194
+Highest Fitness: 2810.0
+Total elapsed time:17120.673167139 seconds
+.
+Generation 195
+Highest Fitness: 2810.0
+Total elapsed time:17203.548293713015 seconds
+.
+Generation 196
+Highest Fitness: 2890.0
+Total elapsed time:17281.984178504965 seconds
+.
+Generation 197
+Highest Fitness: 2580.0
+Total elapsed time:17365.60175747797 seconds
+.
+Generation 198
+Highest Fitness: 2600.0
+Total elapsed time:17464.312272591982 seconds
+.
+Generation 199
+Highest Fitness: 3790.0
+Total elapsed time:17541.159835183003 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 0 3790.0 3090.0
+
+Generation 200
+Highest Fitness: 3090.0
+Total elapsed time:17624.448008836014 seconds
+.
+Generation 201
+Highest Fitness: 2760.0
+Total elapsed time:17721.029354211 seconds
+.
+Generation 202
+Highest Fitness: 2660.0
+Total elapsed time:17810.842509482987 seconds
+.
+Generation 203
+Highest Fitness: 2310.0
+Total elapsed time:17901.20652072999 seconds
+.
+Generation 204
+Highest Fitness: 2410.0
+Total elapsed time:17984.515895790013 seconds
+.
+Generation 205
+Highest Fitness: 2160.0
+Total elapsed time:18114.647309604974 seconds
+.
+Generation 206
+Highest Fitness: 3080.0
+Total elapsed time:18188.625729903986 seconds
+.
+Generation 207
+Highest Fitness: 2700.0
+Total elapsed time:18282.26427673397 seconds
+.
+Generation 208
+Highest Fitness: 2690.0
+Total elapsed time:18354.128078943002 seconds
+.
+Generation 209
+Highest Fitness: 2830.0
+Total elapsed time:18436.239564033982 seconds
+.
+Generation 210
+Highest Fitness: 2990.0
+Total elapsed time:18525.482386712974 seconds
+.
+Generation 211
+Highest Fitness: 2910.0
+Total elapsed time:18602.063170943 seconds
+.
+Generation 212
+Highest Fitness: 3200.0
+Total elapsed time:18689.40359115298 seconds
+.
+Generation 213
+Highest Fitness: 2440.0
+Total elapsed time:18774.56425466499 seconds
+.
+Generation 214
+Highest Fitness: 2990.0
+Total elapsed time:18852.710461995972 seconds
+.
+Generation 215
+Highest Fitness: 2970.0
+Total elapsed time:18939.889085504983 seconds
+.
+Generation 216
+Highest Fitness: 2780.0
+Total elapsed time:19009.98767324799 seconds
+.
+Generation 217
+Highest Fitness: 2850.0
+Total elapsed time:19094.015889377974 seconds
+.
+Generation 218
+Highest Fitness: 3810.0
+Total elapsed time:19179.597860384965 seconds
+.
+Generation 219
+Highest Fitness: 2990.0
+Total elapsed time:19261.455593113962 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 1 3810.0 2590.0
+
+Generation 220
+Highest Fitness: 2590.0
+Total elapsed time:19342.43554216897 seconds
+.
+Generation 221
+Highest Fitness: 3080.0
+Total elapsed time:19417.971962031967 seconds
+.
+Generation 222
+Highest Fitness: 2400.0
+Total elapsed time:19504.172112661996 seconds
+.
+Generation 223
+Highest Fitness: 3420.0
+Total elapsed time:19591.459197090997 seconds
+.
+Generation 224
+Highest Fitness: 3420.0
+Total elapsed time:19673.429093140992 seconds
+.
+Generation 225
+Highest Fitness: 2600.0
+Total elapsed time:19798.537867962965 seconds
+.
+Generation 226
+Highest Fitness: 3070.0
+Total elapsed time:19887.610026647977 seconds
+.
+Generation 227
+Highest Fitness: 2960.0
+Total elapsed time:19968.47265456 seconds
+.
+Generation 228
+Highest Fitness: 3010.0
+Total elapsed time:20047.65690590901 seconds
+.
+Generation 229
+Highest Fitness: 3650.0
+Total elapsed time:20128.13937551697 seconds
+.
+Generation 230
+Highest Fitness: 2930.0
+Total elapsed time:20206.684473135974 seconds
+.
+Generation 231
+Highest Fitness: 2890.0
+Total elapsed time:20289.63808547199 seconds
+.
+Generation 232
+Highest Fitness: 2920.0
+Total elapsed time:20369.07836868899 seconds
+.
+Generation 233
+Highest Fitness: 2820.0
+Total elapsed time:20445.910352914012 seconds
+.
+Generation 234
+Highest Fitness: 2440.0
+Total elapsed time:20519.740839898994 seconds
+.
+Generation 235
+Highest Fitness: 2890.0
+Total elapsed time:20597.062038203003 seconds
+.
+Generation 236
+Highest Fitness: 2770.0
+Total elapsed time:20673.142152720015 seconds
+.
+Generation 237
+Highest Fitness: 2360.0
+Total elapsed time:20766.72048420197 seconds
+.
+Generation 238
+Highest Fitness: 1870.0
+Total elapsed time:20842.164168660005 seconds
+.
+Generation 239
+Highest Fitness: 3290.0
+Total elapsed time:20916.22735207097 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 21 3810.0 2610.0
+
+Generation 240
+Highest Fitness: 2610.0
+Total elapsed time:20995.442870182975 seconds
+.
+Generation 241
+Highest Fitness: 2680.0
+Total elapsed time:21083.433812327974 seconds
+.
+Generation 242
+Highest Fitness: 2850.0
+Total elapsed time:21170.68180052901 seconds
+.
+Generation 243
+Highest Fitness: 3080.0
+Total elapsed time:21259.505890865985 seconds
+.
+Generation 244
+Highest Fitness: 2180.0
+Total elapsed time:21350.834410461015 seconds
+.
+Generation 245
+Highest Fitness: 2460.0
+Total elapsed time:21424.673800632998 seconds
+.
+Generation 246
+Highest Fitness: 2720.0
+Total elapsed time:21506.374117181986 seconds
+.
+Generation 247
+Highest Fitness: 2540.0
+Total elapsed time:21633.204422803014 seconds
+.
+Generation 248
+Highest Fitness: 1960.0
+Total elapsed time:21715.63155155297 seconds
+.
+Generation 249
+Highest Fitness: 2450.0
+Total elapsed time:21791.166098468995 seconds
+.
+Generation 250
+Highest Fitness: 2810.0
+Total elapsed time:21883.743285052013 seconds
+.
+Generation 251
+Highest Fitness: 3480.0
+Total elapsed time:21970.390838938998 seconds
+.
+Generation 252
+Highest Fitness: 2830.0
+Total elapsed time:22051.93366604898 seconds
+.
+Generation 253
+Highest Fitness: 2530.0
+Total elapsed time:22142.431275589974 seconds
+.
+Generation 254
+Highest Fitness: 2530.0
+Total elapsed time:22218.465223104984 seconds
+.
+Generation 255
+Highest Fitness: 3100.0
+Total elapsed time:22305.082638730004 seconds
+.
+Generation 256
+Highest Fitness: 3130.0
+Total elapsed time:22383.562091791013 seconds
+.
+Generation 257
+Highest Fitness: 2490.0
+Total elapsed time:22460.831131778017 seconds
+.
+Generation 258
+Highest Fitness: 2300.0
+Total elapsed time:22540.297604971973 seconds
+.
+Generation 259
+Highest Fitness: 2150.0
+Total elapsed time:22625.52008109301 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 41 3810.0 2610.0
+
+Generation 260
+Highest Fitness: 2610.0
+Total elapsed time:22694.37834282196 seconds
+.
+Generation 261
+Highest Fitness: 4190.0
+Total elapsed time:22763.498596976977 seconds
+.
+Generation 262
+Highest Fitness: 2160.0
+Total elapsed time:22839.79388187296 seconds
+.
+Generation 263
+Highest Fitness: 1750.0
+Total elapsed time:22916.55857134296 seconds
+.
+Generation 264
+Highest Fitness: 2550.0
+Total elapsed time:22994.46443805698 seconds
+.
+Generation 265
+Highest Fitness: 2690.0
+Total elapsed time:23068.793354099966 seconds
+.
+Generation 266
+Highest Fitness: 2450.0
+Total elapsed time:23143.699257742963 seconds
+.
+Generation 267
+Highest Fitness: 2830.0
+Total elapsed time:23223.544375066005 seconds
+.
+Generation 268
+Highest Fitness: 2650.0
+Total elapsed time:23296.70615136501 seconds
+.
+Generation 269
+Highest Fitness: 2720.0
+Total elapsed time:23374.00654727698 seconds
+.
+Generation 270
+Highest Fitness: 2900.0
+Total elapsed time:23490.92655759101 seconds
+.
+Generation 271
+Highest Fitness: 2460.0
+Total elapsed time:23561.38225132198 seconds
+.
+Generation 272
+Highest Fitness: 2560.0
+Total elapsed time:23634.489261048962 seconds
+.
+Generation 273
+Highest Fitness: 2740.0
+Total elapsed time:23706.077844279003 seconds
+.
+Generation 274
+Highest Fitness: 2750.0
+Total elapsed time:23781.461083549017 seconds
+.
+Generation 275
+Highest Fitness: 2400.0
+Total elapsed time:23853.533454141987 seconds
+.
+Generation 276
+Highest Fitness: 3150.0
+Total elapsed time:23928.37079614197 seconds
+.
+Generation 277
+Highest Fitness: 2810.0
+Total elapsed time:24000.01750729396 seconds
+.
+Generation 278
+Highest Fitness: 2670.0
+Total elapsed time:24079.45142725401 seconds
+.
+Generation 279
+Highest Fitness: 2680.0
+Total elapsed time:24159.00405037799 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 18 4190.0 3320.0
+
+Generation 280
+Highest Fitness: 3320.0
+Total elapsed time:24242.76440032199 seconds
+.
+Generation 281
+Highest Fitness: 3330.0
+Total elapsed time:24326.402609351964 seconds
+.
+Generation 282
+Highest Fitness: 2760.0
+Total elapsed time:24407.127236425004 seconds
+.
+Generation 283
+Highest Fitness: 2560.0
+Total elapsed time:24486.749589885992 seconds
+.
+Generation 284
+Highest Fitness: 2980.0
+Total elapsed time:24557.019577119965 seconds
+.
+Generation 285
+Highest Fitness: 2330.0
+Total elapsed time:24633.438718004967 seconds
+.
+Generation 286
+Highest Fitness: 2760.0
+Total elapsed time:24711.27405279799 seconds
+.
+Generation 287
+Highest Fitness: 2760.0
+Total elapsed time:24785.940733150986 seconds
+.
+Generation 288
+Highest Fitness: 2820.0
+Total elapsed time:24861.889901735994 seconds
+.
+Generation 289
+Highest Fitness: 3500.0
+Total elapsed time:24932.008085647016 seconds
+.
+Generation 290
+Highest Fitness: 2490.0
+Total elapsed time:25010.161511352984 seconds
+.
+Generation 291
+Highest Fitness: 2990.0
+Total elapsed time:25095.719737812004 seconds
+.
+Generation 292
+Highest Fitness: 3060.0
+Total elapsed time:25182.839773912972 seconds
+.
+Generation 293
+Highest Fitness: 2650.0
+Total elapsed time:25259.464953774004 seconds
+.
+Generation 294
+Highest Fitness: 3060.0
+Total elapsed time:25343.802507909015 seconds
+.
+Generation 295
+Highest Fitness: 3060.0
+Total elapsed time:25420.525682431995 seconds
+.
+Generation 296
+Highest Fitness: 2840.0
+Total elapsed time:25494.410850455984 seconds
+.
+Generation 297
+Highest Fitness: 2960.0
+Total elapsed time:25610.557891630975 seconds
+.
+Generation 298
+Highest Fitness: 3020.0
+Total elapsed time:25693.24516242696 seconds
+.
+Generation 299
+Highest Fitness: 3060.0
+Total elapsed time:25757.212149560975 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 38 4190.0 2540.0
+
+Generation 300
+Highest Fitness: 2540.0
+Total elapsed time:25853.95000483899 seconds
+.
+Generation 301
+Highest Fitness: 3130.0
+Total elapsed time:25931.325387432007 seconds
+.
+Generation 302
+Highest Fitness: 3130.0
+Total elapsed time:26009.857059939008 seconds
+.
+Generation 303
+Highest Fitness: 3150.0
+Total elapsed time:26085.46147451701 seconds
+.
+Generation 304
+Highest Fitness: 3770.0
+Total elapsed time:26159.702952452993 seconds
+.
+Generation 305
+Highest Fitness: 3450.0
+Total elapsed time:26235.64285513101 seconds
+.
+Generation 306
+Highest Fitness: 2380.0
+Total elapsed time:26310.848954971996 seconds
+.
+Generation 307
+Highest Fitness: 3370.0
+Total elapsed time:26394.200203633984 seconds
+.
+Generation 308
+Highest Fitness: 2870.0
+Total elapsed time:26475.846658577968 seconds
+.
+Generation 309
+Highest Fitness: 3100.0
+Total elapsed time:26547.116027957993 seconds
+.
+Generation 310
+Highest Fitness: 2930.0
+Total elapsed time:26617.10753699497 seconds
+.
+Generation 311
+Highest Fitness: 2980.0
+Total elapsed time:26710.613055187976 seconds
+
+Generation 312
+Highest Fitness: 2530.0
+Total elapsed time:26784.03152070596 seconds
+
+Generation 313
+Highest Fitness: 2770.0
+Total elapsed time:26860.91146749101 seconds
+
+Generation 314
+Highest Fitness: 3330.0
+Total elapsed time:26940.837550355995 seconds
+
+Generation 315
+Highest Fitness: 2810.0
+Total elapsed time:27017.811748798005 seconds
+
+Generation 316
+Highest Fitness: 2820.0
+Total elapsed time:27092.57908578997 seconds
+
+Generation 317
+Highest Fitness: 3500.0
+Total elapsed time:27172.53639356501 seconds
+
+Generation 318
+Highest Fitness: 2000.0
+Total elapsed time:27245.53261522099 seconds
+
+Generation 319
+Highest Fitness: 3210.0
+Total elapsed time:27319.362490008003 seconds
+Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 58 4190.0 3040.0
+
+Generation 320
+Highest Fitness: 3040.0
+Total elapsed time:27390.014402789006 seconds
+
+Generation 321
+Highest Fitness: 2970.0
+Total elapsed time:27462.015471911 seconds
+
+Generation 322
+Highest Fitness: 3140.0
+Total elapsed time:27537.025177026982 seconds
+
+Generation 323
+Highest Fitness: 2790.0
+Total elapsed time:27597.532343222992 seconds
+
+Generation 324
+Highest Fitness: 2890.0
+Total elapsed time:27668.334078545973 seconds
+
+Generation 325
+Highest Fitness: 3120.0
+Total elapsed time:27789.604655845964 seconds
+
+Generation 326
+Highest Fitness: 3190.0
+Total elapsed time:27859.88989372697 seconds
+
+Generation 327
+Highest Fitness: 2930.0
+Total elapsed time:27926.080791871995 seconds
+
+Generation 328
+Highest Fitness: 2770.0
+Total elapsed time:27998.79679944797 seconds
+
+Generation 329
+Highest Fitness: 2590.0
+Total elapsed time:28070.958317245997 seconds
+
+Generation 330
+Highest Fitness: 3150.0
+Total elapsed time:28145.601577885973 seconds
+
+Generation 331
+Highest Fitness: 3040.0
+Total elapsed time:28219.64706432598 seconds
+
+Generation 332
+Highest Fitness: 3110.0
+Total elapsed time:28289.831970751984 seconds
+
+Generation 333
+Highest Fitness: 3130.0
+Total elapsed time:28357.56359509297 seconds
+
+Generation 334
+Highest Fitness: 3920.0
+Total elapsed time:28421.951519518974 seconds
+
+Generation 335
+Highest Fitness: 4650.0
+Total elapsed time:28490.460396141978 seconds
+.
+Generation 336
+Highest Fitness: 4650.0
+Total elapsed time:28569.469721119967 seconds
+.
+Generation 337
+Highest Fitness: 3300.0
+Total elapsed time:28653.39519058197 seconds
+.
+Generation 338
+Highest Fitness: 3390.0
+Total elapsed time:28715.114998126985 seconds
+.
+Generation 339
+Highest Fitness: 3960.0
+Total elapsed time:28795.164965402975 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 4 4650.0 2920.0
+
+Generation 340
+Highest Fitness: 2920.0
+Total elapsed time:28874.285999123007 seconds
+.
+Generation 341
+Highest Fitness: 3020.0
+Total elapsed time:28949.956564655993 seconds
+.
+Generation 342
+Highest Fitness: 3760.0
+Total elapsed time:29031.753327152983 seconds
+.
+Generation 343
+Highest Fitness: 3590.0
+Total elapsed time:29112.414042179007 seconds
+.
+Generation 344
+Highest Fitness: 3770.0
+Total elapsed time:29194.593602015986 seconds
+.
+Generation 345
+Highest Fitness: 3780.0
+Total elapsed time:29270.28804740298 seconds
+.
+Generation 346
+Highest Fitness: 3600.0
+Total elapsed time:29345.450435645005 seconds
+.
+Generation 347
+Highest Fitness: 2900.0
+Total elapsed time:29416.77340021101 seconds
+.
+Generation 348
+Highest Fitness: 3150.0
+Total elapsed time:29497.941490925965 seconds
+.
+Generation 349
+Highest Fitness: 3220.0
+Total elapsed time:29576.556347384 seconds
+.
+Generation 350
+Highest Fitness: 2730.0
+Total elapsed time:29654.407405156002 seconds
+.
+Generation 351
+Highest Fitness: 3760.0
+Total elapsed time:29732.593852712016 seconds
+.
+Generation 352
+Highest Fitness: 3210.0
+Total elapsed time:29808.653281810984 seconds
+.
+Generation 353
+Highest Fitness: 2990.0
+Total elapsed time:29883.76105614897 seconds
+.
+Generation 354
+Highest Fitness: 3560.0
+Total elapsed time:29958.86733020196 seconds
+.
+Generation 355
+Highest Fitness: 3610.0
+Total elapsed time:30033.632534203003 seconds
+.
+Generation 356
+Highest Fitness: 3200.0
+Total elapsed time:30169.945596200996 seconds
+.
+Generation 357
+Highest Fitness: 3150.0
+Total elapsed time:30238.184550024976 seconds
+.
+Generation 358
+Highest Fitness: 3620.0
+Total elapsed time:30316.321811044996 seconds
+.
+Generation 359
+Highest Fitness: 3580.0
+Total elapsed time:30389.655070167966 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 24 4650.0 2790.0
+
+Generation 360
+Highest Fitness: 2790.0
+Total elapsed time:30456.004148682987 seconds
+.
+Generation 361
+Highest Fitness: 3580.0
+Total elapsed time:30529.741006141994 seconds
+.
+Generation 362
+Highest Fitness: 3540.0
+Total elapsed time:30600.469585732964 seconds
+.
+Generation 363
+Highest Fitness: 3570.0
+Total elapsed time:30669.87820827501 seconds
+.
+Generation 364
+Highest Fitness: 3410.0
+Total elapsed time:30731.85567313101 seconds
+.
+Generation 365
+Highest Fitness: 3590.0
+Total elapsed time:30792.492581814004 seconds
+.
+Generation 366
+Highest Fitness: 3140.0
+Total elapsed time:30861.818599024962 seconds
+.
+Generation 367
+Highest Fitness: 3270.0
+Total elapsed time:30922.434060645 seconds
+.
+Generation 368
+Highest Fitness: 3140.0
+Total elapsed time:30984.987432001974 seconds
+.
+Generation 369
+Highest Fitness: 2780.0
+Total elapsed time:31048.239279428963 seconds
+.
+Generation 370
+Highest Fitness: 3590.0
+Total elapsed time:31112.179440254986 seconds
+.
+Generation 371
+Highest Fitness: 3360.0
+Total elapsed time:31174.949929155002 seconds
+.
+Generation 372
+Highest Fitness: 3760.0
+Total elapsed time:31234.523997768993 seconds
+.
+Generation 373
+Highest Fitness: 3320.0
+Total elapsed time:31307.110043341003 seconds
+.
+Generation 374
+Highest Fitness: 4150.0
+Total elapsed time:31381.439219135966 seconds
+.
+Generation 375
+Highest Fitness: 4100.0
+Total elapsed time:31449.382686850964 seconds
+.
+Generation 376
+Highest Fitness: 3180.0
+Total elapsed time:31515.910304615973 seconds
+.
+Generation 377
+Highest Fitness: 3110.0
+Total elapsed time:31581.251519549987 seconds
+.
+Generation 378
+Highest Fitness: 3130.0
+Total elapsed time:31652.21205776598 seconds
+.
+Generation 379
+Highest Fitness: 3130.0
+Total elapsed time:31716.946629518003 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 44 4650.0 3710.0
+
+Generation 380
+Highest Fitness: 3710.0
+Total elapsed time:31785.802940993977 seconds
+.
+Generation 381
+Highest Fitness: 3070.0
+Total elapsed time:31849.62857493898 seconds
+.
+Generation 382
+Highest Fitness: 4000.0
+Total elapsed time:31910.37171395996 seconds
+.
+Generation 383
+Highest Fitness: 2850.0
+Total elapsed time:31969.80176916998 seconds
+.
+Generation 384
+Highest Fitness: 3540.0
+Total elapsed time:32031.560584323015 seconds
+.
+Generation 385
+Highest Fitness: 3530.0
+Total elapsed time:32092.759518257983 seconds
+
+Generation 386
+Highest Fitness: 3560.0
+Total elapsed time:32158.665707294014 seconds
+
+Generation 387
+Highest Fitness: 3380.0
+Total elapsed time:32219.888036512013 seconds
+
+Generation 388
+Highest Fitness: 2620.0
+Total elapsed time:32285.609495803015 seconds
+
+Generation 389
+Highest Fitness: 3560.0
+Total elapsed time:32349.90023922699 seconds
+
+Generation 390
+Highest Fitness: 4140.0
+Total elapsed time:32406.65297393099 seconds
+
+Generation 391
+Highest Fitness: 3330.0
+Total elapsed time:32524.247478667006 seconds
+
+Generation 392
+Highest Fitness: 3650.0
+Total elapsed time:32582.518364120973 seconds
+
+Generation 393
+Highest Fitness: 3500.0
+Total elapsed time:32642.34745726298 seconds
+
+Generation 394
+Highest Fitness: 3280.0
+Total elapsed time:32701.994581684005 seconds
+
+Generation 395
+Highest Fitness: 3260.0
+Total elapsed time:32758.504239889968 seconds
+
+Generation 396
+Highest Fitness: 3500.0
+Total elapsed time:32818.40163205098 seconds
+
+Generation 397
+Highest Fitness: 3180.0
+Total elapsed time:32883.19930930296 seconds
+
+Generation 398
+Highest Fitness: 3190.0
+Total elapsed time:32940.99475417001 seconds
+
+Generation 399
+Highest Fitness: 3180.0
+Total elapsed time:32999.021629997995 seconds
+Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 64 4650.0 3010.0
+
+Generation 400
+Highest Fitness: 3010.0
+Total elapsed time:33060.570536541985 seconds
+
+Generation 401
+Highest Fitness: 3530.0
+Total elapsed time:33122.463559482014 seconds
+
+Generation 402
+Highest Fitness: 4660.0
+Total elapsed time:33177.949482775 seconds
+.
+Generation 403
+Highest Fitness: 3220.0
+Total elapsed time:33236.14305327798 seconds
+.
+Generation 404
+Highest Fitness: 3380.0
+Total elapsed time:33298.542274029984 seconds
+.
+Generation 405
+Highest Fitness: 3380.0
+Total elapsed time:33359.37735527498 seconds
+.
+Generation 406
+Highest Fitness: 3210.0
+Total elapsed time:33427.555933589 seconds
+.
+Generation 407
+Highest Fitness: 3820.0
+Total elapsed time:33499.36637405999 seconds
+.
+Generation 408
+Highest Fitness: 3570.0
+Total elapsed time:33562.657606836 seconds
+.
+Generation 409
+Highest Fitness: 3720.0
+Total elapsed time:33625.346981662966 seconds
+.
+Generation 410
+Highest Fitness: 3150.0
+Total elapsed time:33686.262837090006 seconds
+.
+Generation 411
+Highest Fitness: 3500.0
+Total elapsed time:33743.763898755016 seconds
+.
+Generation 412
+Highest Fitness: 3340.0
+Total elapsed time:33811.71195138496 seconds
+.
+Generation 413
+Highest Fitness: 3370.0
+Total elapsed time:33876.50173190597 seconds
+.
+Generation 414
+Highest Fitness: 3300.0
+Total elapsed time:33937.32522462099 seconds
+.
+Generation 415
+Highest Fitness: 3940.0
+Total elapsed time:33994.15050781699 seconds
+.
+Generation 416
+Highest Fitness: 3110.0
+Total elapsed time:34056.84760720498 seconds
+.
+Generation 417
+Highest Fitness: 4640.0
+Total elapsed time:34118.504512785 seconds
+.
+Generation 418
+Highest Fitness: 3480.0
+Total elapsed time:34181.45990912098 seconds
+.
+Generation 419
+Highest Fitness: 2950.0
+Total elapsed time:34238.90990599396 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 17 4660.0 3130.0
+
+Generation 420
+Highest Fitness: 3130.0
+Total elapsed time:34302.652480877005 seconds
+.
+Generation 421
+Highest Fitness: 4680.0
+Total elapsed time:34374.393976391 seconds
+.
+Generation 422
+Highest Fitness: 3790.0
+Total elapsed time:34429.66050797497 seconds
+.
+Generation 423
+Highest Fitness: 4670.0
+Total elapsed time:34486.42033297097 seconds
+.
+Generation 424
+Highest Fitness: 3600.0
+Total elapsed time:34556.29917962698 seconds
+.
+Generation 425
+Highest Fitness: 3650.0
+Total elapsed time:34622.112146392 seconds
+.
+Generation 426
+Highest Fitness: 3740.0
+Total elapsed time:34683.66361878702 seconds
+.
+Generation 427
+Highest Fitness: 3590.0
+Total elapsed time:34745.55192148796 seconds
+.
+Generation 428
+Highest Fitness: 3590.0
+Total elapsed time:34874.144956987 seconds
+.
+Generation 429
+Highest Fitness: 2930.0
+Total elapsed time:34930.560978299996 seconds
+.
+Generation 430
+Highest Fitness: 2910.0
+Total elapsed time:34993.734259027 seconds
+.
+Generation 431
+Highest Fitness: 3510.0
+Total elapsed time:35067.80011724401 seconds
+.
+Generation 432
+Highest Fitness: 3480.0
+Total elapsed time:35127.31159765099 seconds
+.
+Generation 433
+Highest Fitness: 3810.0
+Total elapsed time:35193.328807693964 seconds
+.
+Generation 434
+Highest Fitness: 3530.0
+Total elapsed time:35256.65499669296 seconds
+.
+Generation 435
+Highest Fitness: 3530.0
+Total elapsed time:35318.252155933005 seconds
+.
+Generation 436
+Highest Fitness: 3520.0
+Total elapsed time:35375.485022586014 seconds
+.
+Generation 437
+Highest Fitness: 4290.0
+Total elapsed time:35441.211573419976 seconds
+.
+Generation 438
+Highest Fitness: 3000.0
+Total elapsed time:35509.85235704301 seconds
+.
+Generation 439
+Highest Fitness: 3570.0
+Total elapsed time:35578.87206048396 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 18 4680.0 3330.0
+
+Generation 440
+Highest Fitness: 3330.0
+Total elapsed time:35648.806029181986 seconds
+.
+Generation 441
+Highest Fitness: 3130.0
+Total elapsed time:35713.29403971997 seconds
+.
+Generation 442
+Highest Fitness: 3100.0
+Total elapsed time:35774.48551516299 seconds
+.
+Generation 443
+Highest Fitness: 3510.0
+Total elapsed time:35833.06476082298 seconds
+.
+Generation 444
+Highest Fitness: 3300.0
+Total elapsed time:35892.89561960701 seconds
+.
+Generation 445
+Highest Fitness: 4150.0
+Total elapsed time:35952.248776844004 seconds
+.
+Generation 446
+Highest Fitness: 3520.0
+Total elapsed time:36017.96608506696 seconds
+.
+Generation 447
+Highest Fitness: 3500.0
+Total elapsed time:36081.84429495997 seconds
+.
+Generation 448
+Highest Fitness: 3720.0
+Total elapsed time:36145.146948167996 seconds
+.
+Generation 449
+Highest Fitness: 4140.0
+Total elapsed time:36205.23606768198 seconds
+.
+Generation 450
+Highest Fitness: 3590.0
+Total elapsed time:36268.20063673798 seconds
+.
+Generation 451
+Highest Fitness: 4020.0
+Total elapsed time:36332.33997097897 seconds
+.
+Generation 452
+Highest Fitness: 3930.0
+Total elapsed time:36397.69006364298 seconds
+.
+Generation 453
+Highest Fitness: 3180.0
+Total elapsed time:36460.94344869797 seconds
+.
+Generation 454
+Highest Fitness: 3930.0
+Total elapsed time:36523.00559360196 seconds
+.
+Generation 455
+Highest Fitness: 3960.0
+Total elapsed time:36582.934156448 seconds
+.
+Generation 456
+Highest Fitness: 3340.0
+Total elapsed time:36646.69311443798 seconds
+.
+Generation 457
+Highest Fitness: 3960.0
+Total elapsed time:36710.688566747005 seconds
+.
+Generation 458
+Highest Fitness: 4020.0
+Total elapsed time:36774.803492066974 seconds
+.
+Generation 459
+Highest Fitness: 3930.0
+Total elapsed time:36841.77643167396 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 38 4680.0 4050.0
+
+Generation 460
+Highest Fitness: 4050.0
+Total elapsed time:36910.10826065799 seconds
+.
+Generation 461
+Highest Fitness: 4080.0
+Total elapsed time:36975.38481567596 seconds
+.
+Generation 462
+Highest Fitness: 3530.0
+Total elapsed time:37039.41680602997 seconds
+.
+Generation 463
+Highest Fitness: 3060.0
+Total elapsed time:37107.901099562005 seconds
+.
+Generation 464
+Highest Fitness: 3020.0
+Total elapsed time:37170.87020411098 seconds
+.
+Generation 465
+Highest Fitness: 3500.0
+Total elapsed time:37233.381183961 seconds
+.
+Generation 466
+Highest Fitness: 3130.0
+Total elapsed time:37297.12588071398 seconds
+.
+Generation 467
+Highest Fitness: 3930.0
+Total elapsed time:37359.45871201699 seconds
+.
+Generation 468
+Highest Fitness: 3430.0
+Total elapsed time:37418.297933208 seconds
+.
+Generation 469
+Highest Fitness: 3370.0
+Total elapsed time:37557.449343012995 seconds
+.
+Generation 470
+Highest Fitness: 3930.0
+Total elapsed time:37622.18431889196 seconds
+.
+Generation 471
+Highest Fitness: 3930.0
+Total elapsed time:37679.77235474897 seconds
+
+Generation 472
+Highest Fitness: 3350.0
+Total elapsed time:37740.663166137994 seconds
+
+Generation 473
+Highest Fitness: 2820.0
+Total elapsed time:37803.22661284701 seconds
+
+Generation 474
+Highest Fitness: 3210.0
+Total elapsed time:37858.74105672102 seconds
+
+Generation 475
+Highest Fitness: 3600.0
+Total elapsed time:37919.645214046 seconds
+
+Generation 476
+Highest Fitness: 3530.0
+Total elapsed time:37979.88927535701 seconds
+
+Generation 477
+Highest Fitness: 5340.0
+Total elapsed time:38036.290072224976 seconds
+.
+Generation 478
+Highest Fitness: 3590.0
+Total elapsed time:38100.06262403197 seconds
+.
+Generation 479
+Highest Fitness: 3510.0
+Total elapsed time:38164.43816888699 seconds
+.Species Report: size, gens_since_improvement, record fitness, current fitnes
+101 2 5340.0 3780.0
+
+Generation 480
+Highest Fitness: 3780.0
+Total elapsed time:38227.790914098965 seconds
+.
+Generation 481
+Highest Fitness: 3550.0
+Total elapsed time:38290.701211330015 seconds
+.
+Generation 482
+Highest Fitness: 3780.0
+Total elapsed time:38351.818005095 seconds
+.
+Generation 483
+Highest Fitness: 3780.0
+Total elapsed time:38407.686853780004 seconds
+.
+Generation 484
+Highest Fitness: 4330.0
+Total elapsed time:38464.643188001995 seconds
+.
+Generation 485
+Highest Fitness: 3870.0
+Total elapsed time:38521.50760187296 seconds
+.
+Generation 486
+Highest Fitness: 3510.0
+Total elapsed time:38585.629982526996 seconds
+.
+Generation 487
+Highest Fitness: 3580.0
+Total elapsed time:38648.00614103401 seconds
+.
+Generation 488
+Highest Fitness: 3350.0
+Total elapsed time:38705.62063633901 seconds
+.
+Generation 489
+Highest Fitness: 3290.0
+Total elapsed time:38768.793208182964 seconds
+.
+Generation 490
+Highest Fitness: 4210.0
+Total elapsed time:38832.889519674005 seconds
+.
+Generation 491
+Highest Fitness: 3880.0
+Total elapsed time:38897.87772551796 seconds
+.
+Generation 492
+Highest Fitness: 3880.0
+Total elapsed time:38958.58512435696 seconds
+.
+Generation 493
+Highest Fitness: 3590.0
+Total elapsed time:39019.638042140985 seconds
+.
+Generation 494
+Highest Fitness: 3880.0
+Total elapsed time:39083.295032944996 seconds
+.
+Generation 495
+Highest Fitness: 3710.0
+Total elapsed time:39148.61522052699 seconds
+.
+Generation 496
+Highest Fitness: 3900.0
+Total elapsed time:39213.578490945976 seconds
+.
+Generation 497
+Highest Fitness: 3880.0
+Total elapsed time:39269.79471783899 seconds
+.
+Generation 498
+Highest Fitness: 3720.0
+Total elapsed time:39330.63141779497 seconds
+.
+Generation 499
+Highest Fitness: 3890.0
+Total elapsed time:39396.46505933197 seconds
+.
+#-------------------------------#
+Experiment has concluded normally
+Highest Fitness: 3890.0
+Press enter to continue to animationTraceback (most recent call last):
+  File "run_experiment.py", line 39, in <module>
+    input("Press enter to continue to animation")
+OSError: [Errno 9] Bad file descriptor

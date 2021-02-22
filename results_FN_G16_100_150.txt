@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "run_experiment.py", line 1, in <module>
+    import evolve_basic
+  File "/home/poppelee/Thesis/evolve_basic.py", line 10, in <module>
+    from genome import *
+  File "/home/poppelee/Thesis/genome.py", line 5, in <module>
+    import gym
+ModuleNotFoundError: No module named 'gym'
