@@ -59,10 +59,11 @@ class Genome():
         self.model = model#.to(torch.device(self.device))
     
     #Runs the environment with the network selecting actions to evaluate fitness
-    def evalFitness(self, render=False, iters=1):
+    def evalFitness(self, render=False, iters=1, return_frames=False):
         self.rebuildModel()
         sum_reward = 0
         trials = self.experiment.trials*iters
+        frames = 0
         for _ in range(trials):
             env = self.env
             observation = env.reset()
@@ -77,6 +78,7 @@ class Genome():
                 action = (torch.max(outputs, 0)[1].item())
                 observation, reward, done, _ = env.step(action)
                 sum_reward += reward
+                frames += 1
                 if done:
                     break
             env.close()
@@ -85,7 +87,10 @@ class Genome():
         if fitness == 0:
             fitness = 0.01
         self.fitness = fitness
-        return fitness
+        if return_frames:
+            return (fitness, frames)
+        else:
+            return fitness
     
     #This basic genome has no speciation, but the algorithm assumes there is speciation
     #So this func returns dist 0 for all genomes to create single-species behavior

@@ -16,7 +16,7 @@ from population import *
 
 def multiEvalFitness(genome):
     torch.set_default_tensor_type(torch.DoubleTensor)
-    return genome.evalFitness()
+    return genome.evalFitness(return_frames=True)
 
 #Runs basic evolution on the given experiment and params
 #Creates a new generation through a combination of methods:
@@ -56,7 +56,8 @@ def evolve(experiment):
         net_copies.append(copy.deepcopy(net))
     fitnesses = pool.map(multiEvalFitness, net_copies)
     for i in range(pop_size):
-        new_nets[i].fitness = fitnesses[i]
+        new_nets[i].fitness = fitnesses[i][0]
+        population.total_frames += fitnesses[1]
     for net in new_nets:
         population.add(net)
         
@@ -200,5 +201,6 @@ def evolve(experiment):
     if experiment.genome_file:
         file = open(experiment.genome_file, 'wb')
         pickle.dump(saved, file)
+    print(population.total_frames)
     return population
     
