@@ -112,7 +112,6 @@ class Population(Species):
         #self.lock = multiprocessing.Lock() #Is this still needed?
         self.species_num = 0
         self.is_speciated = True
-        self.total_frames = 0
         
     #Works as above, adding in sorted position to genome list
     #And also adds genome to the appropriate species, or creates a new one when needed

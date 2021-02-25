@@ -23,6 +23,7 @@ def multiEvalFitness(genome):
 #Crossover from two parents, mutation from one parent, or elitism
 #Ratios of this are specified by experiment
 def evolve(experiment):
+    total_frames = 0
     set_start_method('spawn')
     pool = Pool(experiment.thread_count)
     #torch.multiprocessing.set_start_method('spawn')
@@ -57,7 +58,7 @@ def evolve(experiment):
     fitnesses = pool.map(multiEvalFitness, net_copies)
     for i in range(pop_size):
         new_nets[i].fitness = fitnesses[i][0]
-        population.total_frames += fitnesses[i][1]
+        total_frames += fitnesses[i][1]
     for net in new_nets:
         population.add(net)
         
@@ -173,7 +174,7 @@ def evolve(experiment):
         fitnesses = pool.map(multiEvalFitness, net_copies)
         for i in range(len(new_nets)):
             new_nets[i].fitness = fitnesses[i][0]
-            population.total_frames += fitnesses[i][1]
+            total_frames += fitnesses[i][1]
         for net in new_nets:
             new_pop.add(net)
         
@@ -202,6 +203,6 @@ def evolve(experiment):
     if experiment.genome_file:
         file = open(experiment.genome_file, 'wb')
         pickle.dump(saved, file)
-    print(population.total_frames)
+    print(total_frames)
     return population
     
