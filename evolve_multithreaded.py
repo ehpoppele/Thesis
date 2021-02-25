@@ -57,7 +57,7 @@ def evolve(experiment):
     fitnesses = pool.map(multiEvalFitness, net_copies)
     for i in range(pop_size):
         new_nets[i].fitness = fitnesses[i][0]
-        population.total_frames += fitnesses[1]
+        population.total_frames += fitnesses[i][1]
     for net in new_nets:
         population.add(net)
         
@@ -172,7 +172,8 @@ def evolve(experiment):
             net_copies.append(copy.deepcopy(net))
         fitnesses = pool.map(multiEvalFitness, net_copies)
         for i in range(len(new_nets)):
-            new_nets[i].fitness = fitnesses[i]
+            new_nets[i].fitness = fitnesses[i][0]
+            population.total_frames += fitnesses[i][1]
         for net in new_nets:
             new_pop.add(net)
         
