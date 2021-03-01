@@ -5,6 +5,9 @@ import torch
 import experiments
 import sys
 
+SELECT_COUNT = 20 #Number of genomes selected from elite 
+SELECT_TRIALS = 10 #how many 
+
 #Runs an experiment given as a command line args
 #Mostly just a wrapper file to call one of the evolve files
 if __name__ == "__main__":
@@ -27,17 +30,22 @@ if __name__ == "__main__":
     #These may be joined eventually (multithreaded algorithm should run fine with 1 thread) but basic evolve is better for testing things
     if experiment.thread_count > 1:
         print("multithreading!")
-        fit_pop = evolve_multithreaded.evolve(experiment)
+        fit_pop, saved = evolve_multithreaded.evolve(experiment)
     else:
-        fit_pop = evolve_basic.evolve(experiment)
+        fit_pop, saved = evolve_basic.evolve(experiment)
     #Currently gives a brief report and demonstration of the fittest individual
+    if experiment.genome_file:
+        file = open(experiment.genome_file, 'wb')
+        pickle.dump(saved, file) #This saves those fitness scores as well; could fix this
     print()
     print("#-------------------------------#")
     print("Experiment has concluded normally")
-    fittest = fit_pop.fittest()
-    print("Highest Fitness:", fit_pop.fittest().fitness)
+    fittest_genome = max(saved, key=lambda g: g[1])#Finds the fittest genome based on the fitness saved for it during elite trial evals; ignores fitness sharing
+    fitness = fittest_genome.evalFitness(iters=200)
+    #fittest = fit_pop.fittest()
+    print("Highest Fitness:", fitness)
     input("Press enter to continue to animation")
-    fittest.experiment.trials = 1
-    fittest.evalFitness(True)
-    fittest.printToTerminal()
+    fittest_genome.experiment.trials = 1
+    fittest_genome.evalFitness(True)
+    fittest_genome.printToTerminal()
     

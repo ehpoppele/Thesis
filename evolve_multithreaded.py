@@ -14,9 +14,15 @@ from genome import *
 from genome_NEAT import *
 from population import *
 
-def multiEvalFitness(genome):
+def multiEvalFitness(genome_list):
     torch.set_default_tensor_type(torch.DoubleTensor)
-    return genome.evalFitness(return_frames=True)
+    ret = []
+    frames_used = 0
+    for g in genome_list:
+        fitness, frames = g.evalFitness(return_frames=True)
+        frames_used += frames
+        ret.append(fitness)
+    return ret, frames_used
 
 #Runs basic evolution on the given experiment and params
 #Creates a new generation through a combination of methods:
@@ -52,21 +58,22 @@ def evolve(experiment):
         new_nets.append(new_net)
         
     #Multithreaded fitness evaluation
-    net_copies = []
-    for net in new_nets:
-        net_copies.append(copy.deepcopy(net))
-    fitnesses = pool.map(multiEvalFitness, net_copies)
-    for i in range(pop_size):
-        new_nets[i].fitness = fitnesses[i][0]
-        total_frames += fitnesses[i][1]
-    for net in new_nets:
-        population.add(net)
+    with [] as net_copies:
+        for _ in range(thread_count):
+            net_copies.append([])
+        for i in range(pop_size):
+            net_copies[i%thread_count].append(copy.deepcopy(net))
+        fitnesses, frames = pool.map(multiEvalFitness, net_copies)
+        total_frames += frames
+        for i in range(pop_size):
+            new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
+        for net in new_nets:
+            population.add(net)
     
-    g = -1
     #Run the main algorithm over many generations
     #for g in range(generation_count):
+    g = 0
     while total_frames < experiment.max_frames:
-        g += 1
         #First print reports on generation:
         #Debugging report I hope to remove soon
         if g%20 == 0:
@@ -75,7 +82,7 @@ def evolve(experiment):
                 if s.size() > 0:
                     print(s.size(), s.gens_since_improvement, s.last_fittest, s.genomes[0].fitness)
             #print(torch.cuda.memory_summary())
-        gen_report_string = "\nGeneration " + str(g) +"\nHighest Fitness: "+ str(population.fittest().fitness) + "\nTotal elapsed time:" + str(time.perf_counter() - time_start) + " seconds\n"
+        gen_report_string = "\nGeneration " + str(g) + "\nTotal frames used: " + str(total_frames) + "\nHighest Fitness: "+ str(population.fittest().fitness) + "\nTotal elapsed time:" + str(time.perf_counter() - time_start) + " seconds\n"
         sys.stdout.write(gen_report_string)
         sys.stdout.flush()
         if outfile != 'terminal':
@@ -200,11 +207,9 @@ def evolve(experiment):
                             fittest = species[i]
                     new_pop.add(fittest)
                     #Save each elite carryover to pickle file
-                    saved.append(fittest)
+                    saved.append([fittest, best_fitness])
         population = new_pop
-    if experiment.genome_file:
-        file = open(experiment.genome_file, 'wb')
-        pickle.dump(saved, file)
-    print(total_frames)
-    return population
+        g += 1
+    print("Final frame count:", str(total_frames))
+    return population, saved
     
