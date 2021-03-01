@@ -180,7 +180,4 @@ def evolve(experiment):
                     #Save each elite carryover to pickle file
                     saved.append(fittest)
         population = new_pop
-    if experiment.genome_file:
-        file = open(experiment.genome_file, 'wb')
-        pickle.dump(saved, file)
-    return population
+    return population, saved
