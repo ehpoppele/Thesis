@@ -89,8 +89,8 @@ def evolve(experiment):
         #Adjust fitness of each individual with fitness sharing
         #Done here so it is skipped for the final population, where plain maximum fitness is desired
         if experiment.fitness_sharing:
-            for g in population:
-                g.fitness = g.fitness/g.species.size()
+            for genome in population:
+                genome.fitness = genome.fitness/genome.species.size()
         #Population is re-ordered afterwards based on new fitness
         population.reorder() #make sure this is only called when necessary
         #Assign how many offspring each species gets based on fitness of the species
