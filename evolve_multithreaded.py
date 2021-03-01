@@ -61,10 +61,12 @@ def evolve(experiment):
         total_frames += fitnesses[i][1]
     for net in new_nets:
         population.add(net)
-        
-    #Run the main algorithm over many generations
-    for g in range(generation_count):
     
+    g = -1
+    #Run the main algorithm over many generations
+    #for g in range(generation_count):
+    while total_frames < experiment.max_frames:
+        g += 1
         #First print reports on generation:
         #Debugging report I hope to remove soon
         if g%20 == 0:
