@@ -58,7 +58,7 @@ def evolve(experiment):
         new_nets.append(new_net)
         
     #Multithreaded fitness evaluation
-    with [] as net_copies:
+    with net_copies = []:
         for _ in range(thread_count):
             net_copies.append([])
         for i in range(pop_size):
