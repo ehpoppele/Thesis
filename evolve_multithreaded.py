@@ -58,17 +58,17 @@ def evolve(experiment):
         new_nets.append(new_net)
         
     #Multithreaded fitness evaluation
-    with [] as net_copies:
-        for _ in range(thread_count):
-            net_copies.append([])
-        for i in range(pop_size):
-            net_copies[i%thread_count].append(copy.deepcopy(net))
-        fitnesses, frames = pool.map(multiEvalFitness, net_copies)
-        total_frames += frames
-        for i in range(pop_size):
-            new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
-        for net in new_nets:
-            population.add(net)
+    net_copies = []
+    for _ in range(thread_count):
+        net_copies.append([])
+    for i in range(pop_size):
+        net_copies[i%thread_count].append(copy.deepcopy(new_nets[i]))
+    fitnesses, frames = pool.map(multiEvalFitness, net_copies)
+    total_frames += frames
+    for i in range(pop_size):
+        new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
+    for net in new_nets:
+        population.add(net)
     
     #Run the main algorithm over many generations
     #for g in range(generation_count):
@@ -178,12 +178,14 @@ def evolve(experiment):
             new_nets.append(n)
             
         net_copies = []
-        for net in new_nets:
-            net_copies.append(copy.deepcopy(net))
-        fitnesses = pool.map(multiEvalFitness, net_copies)
-        for i in range(len(new_nets)):
-            new_nets[i].fitness = fitnesses[i][0]
-            total_frames += fitnesses[i][1]
+        for _ in range(thread_count):
+            net_copies.append([])
+        for i in range(pop_size):
+            net_copies[i%thread_count].append(copy.deepcopy(new_nets[i]))
+        fitnesses, frames = pool.map(multiEvalFitness, net_copies)
+        total_frames += frames
+        for i in range(pop_size):
+            new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
         for net in new_nets:
             new_pop.add(net)
         
