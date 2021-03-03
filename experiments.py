@@ -186,6 +186,72 @@ xor.generations   = 500
 xor.elite_range   = 1
 xor.elite_evals   = 1 #Deterministic, so no need for multiple evals
 #---------------------------
-list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor]
+
+class TensorNExperiment(Experiment):
+
+    def __init__(self, name):
+        self.name = name
+        self.outfile = 'terminal'
+        self.genome = 'TensorNEAT'
+        self.genome_file = None
+        self.fitness_sharing = True #Will experiment with this
+        self.species_select = 'weighted' #Need to rename weight to wheel, then change this to something better
+        self.thread_count = 24
+        self.device = 'cpu'
+        self.population = 251
+        self.generations = 2 #Easier to run on generation limit when testing
+        self.max_frames = 1000000000 #1 Billion
+        self.gens_to_improve = 15 #Not sure about this for now
+        self.max_species_dist =  1.0 #Currently just binary effectively, so this is ok as long as it's under 99
+        self.interspecies_crossover = 0.0 #This would break things so it's not allowed
+        self.mutate_ratio = 0.5
+        self.mutate_effect = 1.0 #Can fiddle with this as well
+        self.elite_per_species   = 1 
+        self.elite_threshold   = 5 #As with NEAT, for now
+        self.elite_range   = 3 #number of genomes checked for elite copy over (should be <= threshold, always)
+        self.elite_evals   = 5 #Evaluations done on each genome in the elite range to find a more accurate fitness value
+        self.activation_func = nn.Sigmoid() #Ideally this would be mutated as well
+        self.activation_const = 4.9
+        #Unique params
+        self.weight_perturb_chance = 0.7 
+        self.weight_reset_chance = 0.0
+        self.bias_perturb_chance = 0.7
+        self.bias_reset_chance = 0.0
+        self.layer_add_chance = 0.05
+        self.layer_collapse_chance = 0.025
+        self.max_network_size = 25
+        
+#----------------------------
+#Tensor Cart Pole for testing
+cartpole_TN = TensorNExperiment('CartpoleTensor')
+cartpole_TN.env              = gym.make('CartPole-v0')
+cartpole_TN.device           = 'cpu'
+cartpole_TN.inputs           = 4
+cartpole_TN.outputs          = 2
+cartpole_TN.layer_step_count = 4
+cartpole_TN.layer_step_size  = 1
+cartpole_TN.trials           = 1
+cartpole_TN.population       = 101
+cartpole_TN.generations      = 10
+cartpole_TN.max_frames       = 1000000000
+cartpole_TN.thread_count      = 1
+#----------------------------
+#Tensor Frostbite
+frost_TN = TensorNExperiment('FrostbiteTensor')
+frost_TN.env              = gym.make('CartPole-v0')
+frost_TN.device           = 'cpu'
+frost_TN.inputs           = 128
+frost_TN.outputs          = 18
+frost_TN.layer_step_count = 4
+frost_TN.layer_step_size  = 64
+frost_TN.trials           = 1
+frost_TN.population       = 101
+frost_TN.generations      = 5
+frost_TN.max_frames       = 1000000000
+frost_TN.thread_count      = 8
+#---------------------------
+        
+
+list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN]
 
 

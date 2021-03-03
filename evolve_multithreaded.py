@@ -214,4 +214,3 @@ def evolve(experiment):
         g += 1
     print("Final frame count:", str(total_frames))
     return population, saved
-    

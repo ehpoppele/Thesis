@@ -52,6 +52,10 @@ class Genome():
                 self.genotype.append((torch.randn(experiment.layer_size, experiment.outputs)) * (1/experiment.layer_size))
                 self.genotype.append(torch.zeros(experiment.outputs))
             #self.rebuildModel()
+            
+    def printToTerminal(self):
+        for g in self.genotype:
+            print(g)
 
     #Makes a new neural network for the genome based on its current genotype
     def rebuildModel(self):

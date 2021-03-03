@@ -9,6 +9,7 @@ import threading
 import math
 from genome import *
 from genome_NEAT import *
+from genome_Tensor import *
 from population import *
 
 #Runs basic evolution on the given experiment and params
@@ -34,6 +35,8 @@ def evolve(experiment):
         new_net = "Maybe I can write a function to make a new net of type specified by the experiment"
         if experiment.genome == 'NEAT':
             new_net = NEATGenome(experiment)
+        elif experiment.genome == "TensorNEAT":
+            new_net = TensorNEATGenome(experiment)
         else:
             new_net = Genome(experiment)
         new_net.evalFitness()
@@ -178,6 +181,6 @@ def evolve(experiment):
                     if outfile == 'terminal':
                         print("\nBest elite fitness is: ", best_fitness)
                     #Save each elite carryover to pickle file
-                    saved.append(fittest)
+                    saved.append([fittest, best_fitness])
         population = new_pop
     return population, saved
