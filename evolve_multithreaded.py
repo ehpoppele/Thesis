@@ -22,7 +22,7 @@ def multiEvalFitness(genome_list):
         fitness, frames = g.evalFitness(return_frames=True)
         frames_used += frames
         ret.append(fitness)
-    return ret, frames_used
+    return (ret, frames_used)
 
 #Runs basic evolution on the given experiment and params
 #Creates a new generation through a combination of methods:
@@ -63,8 +63,11 @@ def evolve(experiment):
         net_copies.append([])
     for i in range(pop_size):
         net_copies[i%thread_count].append(copy.deepcopy(new_nets[i]))
-    fitnesses, frames = pool.map(multiEvalFitness, net_copies)
-    total_frames += frames
+    multiReturn = pool.map(multiEvalFitness, net_copies)
+    fitnesses = []
+    for thread in multiReturn:
+        fitnesses.append(thread[0])
+        total_frames += thread[1]
     for i in range(pop_size):
         new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
     for net in new_nets:
@@ -180,11 +183,14 @@ def evolve(experiment):
         net_copies = []
         for _ in range(thread_count):
             net_copies.append([])
-        for i in range(pop_size):
+        for i in range(pop_size-elite_count):
             net_copies[i%thread_count].append(copy.deepcopy(new_nets[i]))
-        fitnesses, frames = pool.map(multiEvalFitness, net_copies)
-        total_frames += frames
-        for i in range(pop_size):
+        multiReturn = pool.map(multiEvalFitness, net_copies)
+        fitnesses = []
+        for thread in multiReturn:
+            fitnesses.append(thread[0])
+            total_frames += thread[1]
+        for i in range(pop_size-elite_count):
             new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
         for net in new_nets:
             new_pop.add(net)
