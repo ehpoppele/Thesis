@@ -15,14 +15,17 @@ from genome_NEAT import *
 from population import *
 
 def multiEvalFitness(genome_list):
-    torch.set_default_tensor_type(torch.DoubleTensor)
-    ret = []
-    frames_used = 0
-    for g in genome_list:
-        fitness, frames = g.evalFitness(return_frames=True)
-        frames_used += frames
-        ret.append(fitness)
-    return (ret, frames_used)
+    try:
+        torch.set_default_tensor_type(torch.DoubleTensor)
+        ret = []
+        frames_used = 0
+        for g in genome_list:
+            fitness, frames = g.evalFitness(return_frames=True)
+            frames_used += frames
+            ret.append(fitness)
+        return (ret, frames_used)
+    except:
+        raise Exception("".join(traceback.format_exception(*sys.exc_info())))
 
 #Runs basic evolution on the given experiment and params
 #Creates a new generation through a combination of methods:
@@ -58,20 +61,20 @@ def evolve(experiment):
         new_nets.append(new_net)
         
     #Multithreaded fitness evaluation
-        net_copies = []
-        for _ in range(thread_count):
-            net_copies.append([])
-        for i in range(pop_size-elite_count):
-            net_copies[i%thread_count].append(copy.deepcopy(new_nets[i]))
-        multiReturn = pool.map(multiEvalFitness, net_copies)
-        fitnesses = []
-        for thread in multiReturn:
-            fitnesses.append(thread[0])
-            total_frames += thread[1]
-        for i in range(pop_size-elite_count):
-            new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
-        for net in new_nets:
-            population.add(net)
+    net_copies = []
+    for _ in range(thread_count):
+        net_copies.append([])
+    for i in range(pop_size-elite_count):
+        net_copies[i%thread_count].append(copy.deepcopy(new_nets[i]))
+    multiReturn = pool.map(multiEvalFitness, net_copies)
+    fitnesses = []
+    for thread in multiReturn:
+        fitnesses.append(thread[0])
+        total_frames += thread[1]
+    for i in range(pop_size-elite_count):
+        new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
+    for net in new_nets:
+        population.add(net)
     
     #Run the main algorithm over many generations
     #for g in range(generation_count):

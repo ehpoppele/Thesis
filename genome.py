@@ -78,7 +78,6 @@ class Genome():
                 inputs = torch.from_numpy(observation)
                 inputs = (inputs.double()).to(torch.device(self.device))
                 outputs = self.model(inputs)
-                del inputs
                 action = (torch.max(outputs, 0)[1].item())
                 observation, reward, done, _ = env.step(action)
                 sum_reward += reward
