@@ -14,10 +14,15 @@ from genome import *
 from genome_NEAT import *
 from population import *
 
-def multiEvalFitness(genome):
+def multiEvalFitness(genome_list):
     torch.set_default_tensor_type(torch.DoubleTensor)
-    fitness, frames = genome.evalFitness(return_frames=True)
-    return (fitness, frames)
+    ret = []
+    frames_used = 0
+    for g in genome_list:
+        fitness, frames = g.evalFitness(return_frames=True)
+        frames_used += frames
+        ret.append(fitness)
+    return (ret, frames_used)
 
 #Runs basic evolution on the given experiment and params
 #Creates a new generation through a combination of methods:
@@ -46,22 +51,27 @@ def evolve(experiment):
         sys.stdout.flush()
     for i in range(pop_size):
         new_net = "Maybe I can write a function to make a new net of type specified by the experiment"
-        if experiment.genome == 'NEAT':
+        if experiment.genome == 'NEAT'
             new_net = NEATGenome(experiment)
         else:
             new_net = Genome(experiment)
         new_nets.append(new_net)
         
     #Multithreaded fitness evaluation
-    net_copies = []
-    for i in range(pop_size):
-        net_copies.append(copy.deepcopy(new_nets[i]))
-    multiReturn = pool.imap(multiEvalFitness, net_copies, thread_count)
-    for pair in multiReturn:
-        new_nets[i].fitness = pair[0]
-        total_frames += pair[1]
-    for net in new_nets:
-        population.add(net)
+        net_copies = []
+        for _ in range(thread_count):
+            net_copies.append([])
+        for i in range(pop_size-elite_count):
+            net_copies[i%thread_count].append(copy.deepcopy(new_nets[i]))
+        multiReturn = pool.map(multiEvalFitness, net_copies)
+        fitnesses = []
+        for thread in multiReturn:
+            fitnesses.append(thread[0])
+            total_frames += thread[1]
+        for i in range(pop_size-elite_count):
+            new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
+        for net in new_nets:
+            population.add(net)
     
     #Run the main algorithm over many generations
     #for g in range(generation_count):
@@ -171,7 +181,6 @@ def evolve(experiment):
             for n in mutated:
                 new_nets.append(n)
             
-            """
             net_copies = []
             for _ in range(thread_count):
                 net_copies.append([])
@@ -184,17 +193,6 @@ def evolve(experiment):
                 total_frames += thread[1]
             for i in range(pop_size-elite_count):
                 new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
-            for net in new_nets:
-                new_pop.add(net)
-            """
-            
-            net_copies = []
-            for i in range(pop_size):
-                net_copies.append(copy.deepcopy(new_nets[i]))
-            multiReturn = pool.imap(multiEvalFitness, net_copies, thread_count)
-            for pair in multiReturn:
-                new_nets[i].fitness = pair[0]
-                total_frames += pair[1]
             for net in new_nets:
                 new_pop.add(net)
             
