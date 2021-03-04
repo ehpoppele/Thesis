@@ -51,27 +51,28 @@ def evolve(experiment):
         sys.stdout.flush()
     for i in range(pop_size):
         new_net = "Maybe I can write a function to make a new net of type specified by the experiment"
-        if experiment.genome == 'NEAT'
+        if experiment.genome == 'NEAT':
             new_net = NEATGenome(experiment)
         else:
             new_net = Genome(experiment)
         new_nets.append(new_net)
         
     #Multithreaded fitness evaluation
-        net_copies = []
-        for _ in range(thread_count):
-            net_copies.append([])
-        for i in range(pop_size-elite_count):
-            net_copies[i%thread_count].append(copy.deepcopy(new_nets[i]))
-        multiReturn = pool.map(multiEvalFitness, net_copies)
-        fitnesses = []
-        for thread in multiReturn:
-            fitnesses.append(thread[0])
-            total_frames += thread[1]
-        for i in range(pop_size-elite_count):
-            new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
-        for net in new_nets:
-            population.add(net)
+    net_copies = []
+    for _ in range(thread_count):
+        net_copies.append([])
+    #print(pop_size, len(new_nets), thread_count, len(net_copies))
+    for i in range(pop_size):
+        net_copies[i%thread_count].append(copy.deepcopy(new_nets[i]))
+    multiReturn = pool.map(multiEvalFitness, net_copies)
+    fitnesses = []
+    for thread in multiReturn:
+        fitnesses.append(thread[0])
+        total_frames += thread[1]
+    for i in range(pop_size):
+        new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
+    for net in new_nets:
+        population.add(net)
     
     #Run the main algorithm over many generations
     #for g in range(generation_count):
