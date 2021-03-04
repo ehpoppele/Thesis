@@ -16,7 +16,7 @@ from population import *
 
 def multiEvalFitness(genome):
     torch.set_default_tensor_type(torch.DoubleTensor)
-    fitness, frames = g.evalFitness(return_frames=True)
+    fitness, frames = genome.evalFitness(return_frames=True)
     return (fitness, frames)
 
 #Runs basic evolution on the given experiment and params
@@ -56,10 +56,10 @@ def evolve(experiment):
     net_copies = []
     for i in range(pop_size):
         net_copies.append(copy.deepcopy(new_nets[i]))
-    multiReturn = pool.imap(multiEvalFitness, net_copies, math.ceil(pop_size/thread_count))
+    multiReturn = pool.imap(multiEvalFitness, net_copies, thread_count)
     for pair in multiReturn:
         new_nets[i].fitness = pair[0]
-        total_frames += thread[1]
+        total_frames += pair[1]
     for net in new_nets:
         population.add(net)
     
@@ -191,10 +191,10 @@ def evolve(experiment):
             net_copies = []
             for i in range(pop_size):
                 net_copies.append(copy.deepcopy(new_nets[i]))
-            multiReturn = pool.imap(multiEvalFitness, net_copies, math.ceil(pop_size/thread_count))
+            multiReturn = pool.imap(multiEvalFitness, net_copies, thread_count)
             for pair in multiReturn:
                 new_nets[i].fitness = pair[0]
-                total_frames += thread[1]
+                total_frames += pair[1]
             for net in new_nets:
                 new_pop.add(net)
             
@@ -221,11 +221,11 @@ def evolve(experiment):
                         saved.append([fittest, best_fitness])
             population = new_pop
             g += 1
-        except Exception as e:
-            #Courtesy of stack overflow since I'm crashing without traceback
-            logging.exception(e)
-            logging.handlers[0].flush() 
-            raise e
+    except Exception as e:
+        #Courtesy of stack overflow since I'm crashing without traceback
+        logging.exception(e)
+        logging.handlers[0].flush() 
+        raise e
             
     print("Final frame count:", str(total_frames))
     return population, saved
