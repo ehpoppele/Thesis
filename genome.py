@@ -81,7 +81,7 @@ class Genome():
                 action = (torch.max(outputs, 0)[1].item())
                 observation, reward, done, _ = env.step(action)
                 sum_reward += reward
-                frames += 1
+                frames += 4 #Fix this to be experiment.frameskip later
                 if done:
                     break
             env.close()

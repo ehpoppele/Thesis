@@ -63,14 +63,14 @@ def evolve(experiment):
     net_copies = []
     for _ in range(thread_count):
         net_copies.append([])
-    for i in range(pop_size-elite_count):
+    for i in range(pop_size):
         net_copies[i%thread_count].append(copy.deepcopy(new_nets[i]))
     multiReturn = pool.map(multiEvalFitness, net_copies)
     fitnesses = []
     for thread in multiReturn:
         fitnesses.append(thread[0])
         total_frames += thread[1]
-    for i in range(pop_size-elite_count):
+    for i in range(pop_size):
         new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
     for net in new_nets:
         population.add(net)
