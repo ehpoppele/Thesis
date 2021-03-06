@@ -123,6 +123,7 @@ def evolve(experiment):
         for species in population.species:
             rep = population.randOfSpecies(species)
             new_species = Species(experiment, rep, False) #The genome is copied over as a rep but not added
+            rep.species = new_species
             new_pop.species.append(new_species)
             
         new_nets = []  
@@ -217,7 +218,9 @@ def evolve(experiment):
                             fittest = species[i]
                     new_pop.add(fittest)
                     #Save each elite carryover to pickle file
-                    saved.append([fittest, best_fitness])
+                    save_copy = copy.deepcopy(fittest)
+                    save_copy.species = None
+                    saved.append([save_copy, best_fitness])
         population = new_pop
         g += 1
     print("Final frame count:", str(total_frames))
