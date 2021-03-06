@@ -14,17 +14,14 @@ from genome_NEAT import *
 from population import *
 
 def multiEvalFitness(genome_list):
-    try:
-        torch.set_default_tensor_type(torch.DoubleTensor)
-        ret = []
-        frames_used = 0
-        for g in genome_list:
-            fitness, frames = g.evalFitness(return_frames=True)
-            frames_used += frames
-            ret.append(fitness)
-        return (ret, frames_used)
-    except:
-        raise Exception("".join(traceback.format_exception(*sys.exc_info())))
+    torch.set_default_tensor_type(torch.DoubleTensor)
+    ret = []
+    frames_used = 0
+    for g in genome_list:
+        fitness, frames = g.evalFitness(return_frames=True)
+        frames_used += frames
+        ret.append(fitness)
+    return (ret, frames_used)
 
 #Runs basic evolution on the given experiment and params
 #Creates a new generation through a combination of methods:
@@ -77,17 +74,17 @@ def evolve(experiment):
     
     #Run the main algorithm over many generations
     #for g in range(generation_count):
-    g = 0
+    generation = 0
     while total_frames < experiment.max_frames:
         #First print reports on generation:
         #Debugging report I hope to remove soon
-        if g%20 == 0:
+        if generation%20 == 0:
             print("Species Report: size, gens_since_improvement, record fitness, current fitnes")
             for s in population.species:
                 if s.size() > 0:
                     print(s.size(), s.gens_since_improvement, s.last_fittest, s.genomes[0].fitness)
             #print(torch.cuda.memory_summary())
-        gen_report_string = "\nGeneration " + str(g) + "\nTotal frames used: " + str(total_frames) + "\nHighest Fitness: "+ str(population.fittest().fitness) + "\nTotal elapsed time:" + str(time.perf_counter() - time_start) + " seconds\n"
+        gen_report_string = "\nGeneration " + str(generation) + "\nTotal frames used: " + str(total_frames) + "\nHighest Fitness: "+ str(population.fittest().fitness) + "\nTotal elapsed time:" + str(time.perf_counter() - time_start) + " seconds\n"
         sys.stdout.write(gen_report_string)
         sys.stdout.flush()
         if outfile != 'terminal':
@@ -207,9 +204,6 @@ def evolve(experiment):
                     best_fitness = float('-inf')
                     fittest = None
                     for i in range(experiment.elite_range):
-                        if outfile == 'terminal':
-                            sys.stdout.write(".")
-                            sys.stdout.flush()
                         fitsum = 0
                         for j in range(experiment.elite_evals):
                             fitsum += species[i].evalFitness() #eval will also return the new fitness, not just update it
@@ -221,7 +215,9 @@ def evolve(experiment):
                     save_copy = copy.deepcopy(fittest)
                     save_copy.species = None
                     saved.append([save_copy, best_fitness])
+        print("Size of relevant objects in memory:")
+        print("Old Population:", sys.getsizeof(population), "New Population:", sys.getsizeof(new_pop), "One Species:", sys.getsizeof(population.species[0]), "One Genome", sys.getsizeof(population.genomes[0]), "The Pool:", sys.getsizeof(pool))
         population = new_pop
-        g += 1
+        generation += 1
     print("Final frame count:", str(total_frames))
     return population, saved
