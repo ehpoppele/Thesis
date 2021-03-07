@@ -69,12 +69,15 @@ def evolve(experiment):
         new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
     for net in new_nets:
         population.add(net)
-    
+    pool.close()
+    pool.join()
+    del pool
+    net_copies = []
+
     #Run the main algorithm over many generations
     #for g in range(generation_count):
     generation = 0
     while total_frames < experiment.max_frames:
-        pool = Pool(experiment.thread_count)
         #First print reports on generation:
         #Debugging report I hope to remove soon
         if generation%20 == 0:
@@ -121,7 +124,10 @@ def evolve(experiment):
             new_species = Species(experiment, rep, False) #The genome is copied over as a rep but not added
             rep.species = new_species
             new_pop.species.append(new_species)
-            
+
+        time.sleep(3)            
+        print("Creating new networks")
+
         new_nets = []  
             
         #Crossover is done first
@@ -179,11 +185,17 @@ def evolve(experiment):
         for n in mutated:
             new_nets.append(n)
         
+        time.sleep(7)
+        print("Evaluating new networks")
+        
+        pool = Pool(experiment.thread_count)
         net_copies = []
         for _ in range(thread_count):
             net_copies.append([])
         for i in range(pop_size-elite_count):
-            net_copies[i%thread_count].append(copy.deepcopy(new_nets[i]))
+            copied = copy.deepcopy(new_nets[i])
+            copied.species = None
+            net_copies[i%thread_count].append(copied)
         multiReturn = pool.map(multiEvalFitness, net_copies)
         fitnesses = []
         for thread in multiReturn:
@@ -193,7 +205,13 @@ def evolve(experiment):
             new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
         for net in new_nets:
             new_pop.add(net)
+        net_copies = []
+        pool.close()
+        pool.join
+        del pool
         
+        print("Selecting elite networks")
+
         #Elite Carry-over; re-evaluates fitness first before selection
         #Currently not built to carry best of each species over; this should be handled by fitness sharing
         #And since this is typically only 1, we just want the fittest genome regardless of species
@@ -214,10 +232,14 @@ def evolve(experiment):
                     save_copy = copy.deepcopy(fittest)
                     save_copy.species = None
                     saved.append([save_copy, best_fitness])
-        pool.close()
-        pool.join()
-        del pool
+        del population
         population = new_pop
+        for species in population.species:
+            for genome in species.genomes:
+                if genome.species != species:
+                        assert False
+            if species.rep.species != species:
+                    assert False
         generation += 1
     print("Final frame count:", str(total_frames))
     return population, saved
