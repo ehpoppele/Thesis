@@ -42,8 +42,6 @@ def evolve(experiment):
     #Create new random population, sorted by starting fitness
     population = Population(experiment)
     new_nets = []
-    if experiment.genome == "NEAT":
-        population.is_speciated = True
     saved = [] #Saving fittest from each gen to pickle file
     if outfile == 'terminal':
         sys.stdout.write("Evaluating Intial Fitness:")
@@ -215,8 +213,10 @@ def evolve(experiment):
                     save_copy = copy.deepcopy(fittest)
                     save_copy.species = None
                     saved.append([save_copy, best_fitness])
-        print("Size of relevant objects in memory:")
-        print("Old Population:", sys.getsizeof(population), "New Population:", sys.getsizeof(new_pop), "One Species:", sys.getsizeof(population.species[0]), "One Genome", sys.getsizeof(population.genomes[0]), "The Pool:", sys.getsizeof(pool))
+        mem_test_file = "population_" + str(generation)
+        file = open(mem_test_file, 'wb')
+        pickle.dump(population, file)
+        file.close()
         population = new_pop
         generation += 1
     print("Final frame count:", str(total_frames))
