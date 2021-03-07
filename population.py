@@ -122,6 +122,7 @@ class Population(Species):
             for species in self.species:
                 if genome.speciesDistance(species.rep) < genome.experiment.max_species_dist:
                     species.add(genome)
+                    genome.species = species
                     assigned = True
                     break
             #Genome becomes the rep for a new species

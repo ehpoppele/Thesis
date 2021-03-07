@@ -76,6 +76,7 @@ def evolve(experiment):
     #for g in range(generation_count):
     generation = 0
     while total_frames < experiment.max_frames:
+        pool = Pool(experiment.thread_count)
         #First print reports on generation:
         #Debugging report I hope to remove soon
         if generation%20 == 0:
@@ -215,8 +216,13 @@ def evolve(experiment):
                     save_copy = copy.deepcopy(fittest)
                     save_copy.species = None
                     saved.append([save_copy, best_fitness])
-        print("Size of relevant objects in memory:")
-        print("Old Population:", sys.getsizeof(population), "New Population:", sys.getsizeof(new_pop), "One Species:", sys.getsizeof(population.species[0]), "One Genome", sys.getsizeof(population.genomes[0]), "The Pool:", sys.getsizeof(pool))
+        mem_test_file = "saved_" + str(generation)
+        file = open(mem_test_file, 'wb')
+        pickle.dump(net_copies, file)
+        file.close()
+        pool.close()
+        pool.join()
+        del pool
         population = new_pop
         generation += 1
     print("Final frame count:", str(total_frames))
