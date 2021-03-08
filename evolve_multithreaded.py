@@ -22,7 +22,21 @@ def multiEvalFitness(genome_list):
         frames_used += frames
         ret.append(fitness)
     return (ret, frames_used)
-
+    
+#The pool for elite evaluation needs a function that takes an extra arg based on the experiment
+#So I could look up how to do multi-args in a pool, or just this hacky workaround
+def getMultiEliteEval(trials):
+    def multiEvalFitnessElite(genome_list):
+        torch.set_default_tensor_type(torch.DoubleTensor)
+        ret = []
+        frames_used = 0
+        for g in genome_list:
+            fitness, frames = g.evalFitness(iters=trials, return_frames=True)
+            frames_used += frames
+            ret.append(fitness)
+        return (ret, frames_used)
+    return multiEvalFitnessElite
+    
 #Runs basic evolution on the given experiment and params
 #Creates a new generation through a combination of methods:
 #Crossover from two parents, mutation from one parent, or elitism
@@ -32,6 +46,7 @@ def evolve(experiment):
     set_start_method('spawn')
     pool = Pool(experiment.thread_count)
     thread_count = experiment.thread_count
+    eliteEvalFunc = getMultiEliteEval(experiment.elite_evals)
     time_start = time.perf_counter()
     #Set params based on the current experiment
     pop_size = experiment.population
@@ -195,17 +210,34 @@ def evolve(experiment):
         #Elite Carry-over; re-evaluates fitness first before selection
         #Currently not built to carry best of each species over; this should be handled by fitness sharing
         #And since this is typically only 1, we just want the fittest genome regardless of species
+        
+        #Eval all the elite nets many times
+        elite_nets = []
+        for species in population.species:
+            if species.size() >= experiment.elite_threshold and species.gens_since_improvement < experiment.gens_to_improve:
+                for i in range(experiment.elite_per_species):
+                    elite_nets.append(species[i])
+        net_copies = []
+        for _ in range(thread_count):
+            net_copies.append([])
+        for i in range(len(elite_nets)):
+            net_copies[i%thread_count].append(copy.deepcopy(elite_nets[i]))
+        multiReturn = pool.map(eliteEvalFunc, net_copies)
+        fitnesses = []
+        for thread in multiReturn:
+            fitnesses.append(thread[0])
+            total_frames += thread[1]
+        for i in range(len(elite_nets):
+            elite_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
+            
         for species in population.species:
             if species.size() >= experiment.elite_threshold and species.gens_since_improvement < experiment.gens_to_improve:
                 for i in range(experiment.elite_per_species): #This needs to be redone for elite_count > 1; currently would just take best genome twice
                     best_fitness = float('-inf')
                     fittest = None
                     for i in range(experiment.elite_range):
-                        fitsum = 0
-                        for j in range(experiment.elite_evals):
-                            fitsum += species[i].evalFitness() #eval will also return the new fitness, not just update it
-                        if fitsum/experiment.elite_evals > best_fitness:
-                            best_fitness = fitsum/experiment.elite_evals
+                        if species[i].fitness > best_fitness:
+                            best_fitness = species[i].fitness
                             fittest = species[i]
                     new_pop.add(fittest)
                     #Save each elite carryover to pickle file
