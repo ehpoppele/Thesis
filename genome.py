@@ -35,7 +35,6 @@ class Genome():
         self.mutate_effect = experiment.mutate_effect
         self.device = experiment.device #Device that network is evaluated on
         self.env = None
-        self.species = None
         self.model = None
         #Now initialize the random genotype
         if randomize:
