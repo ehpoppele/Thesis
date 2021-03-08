@@ -23,19 +23,17 @@ def multiEvalFitness(genome_list):
         ret.append(fitness)
     return (ret, frames_used)
     
-#The pool for elite evaluation needs a function that takes an extra arg based on the experiment
-#So I could look up how to do multi-args in a pool, or just this hacky workaround
-def getMultiEliteEval(trials):
-    def multiEvalFitnessElite(genome_list):
-        torch.set_default_tensor_type(torch.DoubleTensor)
-        ret = []
-        frames_used = 0
-        for g in genome_list:
-            fitness, frames = g.evalFitness(iters=trials, return_frames=True)
-            frames_used += frames
-            ret.append(fitness)
-        return (ret, frames_used)
-    return multiEvalFitnessElite
+global_elite_trials = 1
+
+def multiEvalFitnessElite(genome_list):
+    torch.set_default_tensor_type(torch.DoubleTensor)
+    ret = []
+    frames_used = 0
+    for g in genome_list:
+        fitness, frames = g.evalFitness(iters=global_elite_trials, return_frames=True)
+        frames_used += frames
+        ret.append(fitness)
+    return (ret, frames_used)
     
 #Runs basic evolution on the given experiment and params
 #Creates a new generation through a combination of methods:
@@ -46,7 +44,7 @@ def evolve(experiment):
     set_start_method('spawn')
     pool = Pool(experiment.thread_count)
     thread_count = experiment.thread_count
-    eliteEvalFunc = getMultiEliteEval(experiment.elite_evals)
+    global_elite_trials = experiment.elite_evals
     time_start = time.perf_counter()
     #Set params based on the current experiment
     pop_size = experiment.population
@@ -222,7 +220,7 @@ def evolve(experiment):
             net_copies.append([])
         for i in range(len(elite_nets)):
             net_copies[i%thread_count].append(copy.deepcopy(elite_nets[i]))
-        multiReturn = pool.map(eliteEvalFunc, net_copies)
+        multiReturn = pool.map(multiEvalFitnessElite, net_copies)
         fitnesses = []
         for thread in multiReturn:
             fitnesses.append(thread[0])
