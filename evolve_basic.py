@@ -22,15 +22,13 @@ def evolve(experiment):
     #Set params based on the current experiment
     pop_size = experiment.population
     generation_count = experiment.generations
-    outfile = experiment.outfile
     
     #Create new random population, sorted by starting fitness
     population = Population(experiment)
     new_nets = []
     saved = [] #Saving fittest from each gen to pickle file
-    if outfile == 'terminal':
-        sys.stdout.write("Evaluating Intial Fitness:")
-        sys.stdout.flush()
+    sys.stdout.write("Evaluating Intial Fitness:")
+    sys.stdout.flush()
     for i in range(pop_size):
         new_net = "Maybe I can write a function to make a new net of type specified by the experiment"
         if experiment.genome == 'NEAT':
@@ -60,10 +58,6 @@ def evolve(experiment):
         gen_report_string = "\nGeneration " + str(generation) + "\nTotal frames used: " + str(total_frames) + "\nHighest Fitness: "+ str(population.fittest().fitness) + "\nTotal elapsed time:" + str(time.perf_counter() - time_start) + " seconds\n"
         sys.stdout.write(gen_report_string)
         sys.stdout.flush()
-        if outfile != 'terminal':
-            f = open(outfile, "a")
-            f.write(gen_report_string)
-            f.close()
             
         #Next do the speciation work
         #Check all species and remove those that haven't improved in so many generations
@@ -87,11 +81,9 @@ def evolve(experiment):
         experiment.crossover_count = experiment.population - experiment.mutate_count - experiment.elite_count
         #Make the new population to fill this generation
         new_pop = Population(experiment)
-        if experiment.genome == "NEAT":
-            new_pop.is_speciated = True
         #Now we select species reps for the new pop based on the old one
-        for species in population.species:
-            rep = population.randOfSpecies(species)
+        for s in population.species:
+            rep = population.randOfSpecies(s)
             new_species = Species(experiment, rep, False) #The genome is copied over as a rep but not added
             rep.species = new_species
             new_pop.species.append(new_species)
@@ -186,8 +178,11 @@ def evolve(experiment):
                     save_copy = copy.deepcopy(fittest)
                     save_copy.species = None
                     saved.append([save_copy, best_fitness])
-        del population
+        file = open("old_pop_" + str(generation), 'wb')
+        pickle.dump(population, file)
         population = new_pop
+        file = open("new_pop_" + str(generation), 'wb')
+        pickle.dump(population, file)
         for species in population.species:
             for genome in species.genomes:
                 if genome.species != species:
