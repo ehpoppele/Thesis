@@ -85,7 +85,7 @@ def evolve(experiment):
         for s in population.species:
             rep = population.randOfSpecies(s)
             new_species = Species(experiment, rep, False) #The genome is copied over as a rep but not added
-            rep.species = new_species
+            #rep.species = new_ispecies
             new_pop.species.append(new_species)
 
         time.sleep(3)            
@@ -178,17 +178,20 @@ def evolve(experiment):
                     save_copy = copy.deepcopy(fittest)
                     save_copy.species = None
                     saved.append([save_copy, best_fitness])
-        file = open("old_pop_" + str(generation), 'wb')
-        pickle.dump(population, file)
+        file = open("experiment_" + str(generation), 'wb')
+        pickle.dump(experiment, file)
+        population.species = []
+        population.genomes = []
         population = new_pop
-        file = open("new_pop_" + str(generation), 'wb')
-        pickle.dump(population, file)
+        file = open("species_" + str(generation), 'wb')
+        pickle.dump(population.species[0], file)
         for species in population.species:
             for genome in species.genomes:
                 if genome.species != species:
                         assert False
-            if species.rep.species != species:
-                    assert False
+            species.rep.species = species
+        for g in population.genomes:
+            assert g.species == population.species[0]
         generation += 1
     print("Final frame count:", str(total_frames))
     return population, saved
