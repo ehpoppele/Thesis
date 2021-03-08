@@ -94,18 +94,18 @@ frostbite_1.outputs         = 18
 frostbite_1.layers          = 2
 frostbite_1.layer_size      = 512
 frostbite_1.trials          = 1
-frostbite_1.population      = 10#251
+frostbite_1.population      = 1001
 frostbite_1.generations     = 500
 frostbite_1.child_count     = 0
-frostbite_1.mutate_range    = 5#20
+frostbite_1.mutate_range    = 20
 frostbite_1.mutate_count    = frostbite_1.population - 1
 frostbite_1.mutate_effect   = 0.002
 frostbite_1.elite_count     = frostbite_1.population - (frostbite_1.child_count + frostbite_1.mutate_count)
-frostbite_1.elite_range     = 2#10
-frostbite_1.elite_evals     = 1#30
+frostbite_1.elite_range     = 10
+frostbite_1.elite_evals     = 30
 frostbite_1.outfile         = 'terminal' #"frostbite.txt"
 frostbite_1.genome_file     = None
-frostbite_1.thread_count    = 1#24
+frostbite_1.thread_count    = 24
 frostbite_1.max_frames      = 1000000000
 #---------------------------
 #Venture

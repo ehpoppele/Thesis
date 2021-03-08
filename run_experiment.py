@@ -40,12 +40,14 @@ if __name__ == "__main__":
     print()
     print("#-------------------------------#")
     print("Experiment has concluded normally")
-    fittest_genome = max(saved, key=lambda g: g[1])[0]#Finds the fittest genome based on the fitness saved for it during elite trial evals; ignores fitness sharing
+    fittest = max(saved, key=lambda g: g[1])#Finds the fittest genome based on the fitness saved for it during elite trial evals; ignores fitness sharing
+    print("Fitness before many evals:", fittest[1])
+    fittest_genome = fittest[0]
     fitness = fittest_genome.evalFitness(iters=200)
     #fittest = fit_pop.fittest()
     print("Highest Fitness:", fitness)
-    input("Press enter to continue to animation")
-    fittest_genome.experiment.trials = 1
-    fittest_genome.evalFitness(True)
+    #input("Press enter to continue to animation")
+    #fittest_genome.experiment.trials = 1
+    #fittest_genome.evalFitness(True)
     fittest_genome.printToTerminal()
     
