@@ -85,12 +85,7 @@ def evolve(experiment):
         #Now we select species reps for the new pop based on the old one
         for s in population.species:
             rep = population.randOfSpecies(s)
-<<<<<<< HEAD
-            new_species = Species(experiment, rep, False) #The genome is copied over as a rep but not added
-            #rep.species = new_ispecies
-=======
             new_species = Species(experiment, rep, False, s.gens_since_improvement, s.last_fittest, s.can_reproduce) #The genome is copied over as a rep but not added
->>>>>>> ec4f1f2fef0e07125edbeef3d402be04784f9cf5
             new_pop.species.append(new_species)
 
         time.sleep(3)            
