@@ -53,7 +53,6 @@ class NEATGenome(Genome):
         self.nodes = []
         self.weights = []
         self.disabled = [] #holds all the connections (weights) that have been disabled, which may be re-enabled later
-        self.species = None #pointer to species object
         #Randomize should only be used for genomes created at the start of the experiment
         #For this reason, they have standardized (sequential) innovation numbers
         if randomize:
