@@ -227,7 +227,7 @@ def evolve(experiment):
         for thread in multiReturn:
             fitnesses.append(thread[0])
             total_frames += thread[1]
-        for i in range(len(elite_nets):
+        for i in range(len(elite_nets)):
             elite_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
             
         for species in population.species:
