@@ -31,21 +31,18 @@ def evolve(experiment):
     total_frames = 0
     set_start_method('spawn')
     pool = Pool(experiment.thread_count)
-    #torch.multiprocessing.set_start_method('spawn')
     thread_count = experiment.thread_count
     time_start = time.perf_counter()
     #Set params based on the current experiment
     pop_size = experiment.population
     generation_count = experiment.generations
-    outfile = experiment.outfile
     
     #Create new random population, sorted by starting fitness
     population = Population(experiment)
     new_nets = []
     saved = [] #Saving fittest from each gen to pickle file
-    if outfile == 'terminal':
-        sys.stdout.write("Evaluating Intial Fitness:")
-        sys.stdout.flush()
+    sys.stdout.write("Evaluating Intial Fitness:")
+    sys.stdout.flush()
     for i in range(pop_size):
         new_net = "Maybe I can write a function to make a new net of type specified by the experiment"
         if experiment.genome == 'NEAT':
@@ -69,10 +66,6 @@ def evolve(experiment):
         new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
     for net in new_nets:
         population.add(net)
-    pool.close()
-    pool.join()
-    del pool
-    net_copies = []
 
     #Run the main algorithm over many generations
     #for g in range(generation_count):
@@ -89,10 +82,6 @@ def evolve(experiment):
         gen_report_string = "\nGeneration " + str(generation) + "\nTotal frames used: " + str(total_frames) + "\nHighest Fitness: "+ str(population.fittest().fitness) + "\nTotal elapsed time:" + str(time.perf_counter() - time_start) + " seconds\n"
         sys.stdout.write(gen_report_string)
         sys.stdout.flush()
-        if outfile != 'terminal':
-            f = open(outfile, "a")
-            f.write(gen_report_string)
-            f.close()
             
         #Next do the speciation work
         #Check all species and remove those that haven't improved in so many generations
@@ -100,8 +89,9 @@ def evolve(experiment):
         #Adjust fitness of each individual with fitness sharing
         #Done here so it is skipped for the final population, where plain maximum fitness is desired
         if experiment.fitness_sharing:
-            for genome in population:
-                genome.fitness = genome.fitness/genome.species.size()
+            for species in population.species:
+                for genome in species:
+                    genome.fitness = genome.fitness/species.size()
         #Population is re-ordered afterwards based on new fitness
         population.reorder() #make sure this is only called when necessary
         #Assign how many offspring each species gets based on fitness of the species
@@ -116,13 +106,10 @@ def evolve(experiment):
         experiment.crossover_count = experiment.population - experiment.mutate_count - experiment.elite_count
         #Make the new population to fill this generation
         new_pop = Population(experiment)
-        if experiment.genome == "NEAT":
-            new_pop.is_speciated = True
         #Now we select species reps for the new pop based on the old one
-        for species in population.species:
-            rep = population.randOfSpecies(species)
-            new_species = Species(experiment, rep, False) #The genome is copied over as a rep but not added
-            rep.species = new_species
+        for s in population.species:
+            rep = population.randOfSpecies(s)
+            new_species = Species(experiment, rep, False, s.gens_since_improvement, s.last_fittest, s.can_reproduce) #The genome is copied over as a rep but not added
             new_pop.species.append(new_species)
 
         time.sleep(3)            
@@ -188,14 +175,11 @@ def evolve(experiment):
         time.sleep(7)
         print("Evaluating new networks")
         
-        pool = Pool(experiment.thread_count)
         net_copies = []
         for _ in range(thread_count):
             net_copies.append([])
         for i in range(pop_size-elite_count):
-            copied = copy.deepcopy(new_nets[i])
-            copied.species = None
-            net_copies[i%thread_count].append(copied)
+            net_copies[i%thread_count].append(copy.deepcopy(new_nets[i]))
         multiReturn = pool.map(multiEvalFitness, net_copies)
         fitnesses = []
         for thread in multiReturn:
@@ -205,10 +189,6 @@ def evolve(experiment):
             new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
         for net in new_nets:
             new_pop.add(net)
-        net_copies = []
-        pool.close()
-        pool.join
-        del pool
         
         print("Selecting elite networks")
 
@@ -230,16 +210,10 @@ def evolve(experiment):
                     new_pop.add(fittest)
                     #Save each elite carryover to pickle file
                     save_copy = copy.deepcopy(fittest)
-                    save_copy.species = None
                     saved.append([save_copy, best_fitness])
-        del population
+        population.species = []
+        population.genomes = []
         population = new_pop
-        for species in population.species:
-            for genome in species.genomes:
-                if genome.species != species:
-                        assert False
-            if species.rep.species != species:
-                    assert False
         generation += 1
     print("Final frame count:", str(total_frames))
     return population, saved

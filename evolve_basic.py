@@ -177,8 +177,6 @@ def evolve(experiment):
                     #Save each elite carryover to pickle file
                     save_copy = copy.deepcopy(fittest)
                     saved.append([save_copy, best_fitness])
-        file = open("experiment_" + str(generation), 'wb')
-        pickle.dump(experiment, file)
         population.species = []
         population.genomes = []
         population = new_pop
