@@ -65,8 +65,9 @@ def evolve(experiment):
         #Adjust fitness of each individual with fitness sharing
         #Done here so it is skipped for the final population, where plain maximum fitness is desired
         if experiment.fitness_sharing:
-            for genome in population:
-                genome.fitness = genome.fitness/genome.species.size()
+            for species in population.species:
+                for genome in species:
+                    genome.fitness = genome.fitness/species.size()
         #Population is re-ordered afterwards based on new fitness
         population.reorder() #make sure this is only called when necessary
         #Assign how many offspring each species gets based on fitness of the species
@@ -84,8 +85,12 @@ def evolve(experiment):
         #Now we select species reps for the new pop based on the old one
         for s in population.species:
             rep = population.randOfSpecies(s)
+<<<<<<< HEAD
             new_species = Species(experiment, rep, False) #The genome is copied over as a rep but not added
             #rep.species = new_ispecies
+=======
+            new_species = Species(experiment, rep, False, s.gens_since_improvement, s.last_fittest, s.can_reproduce) #The genome is copied over as a rep but not added
+>>>>>>> ec4f1f2fef0e07125edbeef3d402be04784f9cf5
             new_pop.species.append(new_species)
 
         time.sleep(3)            
@@ -176,22 +181,12 @@ def evolve(experiment):
                     new_pop.add(fittest)
                     #Save each elite carryover to pickle file
                     save_copy = copy.deepcopy(fittest)
-                    save_copy.species = None
                     saved.append([save_copy, best_fitness])
         file = open("experiment_" + str(generation), 'wb')
         pickle.dump(experiment, file)
         population.species = []
         population.genomes = []
         population = new_pop
-        file = open("species_" + str(generation), 'wb')
-        pickle.dump(population.species[0], file)
-        for species in population.species:
-            for genome in species.genomes:
-                if genome.species != species:
-                        assert False
-            species.rep.species = species
-        for g in population.genomes:
-            assert g.species == population.species[0]
         generation += 1
     print("Final frame count:", str(total_frames))
     return population, saved

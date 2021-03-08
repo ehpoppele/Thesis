@@ -9,7 +9,7 @@ import multiprocessing
 class Species():
 
     #Defined with a representative to which other genomes are compared to see if they fall in the species
-    def __init__(self, experiment, representative, add_rep=True):
+    def __init__(self, experiment, representative, add_rep=True, gens_since_improvement=0, last_fittest=0, can_reproduce=True):
         self.genomes = []
         self.experiment = experiment
         self.selection_type = experiment.species_select #How fit genomes are selected for mutation/crossover
@@ -24,9 +24,9 @@ class Species():
             self.add(representative)
         #If not, then we are copying over an old species, so we retain the same data
         else:
-            self.gens_since_improvement = representative.species.gens_since_improvement
-            self.last_fittest = representative.species.last_fittest
-            self.can_reproduce = representative.species.can_reproduce
+            self.gens_since_improvement = gens_since_improvement
+            self.last_fittest = last_fittest
+            self.can_reproduce = can_reproduce
          
     def __getitem__(self, index):
         return self.genomes[index]
@@ -122,13 +122,11 @@ class Population(Species):
             for species in self.species:
                 if genome.speciesDistance(species.rep) < genome.experiment.max_species_dist:
                     species.add(genome)
-                    genome.species = species
                     assigned = True
                     break
             #Genome becomes the rep for a new species
             if not assigned:
                 new_species = Species(self.experiment, genome)
-                genome.species = new_species
                 self.species.append(new_species)
     
     #Sorts the population by fitness again, to be used after mass changes to fitness (like with fitness sharing)
