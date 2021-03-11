@@ -13,6 +13,8 @@ from genome import *
 from genome_NEAT import *
 from population import *
 
+
+"""
 def multiEvalFitness(genome_list):
     torch.set_default_tensor_type(torch.DoubleTensor)
     ret = []
@@ -22,6 +24,9 @@ def multiEvalFitness(genome_list):
         frames_used += frames
         ret.append(fitness)
     return (ret, frames_used)
+"""
+def multiEvalFitness(genome):
+    return genome.evalFitness(return_frames=True)
 
 def multiEvalFitnessElite(g):
     torch.set_default_tensor_type(torch.DoubleTensor)
@@ -56,6 +61,7 @@ def evolve(experiment):
         new_nets.append(new_net)
         
     #Multithreaded fitness evaluation
+    """
     net_copies = []
     for _ in range(thread_count):
         net_copies.append([])
@@ -68,6 +74,16 @@ def evolve(experiment):
         total_frames += thread[1]
     for i in range(pop_size):
         new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
+    for net in new_nets:
+        population.add(net)
+    """
+    net_copies = []
+    for i in range(pop_size):
+        net_copies.append(copy.deepcopy(new_nets[i]))
+    multiReturn = pool.map(multiEvalFitness, net_copies)
+    for i in range(pop_size):
+        new_nets[i].fitness = multiReturn[i][0]
+        total_frames += multiReturn[i][1]
     for net in new_nets:
         population.add(net)
 
@@ -178,17 +194,12 @@ def evolve(experiment):
             new_nets.append(n)
         
         net_copies = []
-        for _ in range(thread_count):
-            net_copies.append([])
         for i in range(pop_size-elite_count):
-            net_copies[i%thread_count].append(copy.deepcopy(new_nets[i]))
+            net_copies.append(copy.deepcopy(new_nets[i]))
         multiReturn = pool.map(multiEvalFitness, net_copies)
-        fitnesses = []
-        for thread in multiReturn:
-            fitnesses.append(thread[0])
-            total_frames += thread[1]
         for i in range(pop_size-elite_count):
-            new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
+            new_nets[i].fitness = multiReturn[i][0]
+            total_frames += multiReturn[i][1]
         for net in new_nets:
             new_pop.add(net)
 
