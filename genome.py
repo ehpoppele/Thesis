@@ -53,8 +53,7 @@ class Genome():
             #self.rebuildModel()
             
     def printToTerminal(self):
-        for g in self.genotype:
-            print(g)
+        print("Nothing to show for this type of genome")
 
     #Makes a new neural network for the genome based on its current genotype
     def rebuildModel(self):

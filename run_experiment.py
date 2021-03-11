@@ -43,9 +43,21 @@ if __name__ == "__main__":
     fittest = max(saved, key=lambda g: g[1])#Finds the fittest genome based on the fitness saved for it during elite trial evals; ignores fitness sharing
     print("Fitness before many evals:", fittest[1])
     fittest_genome = fittest[0]
-    fitness = fittest_genome.evalFitness(iters=200)
+
+    maxf = float("-inf")
+    minf = float("inf")
+    total = 0
+    for i in range(200):
+        fit = fittest_genome.evalFitness()
+        total += fit
+        maxf = max(maxf, fit)
+        minf = min(minf, fit)
+    fitness = total/200
+    #fitness = fittest_genome.evalFitness(iters=200)
     #fittest = fit_pop.fittest()
     print("Highest Fitness:", fitness)
+    print("Highest Score:", maxf)
+    print("Lowest Score:", minf)
     #input("Press enter to continue to animation")
     #fittest_genome.experiment.trials = 1
     #fittest_genome.evalFitness(True)

@@ -104,7 +104,7 @@ frostbite_1.elite_count     = frostbite_1.population - (frostbite_1.child_count 
 frostbite_1.elite_range     = 10
 frostbite_1.elite_evals     = 30
 frostbite_1.outfile         = 'terminal' #"frostbite.txt"
-frostbite_1.genome_file     = None
+frostbite_1.genome_file     = 'Pickled\ Genomes/frost_genes.pjar'
 frostbite_1.thread_count    = 24
 frostbite_1.max_frames      = 1000000000
 #---------------------------
