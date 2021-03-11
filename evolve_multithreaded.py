@@ -22,12 +22,10 @@ def multiEvalFitness(genome_list):
         frames_used += frames
         ret.append(fitness)
     return (ret, frames_used)
-    
-global_elite_trials = 30
 
 def multiEvalFitnessElite(g):
     torch.set_default_tensor_type(torch.DoubleTensor)
-    return (g.evalFitness(iters=global_elite_trials))
+    return (g.evalFitness(iters=g.experiment.elite_evals))
     
 #Runs basic evolution on the given experiment and params
 #Creates a new generation through a combination of methods:
@@ -38,7 +36,6 @@ def evolve(experiment):
     set_start_method('spawn')
     pool = Pool(experiment.thread_count)
     thread_count = experiment.thread_count
-    global_elite_trials = experiment.elite_evals
     time_start = time.perf_counter()
     #Set params based on the current experiment
     pop_size = experiment.population
