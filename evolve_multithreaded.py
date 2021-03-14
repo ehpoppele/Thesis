@@ -13,6 +13,8 @@ from genome import *
 from genome_NEAT import *
 from population import *
 
+
+"""
 def multiEvalFitness(genome_list):
     torch.set_default_tensor_type(torch.DoubleTensor)
     ret = []
@@ -22,18 +24,13 @@ def multiEvalFitness(genome_list):
         frames_used += frames
         ret.append(fitness)
     return (ret, frames_used)
-    
-global_elite_trials = 1
+"""
+def multiEvalFitness(genome):
+    return genome.evalFitness(return_frames=True)
 
-def multiEvalFitnessElite(genome_list):
+def multiEvalFitnessElite(g):
     torch.set_default_tensor_type(torch.DoubleTensor)
-    ret = []
-    frames_used = 0
-    for g in genome_list:
-        fitness, frames = g.evalFitness(iters=global_elite_trials, return_frames=True)
-        frames_used += frames
-        ret.append(fitness)
-    return (ret, frames_used)
+    return (g.evalFitness(iters=g.experiment.elite_evals))
     
 #Runs basic evolution on the given experiment and params
 #Creates a new generation through a combination of methods:
@@ -44,7 +41,6 @@ def evolve(experiment):
     set_start_method('spawn')
     pool = Pool(experiment.thread_count)
     thread_count = experiment.thread_count
-    global_elite_trials = experiment.elite_evals
     time_start = time.perf_counter()
     #Set params based on the current experiment
     pop_size = experiment.population
@@ -65,6 +61,7 @@ def evolve(experiment):
         new_nets.append(new_net)
         
     #Multithreaded fitness evaluation
+    """
     net_copies = []
     for _ in range(thread_count):
         net_copies.append([])
@@ -79,6 +76,16 @@ def evolve(experiment):
         new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
     for net in new_nets:
         population.add(net)
+    """
+    net_copies = []
+    for i in range(pop_size):
+        net_copies.append(copy.deepcopy(new_nets[i]))
+    multiReturn = pool.map(multiEvalFitness, net_copies)
+    for i in range(pop_size):
+        new_nets[i].fitness = multiReturn[i][0]
+        total_frames += multiReturn[i][1]
+    for net in new_nets:
+        population.add(net)
 
     #Run the main algorithm over many generations
     #for g in range(generation_count):
@@ -91,7 +98,7 @@ def evolve(experiment):
             population[0].printToTerminal()
             population[1].printToTerminal()
             population[2].printToTerminal()
-            print("Species Report: size, gens_since_improvement, record fitness, current fitnes")
+            print("Species Report: size, gens_since_improvement, record fitness, current fitness")
             for s in population.species:
                 if s.size() > 0:
                     print(s.size(), s.gens_since_improvement, s.last_fittest, s.genomes[0].fitness)
@@ -128,9 +135,6 @@ def evolve(experiment):
             rep = population.randOfSpecies(s)
             new_species = Species(experiment, rep, False, s.gens_since_improvement, s.last_fittest, s.can_reproduce) #The genome is copied over as a rep but not added
             new_pop.species.append(new_species)
-
-        time.sleep(3)            
-        print("Creating new networks")
 
         new_nets = []  
             
@@ -189,25 +193,15 @@ def evolve(experiment):
         for n in mutated:
             new_nets.append(n)
         
-        time.sleep(7)
-        print("Evaluating new networks")
-        
         net_copies = []
-        for _ in range(thread_count):
-            net_copies.append([])
         for i in range(pop_size-elite_count):
-            net_copies[i%thread_count].append(copy.deepcopy(new_nets[i]))
+            net_copies.append(copy.deepcopy(new_nets[i]))
         multiReturn = pool.map(multiEvalFitness, net_copies)
-        fitnesses = []
-        for thread in multiReturn:
-            fitnesses.append(thread[0])
-            total_frames += thread[1]
         for i in range(pop_size-elite_count):
-            new_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
+            new_nets[i].fitness = multiReturn[i][0]
+            total_frames += multiReturn[i][1]
         for net in new_nets:
             new_pop.add(net)
-        
-        print("Selecting elite networks")
 
         #Elite Carry-over; re-evaluates fitness first before selection
         #Currently not built to carry best of each species over; this should be handled by fitness sharing
@@ -220,17 +214,11 @@ def evolve(experiment):
                 for i in range(experiment.elite_per_species):
                     elite_nets.append(species[i])
         net_copies = []
-        for _ in range(thread_count):
-            net_copies.append([])
         for i in range(len(elite_nets)):
-            net_copies[i%thread_count].append(copy.deepcopy(elite_nets[i]))
-        multiReturn = pool.map(multiEvalFitnessElite, net_copies)
-        fitnesses = []
-        for thread in multiReturn:
-            fitnesses.append(thread[0])
-            total_frames += thread[1]
+            net_copies.append(copy.deepcopy(elite_nets[i]))
+        fitnesses = pool.map(multiEvalFitnessElite, net_copies)
         for i in range(len(elite_nets)):
-            elite_nets[i].fitness = fitnesses[i%thread_count][i//thread_count]
+            elite_nets[i].fitness = fitnesses[i]
             
         for species in population.species:
             if species.size() >= experiment.elite_threshold and species.gens_since_improvement < experiment.gens_to_improve:
@@ -242,6 +230,7 @@ def evolve(experiment):
                             best_fitness = species[i].fitness
                             fittest = species[i]
                     new_pop.add(fittest)
+                    print("Elite fitness:", best_fitness)
                     #Save each elite carryover to pickle file
                     save_copy = copy.deepcopy(fittest)
                     saved.append([save_copy, best_fitness])

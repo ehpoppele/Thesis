@@ -78,12 +78,14 @@ class TensorNEATGenome(Genome):
             else:
                 new.biases.append(copy.deepcopy(self.biases[i]))
         #New network has a full set of layers now, so we can add or remove them
+        #Adding a new tensor
         if new.layer_count < exp.max_network_size and random.random() < exp.layer_add_chance:
             assert new.layer_count > 0
             index = random.randint(1, new.layer_count)
             new.weights.insert(index, torch.eye(new.layer_size))
             new.biases.insert(index, torch.zeros(new.layer_size))
             new.layer_count += 1
+        #Collapsing two old tensors into one
         if new.layer_count > 1 and random.random() < exp.layer_collapse_chance:
             index = random.randint(0, new.layer_count-2) #can't collapse the last tensor into another one since the biases will have different sizes
             new.weights.insert(index, new.weights[index] @ new.weights[index+1])
@@ -103,6 +105,7 @@ class TensorNEATGenome(Genome):
         left_index = random.randint(0, self.layer_count-1)
         right_index = random.randint(1, other.layer_count)
         new.layer_size = self.layer_size
+        #Fancy work goes here to ensure that the new genome does not exceed the maximum layer count
         for i in range(left_index+1):
             new.weights.append(self.weights[i])
             new.biases.append(self.biases[i])

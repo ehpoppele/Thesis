@@ -21,7 +21,7 @@ class Experiment():
         self.thread_count = 1
         self.device = 'cpu'
         self.population = 101
-        self.generations = 100
+        self.generations = 10000
         self.gens_to_improve = self.generations #To effectively ignore species constraints
         self.max_species_dist =  1.0 #Basic genomes should always be considered same species, but this is dealt with in distance function
         self.interspecies_crossover = 0.0 #No crossover in general
@@ -104,7 +104,7 @@ frostbite_1.elite_count     = frostbite_1.population - (frostbite_1.child_count 
 frostbite_1.elite_range     = 10
 frostbite_1.elite_evals     = 30
 frostbite_1.outfile         = 'terminal' #"frostbite.txt"
-frostbite_1.genome_file     = None
+frostbite_1.genome_file     = 'PickledGenomes/frost_genes.pjar'
 frostbite_1.thread_count    = 24
 frostbite_1.max_frames      = 1000000000
 #---------------------------
