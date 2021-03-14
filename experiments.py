@@ -21,7 +21,7 @@ class Experiment():
         self.thread_count = 1
         self.device = 'cpu'
         self.population = 101
-        self.generations = 100
+        self.generations = 10000
         self.gens_to_improve = self.generations #To effectively ignore species constraints
         self.max_species_dist =  1.0 #Basic genomes should always be considered same species, but this is dealt with in distance function
         self.interspecies_crossover = 0.0 #No crossover in general
