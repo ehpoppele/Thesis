@@ -88,13 +88,13 @@ cart_pole.thread_count  = 8
 #Frostbite
 frostbite_1 = Experiment('Frostbite')
 frostbite_1.env             = gym.make('Frostbite-ram-v0', frameskip=4)
-frostbite_1.device          = 'cpu'
+frostbite_1.device          = 'cuda'
 frostbite_1.inputs          = 128
 frostbite_1.outputs         = 18
 frostbite_1.layers          = 2
 frostbite_1.layer_size      = 512
 frostbite_1.trials          = 1
-frostbite_1.population      = 1001
+frostbite_1.population      = 101
 frostbite_1.generations     = 500
 frostbite_1.child_count     = 0
 frostbite_1.mutate_range    = 20
