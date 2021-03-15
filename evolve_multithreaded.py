@@ -26,6 +26,7 @@ def multiEvalFitness(genome_list):
     return (ret, frames_used)
 """
 def multiEvalFitness(genome):
+    torch.set_default_tensor_type(torch.DoubleTensor)
     return genome.evalFitness(return_frames=True)
 
 def multiEvalFitnessElite(g):
