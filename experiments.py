@@ -111,21 +111,17 @@ frostbite_1.max_frames      = 1000000000
 #Venture
 venture_1 = Experiment('Venture')
 venture_1.env             = gym.make('Venture-ram-v0', frameskip=4)
-venture_1.device          = 'cuda'
 venture_1.inputs          = 128
 venture_1.outputs         = 18
 venture_1.layers          = 2
 venture_1.layer_size      = 512
 venture_1.trials          = 1
 venture_1.population      = 1001
-venture_1.generations     = 10
-venture_1.child_count     = 0
-venture_1.mutate_range    = 20
-venture_1.mutate_count    = venture_1.population - 1
-venture_1.mutate_effect   = 0.002
-venture_1.elite_count     = venture_1.population - (venture_1.child_count + venture_1.mutate_count)
-venture_1.elite_range     = 10
-venture_1.elite_evals     = 30
+venture_1.generations     = 9999
+venture_1.outfile         = 'terminal'
+venture_1.genome_file     = 'PickledGenomes/venture_genes.pjar'
+venture_1.thread_count    = 24
+venture_1.max_frames      = 1000000000
 #---------------------------
 cart_NEAT = NEATExperiment('CartPole_NEAT')
 cart_NEAT.env         = gym.make('CartPole-v0')

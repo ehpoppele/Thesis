@@ -285,5 +285,8 @@ Change innovation nums to stop using all caps
 standardize child and new to offspring
 remove outfile system and just use prints?
 
+assault, atlantis, seaquest -- GA worse than other methods, test to see if NEAT can succeed
+frostbite, skiing, venture -- GA has best performance, test to see if i can replicate results and exceed them with tensor genome 
+
 
 
