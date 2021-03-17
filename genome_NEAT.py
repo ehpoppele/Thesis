@@ -301,19 +301,34 @@ class NEATGenome(Genome):
             else:
                 child.weights.append(copy.deepcopy(weight))
         #And do the same for disabled weights, with a chance for them to re-enabled
+        to_add = [] #Disabled weights must be added in a sorted order into the list to maintain the order
         for weight in primary.disabled:
             i_num = weight.innovation_num
             other_weight = next((n for n in secondary.disabled if n.innovation_num == i_num), None)
             if other_weight is not None and random.random() > 0.5:
                 if random.random() < self.reenable_chance:
-                    child.weights.append(copy.deepcopy(other_weight))
+                    to_add.append(copy.deepcopy(other_weight))
                 else:
                     child.disabled.append(copy.deepcopy(other_weight))
             else:
                 if random.random() < self.reenable_chance:
-                    child.weights.append(copy.deepcopy(weight))
+                    to_add.append(copy.deepcopy(weight))
                 else:
                     child.disabled.append(copy.deepcopy(weight))
+        #Add re-enabled weights while keeping weights sorted by inum
+        for w in to_add:
+            added = False
+            i_num = w.innovation_num
+            for i in range(len(child.weights)):
+                if child.weights[i].innovation_num = i_num:
+                    added = True #This is a lie, technically
+                    break #This shouldn't happen, but just in case; we don't want multiple weights with same inums
+                if child.weights[i].innovation_num > i_num:
+                    child.weights.insert(i, w)
+                    added = True
+                    break
+            if not added:
+                child.weights.append(w)
         #Now we need to fix the weights so they point to the new copies of the nodes now in this network
         #This looks like an expensive double loop; not sure yet how much time it actually takes up
         for weight in child.weights:
@@ -383,7 +398,7 @@ class NEATGenome(Genome):
                     node.bias += (random.random() * self.mutate_effect) - (self.mutate_effect/2) #perturb
                 else:
                     node.bias = (random.random() * self.mutate_effect) - (self.mutate_effect/2) #reset
-        if random.random() < new.m_connection_chance: #If this tries to add a connection which already exists, it will allow it, but one at random will overwrite the rest in the actual tensor, I believe
+        if random.random() < new.m_connection_chance:
             #Select two nodes
             node_1 = new.nodes[random.randrange(len(new.nodes))]
             node_2 = new.nodes[random.randrange(len(new.nodes))]
