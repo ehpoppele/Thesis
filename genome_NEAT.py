@@ -81,15 +81,18 @@ class NEATGenome(Genome):
     def printToTerminal(self):
         print("Fitness:")
         print(self.fitness)
-        print("Nodes:")
-        for node in self.nodes:
-            print(node.innovation_num, node.type, node.layer, node.bias)
-        print("Weights:")
-        for weight in self.weights:
-            print(weight.innovation_num, weight.origin.innovation_num, weight.destination.innovation_num, weight.value)
+        print("Extra Nodes:")
+        print(len(self.nodes)-self.experiment.inputs-self.experiment.outputs) 
+        #for node in self.nodes:
+        #    print(node.innovation_num, node.type, node.layer, node.bias)
+        print("Extra Weights:")
+        print(len(self.weights) - (self.experiment.inputs*self.experiment.outputs))
+        #for weight in self.weights:
+        #    print(weight.innovation_num, weight.origin.innovation_num, weight.destination.innovation_num, weight.value)
         print("Disabled Weights:")
-        for weight in self.disabled:
-            print(weight.innovation_num, weight.origin.innovation_num, weight.destination.innovation_num, weight.value)
+        print(len(self.disabled))
+        #for weight in self.disabled:
+        #    print(weight.innovation_num, weight.origin.innovation_num, weight.destination.innovation_num, weight.value)
         print()
             
     #Returns the species distance between two genomes, following the formula from the paper
