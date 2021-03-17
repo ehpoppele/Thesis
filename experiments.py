@@ -120,7 +120,7 @@ venture_1.population      = 1001
 venture_1.generations     = 9999
 venture_1.outfile         = 'terminal'
 venture_1.genome_file     = 'PickledGenomes/venture_genes.pjar'
-venture_1.thread_count    = 24
+venture_1.thread_count    = 12
 venture_1.max_frames      = 1000000000
 #---------------------------
 cart_NEAT = NEATExperiment('CartPole_NEAT')
