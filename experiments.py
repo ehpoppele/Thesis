@@ -82,7 +82,7 @@ cart_pole.trials        = 10
 cart_pole.population    = 101
 cart_pole.generations   = 1 #20    #needs 35 for stable no-oscillation
 cart_pole.mutate_effect = 1.0/cart_pole.inputs
-cart_pole.genome_file   = './Pickled Genomes/cart_genes.pjar' #'/Pickled Genomes/cart_genes.pjar'
+cart_pole.genome_file   = './Pickled Genomes/cart_genes' #'/Pickled Genomes/cart_genes.pjar'
 cart_pole.thread_count  = 8
 #---------------------------
 #Frostbite
@@ -104,7 +104,7 @@ frostbite_1.elite_count     = frostbite_1.population - (frostbite_1.child_count 
 frostbite_1.elite_range     = 10
 frostbite_1.elite_evals     = 30
 frostbite_1.outfile         = 'terminal' #"frostbite.txt"
-frostbite_1.genome_file     = 'PickledGenomes/frost_genes.pjar'
+frostbite_1.genome_file     = 'PickledGenomes/frost_genes'
 frostbite_1.thread_count    = 24
 frostbite_1.max_frames      = 1000000000
 #---------------------------
@@ -119,7 +119,7 @@ venture_1.trials          = 1
 venture_1.population      = 1001
 venture_1.generations     = 9999
 venture_1.outfile         = 'terminal'
-venture_1.genome_file     = 'PickledGenomes/venture_genes.pjar'
+venture_1.genome_file     = 'PickledGenomes/venture_genes'
 venture_1.thread_count    = 12
 venture_1.max_frames      = 1000000000
 #---------------------------
@@ -171,6 +171,7 @@ frost_NEAT.species_c3       = 0.01
 frost_NEAT.max_species_dist = 13.0
 frost_NEAT.mutate_odds      = [0.8, 0.9, 0.06, 0.1]
 frost_NEAT.max_frames       = 1000000000
+frost_NEAT.genome_file = "PickledGenomes/Frost_NEAT_Genes"
 #---------------------------
 xor = NEATExperiment("XOR")
 xor.env = XOR_env()
