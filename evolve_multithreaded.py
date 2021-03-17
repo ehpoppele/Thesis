@@ -31,7 +31,7 @@ def multiEvalFitness(genome):
 
 def multiEvalFitnessElite(g):
     torch.set_default_tensor_type(torch.DoubleTensor)
-    return (g.evalFitness(iters=g.experiment.elite_evals))
+    return (g.evalFitness(iters=g.experiment.elite_evals, return_frames=True))
     
 #Runs basic evolution on the given experiment and params
 #Creates a new generation through a combination of methods:
@@ -223,10 +223,11 @@ def evolve(experiment):
         net_copies = []
         for i in range(len(elite_nets)):
             net_copies.append(copy.deepcopy(elite_nets[i]))
-        fitnesses = pool.map(multiEvalFitnessElite, net_copies)
+        multiReturn = pool.map(multiEvalFitnessElite, net_copies)
         #print(fitnesses)
         for i in range(len(elite_nets)):
-            elite_nets[i].fitness = fitnesses[i]
+            elite_nets[i].fitness = multiReturn[i][0]
+            total_frames += multiReturn[i][1]
            
         elite_max = float("-inf")
         for species in population.species:
