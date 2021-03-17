@@ -39,7 +39,11 @@ def multiEvalFitnessElite(g):
 #Ratios of this are specified by experiment
 def evolve(experiment):
     total_frames = 0
-    set_start_method('spawn')
+    #If CUDA is breaking try adding this and removing it from main/run_experiment
+    #try:
+    #    set_start_method('spawn')
+    #except RuntimeError:
+    #    pass
     pool = Pool(experiment.thread_count)
     thread_count = experiment.thread_count
     time_start = time.perf_counter()
@@ -94,6 +98,7 @@ def evolve(experiment):
     while total_frames < experiment.max_frames:
         #First print reports on generation:
         #Debugging report I hope to remove soon
+        """
         if generation%20 == 0:
             print("Top genomes:")
             population[0].printToTerminal()
@@ -107,7 +112,8 @@ def evolve(experiment):
         gen_report_string = "\nGeneration " + str(generation) + "\nTotal frames used: " + str(total_frames) + "\nHighest Fitness: "+ str(population.fittest().fitness) + "\nTotal elapsed time:" + str(time.perf_counter() - time_start) + " seconds\n"
         sys.stdout.write(gen_report_string)
         sys.stdout.flush()
-            
+        """
+
         #Next do the speciation work
         #Check all species and remove those that haven't improved in so many generations
         population.checkSpeciesForImprovement(experiment.gens_to_improve)
@@ -212,15 +218,17 @@ def evolve(experiment):
         elite_nets = []
         for species in population.species:
             if species.size() >= experiment.elite_threshold and species.gens_since_improvement < experiment.gens_to_improve:
-                for i in range(experiment.elite_per_species):
+                for i in range(experiment.elite_range):
                     elite_nets.append(species[i])
         net_copies = []
         for i in range(len(elite_nets)):
             net_copies.append(copy.deepcopy(elite_nets[i]))
         fitnesses = pool.map(multiEvalFitnessElite, net_copies)
+        #print(fitnesses)
         for i in range(len(elite_nets)):
             elite_nets[i].fitness = fitnesses[i]
-            
+           
+        elite_max = float("-inf")
         for species in population.species:
             if species.size() >= experiment.elite_threshold and species.gens_since_improvement < experiment.gens_to_improve:
                 for i in range(experiment.elite_per_species): #This needs to be redone for elite_count > 1; currently would just take best genome twice
@@ -230,14 +238,18 @@ def evolve(experiment):
                         if species[i].fitness > best_fitness:
                             best_fitness = species[i].fitness
                             fittest = species[i]
+                    elite_max = max(best_fitness, elite_max)
                     new_pop.add(fittest)
-                    print("Elite fitness:", best_fitness)
+                    #print("Elite fitness:", best_fitness)
                     #Save each elite carryover to pickle file
                     save_copy = copy.deepcopy(fittest)
                     saved.append([save_copy, best_fitness])
+        print(elite_max)
         population.species = []
         population.genomes = []
         population = new_pop
         generation += 1
     print("Final frame count:", str(total_frames))
+    print("Total generations:", generation)
+    print("Time Elapsed:", time.perf_counter()-time_start)
     return population, saved
