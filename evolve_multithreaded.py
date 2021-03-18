@@ -245,8 +245,9 @@ def evolve(experiment):
                     #Save each elite carryover to pickle file
                     save_copy = copy.deepcopy(fittest)
                     saved.append([save_copy, best_fitness])
-        time_string = str(time.perf_counter()-time_start//3600) + ":" + str((time.perf_counter()-time_start%3600)//60) + ":" + str(time.perf_counter()-time_start%60)
-        sys.stdout.write(str(100*total_frames/experiment.max_frames) + "% complete | " + time_string + " elapsed | " + str(elite_max) + " recent score")
+        elapsed = int(time.perf_counter()-start)
+        time_string = str(elapsed//3600) + ":" + str((elapsed%3600)//60) + ":" + str(elapsed%60)
+        sys.stdout.write(str(100*total_frames/experiment.max_frames) + "% complete | " + time_string + " elapsed | " + str(elite_max) + " recent score\n")
         sys.stdout.flush()
         population.species = []
         population.genomes = []

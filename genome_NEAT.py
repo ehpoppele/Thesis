@@ -320,7 +320,7 @@ class NEATGenome(Genome):
             added = False
             i_num = w.innovation_num
             for i in range(len(child.weights)):
-                if child.weights[i].innovation_num = i_num:
+                if child.weights[i].innovation_num == i_num:
                     added = True #This is a lie, technically
                     break #This shouldn't happen, but just in case; we don't want multiple weights with same inums
                 if child.weights[i].innovation_num > i_num:
