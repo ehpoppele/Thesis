@@ -55,8 +55,8 @@ def evolve(experiment):
     population = Population(experiment)
     new_nets = []
     saved = [] #Saving fittest from each gen to pickle file
-    sys.stdout.write("Evaluating Intial Fitness:")
-    sys.stdout.flush()
+    #sys.stdout.write("Evaluating Intial Fitness:")
+    #sys.stdout.flush()
     for i in range(pop_size):
         new_net = "Maybe I can write a function to make a new net of type specified by the experiment"
         if experiment.genome == 'NEAT':
@@ -82,10 +82,10 @@ def evolve(experiment):
     for net in new_nets:
         population.add(net)
     """
-    net_copies = []
-    for i in range(pop_size):
-        net_copies.append(new_nets[i])#(copy.deepcopy(new_nets[i]))
-    multiReturn = pool.map(multiEvalFitness, net_copies)
+    #net_copies = []
+    #for i in range(pop_size):
+    #    net_copies.append(copy.deepcopy(new_nets[i]))
+    multiReturn = pool.map(multiEvalFitness, new_nets)
     for i in range(pop_size):
         print(new_nets[i].fitness)
         new_nets[i].fitness = multiReturn[i][0]
@@ -201,10 +201,10 @@ def evolve(experiment):
         for n in mutated:
             new_nets.append(n)
         
-        net_copies = []
-        for i in range(pop_size-elite_count):
-            net_copies.append(copy.deepcopy(new_nets[i]))
-        multiReturn = pool.map(multiEvalFitness, net_copies)
+        #net_copies = []
+        #for i in range(pop_size-elite_count):
+        #    net_copies.append(copy.deepcopy(new_nets[i]))
+        multiReturn = pool.map(multiEvalFitness, new_nets)
         for i in range(pop_size-elite_count):
             new_nets[i].fitness = multiReturn[i][0]
             total_frames += multiReturn[i][1]
@@ -221,10 +221,10 @@ def evolve(experiment):
             if species.size() >= experiment.elite_threshold and species.gens_since_improvement < experiment.gens_to_improve:
                 for i in range(experiment.elite_range):
                     elite_nets.append(species[i])
-        net_copies = []
-        for i in range(len(elite_nets)):
-            net_copies.append(copy.deepcopy(elite_nets[i]))
-        multiReturn = pool.map(multiEvalFitnessElite, net_copies)
+        #net_copies = []
+        #for i in range(len(elite_nets)):
+        #    net_copies.append(copy.deepcopy(elite_nets[i]))
+        multiReturn = pool.map(multiEvalFitnessElite, elite_nets)
         #print(fitnesses)
         for i in range(len(elite_nets)):
             elite_nets[i].fitness = multiReturn[i][0]
@@ -246,7 +246,10 @@ def evolve(experiment):
                     #Save each elite carryover to pickle file
                     save_copy = copy.deepcopy(fittest)
                     saved.append([save_copy, best_fitness])
-        print(str(100*total_frames/experiment.max_frames) + "% complete; latest elite score is ",elite_max)
+        elapsed = int(time.perf_counter()-start)
+        time_string = str(elapsed//3600) + ":" + str((elapsed%3600)//60) + ":" + str(elapsed%60)
+        sys.stdout.write(str(100*total_frames/experiment.max_frames) + "% complete | " + time_string + " elapsed | " + str(elite_max) + " recent score\n")
+        sys.stdout.flush()
         population.species = []
         population.genomes = []
         population = new_pop
