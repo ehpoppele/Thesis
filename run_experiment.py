@@ -40,7 +40,7 @@ if __name__ == "__main__":
             fit_pop, saved = evolve_basic.evolve(experiment)
         #Currently gives a brief report and demonstration of the fittest individual
         if experiment.genome_file:
-            file = open(str(i) + "_" + experiment.genome_file, 'wb')
+            file = open(experiment.genome_file + str(i) + ".pjar", 'wb')
             pickle.dump(saved, file) #This saves those fitness scores as well; could fix this
         fits = []
         fittest = max(saved, key=lambda g: g[1])#Finds the fittest genome based on the fitness saved for it during elite trial evals; ignores fitness sharing

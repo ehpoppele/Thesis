@@ -82,19 +82,19 @@ cart_pole.trials        = 10
 cart_pole.population    = 101
 cart_pole.generations   = 1 #20    #needs 35 for stable no-oscillation
 cart_pole.mutate_effect = 1.0/cart_pole.inputs
-cart_pole.genome_file   = './Pickled Genomes/cart_genes.pjar' #'/Pickled Genomes/cart_genes.pjar'
+cart_pole.genome_file   = './Pickled Genomes/cart_genes' #'/Pickled Genomes/cart_genes.pjar'
 cart_pole.thread_count  = 8
 #---------------------------
 #Frostbite
 frostbite_1 = Experiment('Frostbite')
 frostbite_1.env             = gym.make('Frostbite-ram-v0', frameskip=4)
-frostbite_1.device          = 'cuda'
+frostbite_1.device          = 'cpu'
 frostbite_1.inputs          = 128
 frostbite_1.outputs         = 18
 frostbite_1.layers          = 2
 frostbite_1.layer_size      = 512
 frostbite_1.trials          = 1
-frostbite_1.population      = 101
+frostbite_1.population      = 501
 frostbite_1.generations     = 500
 frostbite_1.child_count     = 0
 frostbite_1.mutate_range    = 20
@@ -104,9 +104,9 @@ frostbite_1.elite_count     = frostbite_1.population - (frostbite_1.child_count 
 frostbite_1.elite_range     = 10
 frostbite_1.elite_evals     = 30
 frostbite_1.outfile         = 'terminal' #"frostbite.txt"
-frostbite_1.genome_file     = 'PickledGenomes/frost_genes.pjar'
+frostbite_1.genome_file     = 'PickledGenomes/frost_genes'
 frostbite_1.thread_count    = 24
-frostbite_1.max_frames      = 1000000000
+frostbite_1.max_frames      = 200000#1000000000
 #---------------------------
 #Venture
 venture_1 = Experiment('Venture')
@@ -119,7 +119,7 @@ venture_1.trials          = 1
 venture_1.population      = 1001
 venture_1.generations     = 9999
 venture_1.outfile         = 'terminal'
-venture_1.genome_file     = 'PickledGenomes/venture_genes.pjar'
+venture_1.genome_file     = 'PickledGenomes/venture_genes'
 venture_1.thread_count    = 12
 venture_1.max_frames      = 1000000000
 #---------------------------
@@ -172,9 +172,10 @@ frost_NEAT.species_c2       = 5.
 frost_NEAT.species_c3       = 0.01
 frost_NEAT.max_species_dist = 20.0
 frost_NEAT.mutate_odds      = [0.8, 0.9, 0.1, 0.3]
-frost_NEAT.max_frames       = 1000000000
+frost_NEAT.max_frames       = 10000000
 frost_NEAT.activation_func = nn.ReLU()
 frost_NEAT.activation_const = 1.0
+frost_NEAT.genome_file = "PickledGenomes/Frost_NEAT_Genes"
 #---------------------------
 xor = NEATExperiment("XOR")
 xor.env = XOR_env()
