@@ -20,13 +20,13 @@ class Experiment():
         self.species_select = 'range'
         self.thread_count = 1
         self.device = 'cpu'
-        self.population = 101
+        self.population = 1001
         self.generations = 10000
         self.gens_to_improve = self.generations #To effectively ignore species constraints
         self.max_species_dist =  1.0 #Basic genomes should always be considered same species, but this is dealt with in distance function
         self.interspecies_crossover = 0.0 #No crossover in general
         self.mutate_ratio = 1.0 #All offspring from mutation, none from crossover
-        self.mutate_range = 10
+        self.mutate_range = 20
         self.mutate_effect = 1.0 #Size of the mutations that occur; uniform random with this range centered on zero
         self.elite_per_species   = 1 #Only 1 species, but only 1 genome copied by default
         self.elite_threshold   = 1 #Should only ever be 1 species
@@ -106,7 +106,7 @@ frostbite_1.elite_evals     = 30
 frostbite_1.outfile         = 'terminal' #"frostbite.txt"
 frostbite_1.genome_file     = 'PickledGenomes/frost_genes'
 frostbite_1.thread_count    = 24
-frostbite_1.max_frames      = 200000#1000000000
+frostbite_1.max_frames      = 1000000000
 #---------------------------
 #Venture
 venture_1 = Experiment('Venture')
@@ -246,10 +246,11 @@ frost_TN.outputs          = 18
 frost_TN.layer_step_count = 4
 frost_TN.layer_step_size  = 64
 frost_TN.trials           = 1
-frost_TN.population       = 101
-frost_TN.generations      = 5
+frost_TN.population       = 1001
+frost_TN.generations      = 9999
+frostbite_1.genome_file     = 'PickledGenomes/frost_tensor_genes'
 frost_TN.max_frames       = 1000000000
-frost_TN.thread_count      = 8
+frost_TN.thread_count      = 24
 #---------------------------
         
 
