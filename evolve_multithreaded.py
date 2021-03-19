@@ -11,6 +11,7 @@ import torch
 from torch.multiprocessing import Pool, set_start_method
 from genome import *
 from genome_NEAT import *
+from genome_Tensor import *
 from population import *
 
 
@@ -61,6 +62,8 @@ def evolve(experiment):
         new_net = "Maybe I can write a function to make a new net of type specified by the experiment"
         if experiment.genome == 'NEAT':
             new_net = NEATGenome(experiment)
+        elif experiment.genome == 'TensorNEAT':
+            new_net = TensorNEATGenome(experiment)
         else:
             new_net = Genome(experiment)
         new_nets.append(new_net)
@@ -246,7 +249,7 @@ def evolve(experiment):
                     #Save each elite carryover to pickle file
                     save_copy = copy.deepcopy(fittest)
                     saved.append([save_copy, best_fitness])
-        elapsed = int(time.perf_counter()-start)
+        elapsed = int(time.perf_counter()-time_start)
         time_string = str(elapsed//3600) + ":" + str((elapsed%3600)//60) + ":" + str(elapsed%60)
         sys.stdout.write(str(100*total_frames/experiment.max_frames) + "% complete | " + time_string + " elapsed | " + str(elite_max) + " recent score\n")
         sys.stdout.flush()

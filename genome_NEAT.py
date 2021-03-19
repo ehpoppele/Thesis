@@ -101,7 +101,7 @@ class NEATGenome(Genome):
         primary = self
         secondary = other
         #Primary is the genome with the greatest innovation number on one of its weights
-        if self.weights[len(self.weights)-1].innovation_num < other.weights[len(other.weights)-1].innovation_num:
+        if self.weights[-1].innovation_num < other.weights[-1].innovation_num:
             primary = other
             secondary = self
         c1 = self.experiment.species_c1
@@ -110,6 +110,56 @@ class NEATGenome(Genome):
         E = 0 #excess
         D = 0 #disjoint
         W = 0 #average weight differences
+        #Now we do a clever algorithm to find disjoint/excess weights; should be linear since the lists are sorted
+        primary_index = 0
+        secondary_index = 0
+        while (primary_index < len(primary.weights) and secondary_index < len(secondary.weights)):
+            if primary.weights[primary_index].innovation_num < secondary.weights[secondary_index].innovation_num:
+                D +=1
+                primary_index += 1
+            elif primary.weights[primary_index].innovation_num == secondary.weights[secondary_index].innovation_num:
+                W += abs(primary.weights[primary_index].value - secondary.weights[secondary_index].value)
+                primary_index += 1
+                secondary_index += 1
+            elif primary.weights[primary_index].innovation_num > secondary.weights[secondary_index].innovation_num:
+                secondary_index += 1
+        while (primary_index < len(primary.weights)):
+            E += 1
+            primary_index += 1
+        #Next we loop through the nodes, first reassigning based on which has more
+        if primary.nodes[-1].innovation_num < secondary.nodes[-1].innovation_num:
+            primary = secondary
+            secondary = primary
+        primary_index = 0
+        secondary_index = 0
+        while (primary_index < len(primary.nodes) and secondary_index < len(secondary.nodes)):
+            if primary.nodes[primary_index].innovation_num < secondary.nodes[secondary_index].innovation_num:
+                D +=1
+                primary_index += 1
+            elif primary.nodes[primary_index].innovation_num == secondary.nodes[secondary_index].innovation_num:
+                W += abs(primary.nodes[primary_index].bias - secondary.nodes[secondary_index].bias)
+                primary_index += 1
+                secondary_index += 1
+            elif primary.nodes[primary_index].innovation_num > secondary.nodes[secondary_index].innovation_num:
+                secondary_index += 1
+        while (primary_index < len(primary.nodes)):
+            E += 1
+            primary_index += 1
+        #And another loop for the disabled weights
+        primary_index = 0
+        secondary_index = 0
+        while (primary_index < len(primary.disabled) and secondary_index < len(secondary.disabled)):
+            if primary.disabled[primary_index].innovation_num < secondary.disabled[secondary_index].innovation_num:
+                primary_index += 1
+            elif primary.disabled[primary_index].innovation_num == secondary.disabled[secondary_index].innovation_num:
+                W += abs(primary.disabled[primary_index].value - secondary.disabled[secondary_index].value)
+                primary_index += 1
+                secondary_index += 1
+            elif primary.disabled[primary_index].innovation_num > secondary.disabled[secondary_index].innovation_num:
+                secondary_index += 1
+        #We don't count excess on disabled weights, so no end loop
+        
+        """       
         for weight in primary.weights:
             #Count all weights that are excess of secondary's greatest innovation nums
             if weight.innovation_num > secondary.weights[len(secondary.weights)-1].innovation_num:
@@ -142,6 +192,8 @@ class NEATGenome(Genome):
                 if d1.innovation_num == d2.innovation_num:
                     W += abs(d1.value - d2.value)
                     break
+        """
+        #Apply equation from NEAT paper
         N = max(len(self.nodes)+len(self.weights), len(other.nodes)+len(other.weights))
         gamma = (c1*E)/N + (c2*D)/N +(c3*W)
         return gamma
@@ -155,6 +207,7 @@ class NEATGenome(Genome):
         #Starting at layer zero, we loop over all the weights and find the connections out of a node at this layer
         #We then ensure the layer of the connections destination is higher than that of its origin
         #The loop ends when we can't find any connections leaving the current layer
+        #This could be optimized more, I think; technically still linear since it's length of weights times number of layers
         while True:
             weights_leaving_this_layer = False
             for weight in self.weights:
@@ -223,6 +276,7 @@ class NEATGenome(Genome):
     def rebuildModel(self):
         self.retraceLayers() #Makes sure each node is labeled with the correct layer, as these may have shifted after crossover/mutation
         working_nodes, working_weights, layer_counts = self.buildShadowElements()
+        """
         #Debugging code, will remove once im sure NEAT is stable
         if layer_counts[-1] > self.experiment.outputs:
             self.printToTerminal()
@@ -234,19 +288,23 @@ class NEATGenome(Genome):
                             print("connection starting at last layer")
                         if w.destination == n:
                             print("connection ending at last layer")
+        """
         tensor_list = []
         prev_layer = 0
         curr_layer = 1
         #loop through and make a 2D matrix for each layer and set of bias values
         while curr_layer < self.layers:
+            """
             if (layer_counts[curr_layer] <= 0):
                 print("Empty layers found in the network:")
                 print(layer_counts)
                 self.printToTerminal()
                 assert False
+            """
             weight_tensor = torch.zeros(layer_counts[curr_layer-1], layer_counts[curr_layer])
             bias_tensor = torch.zeros(layer_counts[curr_layer])
             for weight in working_weights[curr_layer]:
+                """
                 if weight.destination.l_index >=  layer_counts[curr_layer]:
                     print("Destination OOR: ", layer_counts, weight.destination.l_index, curr_layer)
                     for l in working_nodes:
@@ -259,6 +317,7 @@ class NEATGenome(Genome):
                         print("layer")
                         for n in l:
                             print(n.l_index, n.layer)
+                """
                 weight_tensor[weight.origin.l_index][weight.destination.l_index] = weight.value
             for node in working_nodes[curr_layer]:
                 bias_tensor[node.l_index] = node.bias
@@ -286,8 +345,78 @@ class NEATGenome(Genome):
         if other.fitness > self.fitness:
             primary = other
             secondary = self
+            
         #Iterate over primary parent; we copy any nodes which it has that the other parent doesn't
         #For ones they both have, we select at random
+        primary_index = 0
+        secondary_index = 0
+        while(primary_index < len(primary.nodes) and secondary_index < len(secondary.nodes)):
+            if primary.nodes[primary_index].innovation_num < secondary.nodes[secondary_index].innovation_num:
+                child.nodes.append(copy.deepcopy(primary.nodes[primary_index]))
+                primary_index += 1
+            elif primary.nodes[primary_index].innovation_num == secondary.nodes[secondary_index].innovation_num:
+                if random.random() > 0.5:
+                    child.nodes.append(copy.deepcopy(secondary.nodes[secondary_index]))
+                else:
+                    child.nodes.append(copy.deepcopy(primary.nodes[primary_index]))
+                primary_index += 1
+                secondary_index += 1
+            elif primary.nodes[primary_index].innovation_num > secondary.nodes[secondary_index].innovation_num:
+                secondary_index += 1
+        while (primary_index < len(primary.nodes)):
+            child.nodes.append(copy.deepcopy(primary.nodes[primary_index]))
+            primary_index += 1
+            
+        #Loop for weights
+        primary_index = 0
+        secondary_index = 0
+        while(primary_index < len(primary.weights) and secondary_index < len(secondary.weights)):
+            if primary.weights[primary_index].innovation_num < secondary.weights[secondary_index].innovation_num:
+                child.weights.append(copy.deepcopy(primary.weights[primary_index]))
+                primary_index += 1
+            elif primary.weights[primary_index].innovation_num == secondary.weights[secondary_index].innovation_num:
+                if random.random() > 0.5:
+                    child.weights.append(copy.deepcopy(secondary.weights[secondary_index]))
+                else:
+                    child.weights.append(copy.deepcopy(primary.weights[primary_index]))
+                primary_index += 1
+                secondary_index += 1
+            elif primary.weights[primary_index].innovation_num > secondary.weights[secondary_index].innovation_num:
+                secondary_index += 1
+        while (primary_index < len(primary.weights)):
+            child.weights.append(copy.deepcopy(primary.weights[primary_index]))
+            primary_index += 1
+            
+        #And do the same for disabled weights, with a chance for them to re-enabled
+        to_add = [] #Disabled weights must be added in a sorted order into the list to maintain the order
+        primary_index = 0
+        secondary_index = 0
+        while(primary_index < len(primary.disabled) and secondary_index < len(secondary.disabled)):
+            if primary.disabled[primary_index].innovation_num < secondary.disabled[secondary_index].innovation_num:
+                child.disabled.append(copy.deepcopy(primary.disabled[primary_index]))
+                primary_index += 1
+            elif primary.disabled[primary_index].innovation_num == secondary.disabled[secondary_index].innovation_num:
+                if random.random() > 0.5:
+                    if random.random() < self.reenable_chance:
+                        to_add.append(copy.deepcopy(secondary.disabled[secondary_index]))
+                    else:
+                        child.disabled.append(copy.deepcopy(secondary.disabled[secondary_index]))
+                else:
+                    if random.random() < self.reenable_chance:
+                        to_add.append(copy.deepcopy(primary.disabled[primary_index]))
+                    else:
+                        child.disabled.append(copy.deepcopy(primary.disabled[primary_index]))
+                primary_index += 1
+                secondary_index += 1
+            elif primary.disabled[primary_index].innovation_num > secondary.disabled[secondary_index].innovation_num:
+                secondary_index += 1
+        while (primary_index < len(primary.disabled)):
+            if random.random() < self.reenable_chance:
+                to_add.append(copy.deepcopy(primary.disabled[primary_index]))
+            else:
+                child.disabled.append(copy.deepcopy(primary.disabled[primary_index]))
+            primary_index += 1
+        """
         for node in primary.nodes:
             i_num = node.innovation_num
             other_node = next((n for n in secondary.nodes if n.innovation_num == i_num), None)
@@ -318,6 +447,7 @@ class NEATGenome(Genome):
                     to_add.append(copy.deepcopy(weight))
                 else:
                     child.disabled.append(copy.deepcopy(weight))
+        """
         #Add re-enabled weights while keeping weights sorted by inum
         for w in to_add:
             added = False
