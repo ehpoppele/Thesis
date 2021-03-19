@@ -149,7 +149,7 @@ class NEATGenome(Genome):
             if primary.disabled[primary_index].innovation_num < secondary.disabled[secondary_index].innovation_num:
                 primary_index += 1
             elif primary.disabled[primary_index].innovation_num == secondary.disabled[secondary_index].innovation_num:
-                W += abs(primary.disabled[primary_index].bias - secondary.disabled[secondary_index].bias)
+                W += abs(primary.disabled[primary_index].value - secondary.disabled[secondary_index].value)
                 primary_index += 1
                 secondary_index += 1
             elif primary.disabled[primary_index].innovation_num > secondary.disabled[secondary_index].innovation_num:
