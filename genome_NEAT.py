@@ -2,7 +2,6 @@ import gym
 import torch
 import torch.nn as nn
 import random
-import copy
 
 from genome import *
 
@@ -17,6 +16,12 @@ class NEATNode():
         self.l_index = 0 #Layer index, used only for rebuilding model faster
         self.innovation_num = innovation_num
         
+    #Returns a new node with the same values as this one
+    def newCopy(self):
+        new = NEATNode(self.type, self.layer, self.bias, self.innovation_num)
+        new.l_index = self.l_index
+        return new
+        
 #Class to track the weights/connections in the network
 #Tracks the value of the weight and what it connects
 class NEATWeight():
@@ -27,6 +32,12 @@ class NEATWeight():
         self.value = value
         self.origin_backup = origin #Hold onto for when the origin is changed to a shadow node when tracing the network; should still be a shallow copy though
         self.innovation_num = innovation_num
+        
+    #Returns a new weight with the same values, including origin/destination
+    def newCopy(self):
+        new = NEATWeight(self.origin, self.destination, self.value, self.innovation_num)
+        new.origin_backup = self.origin_backup
+        return new
         
 #Actual genome class; overrides most methods from the other class
 class NEATGenome(Genome):
@@ -352,19 +363,19 @@ class NEATGenome(Genome):
         secondary_index = 0
         while(primary_index < len(primary.nodes) and secondary_index < len(secondary.nodes)):
             if primary.nodes[primary_index].innovation_num < secondary.nodes[secondary_index].innovation_num:
-                child.nodes.append(copy.deepcopy(primary.nodes[primary_index]))
+                child.nodes.append(primary.nodes[primary_index].newCopy())
                 primary_index += 1
             elif primary.nodes[primary_index].innovation_num == secondary.nodes[secondary_index].innovation_num:
                 if random.random() > 0.5:
-                    child.nodes.append(copy.deepcopy(secondary.nodes[secondary_index]))
+                    child.nodes.append(secondary.nodes[secondary_index].newCopy())
                 else:
-                    child.nodes.append(copy.deepcopy(primary.nodes[primary_index]))
+                    child.nodes.append(primary.nodes[primary_index].newCopy())
                 primary_index += 1
                 secondary_index += 1
             elif primary.nodes[primary_index].innovation_num > secondary.nodes[secondary_index].innovation_num:
                 secondary_index += 1
         while (primary_index < len(primary.nodes)):
-            child.nodes.append(copy.deepcopy(primary.nodes[primary_index]))
+            child.nodes.append(primary.nodes[primary_index].newCopy())
             primary_index += 1
             
         #Loop for weights
@@ -372,19 +383,19 @@ class NEATGenome(Genome):
         secondary_index = 0
         while(primary_index < len(primary.weights) and secondary_index < len(secondary.weights)):
             if primary.weights[primary_index].innovation_num < secondary.weights[secondary_index].innovation_num:
-                child.weights.append(copy.deepcopy(primary.weights[primary_index]))
+                child.weights.append(primary.weights[primary_index].newCopy())
                 primary_index += 1
             elif primary.weights[primary_index].innovation_num == secondary.weights[secondary_index].innovation_num:
                 if random.random() > 0.5:
-                    child.weights.append(copy.deepcopy(secondary.weights[secondary_index]))
+                    child.weights.append(secondary.weights[secondary_index].newCopy())
                 else:
-                    child.weights.append(copy.deepcopy(primary.weights[primary_index]))
+                    child.weights.append(primary.weights[primary_index].newCopy())
                 primary_index += 1
                 secondary_index += 1
             elif primary.weights[primary_index].innovation_num > secondary.weights[secondary_index].innovation_num:
                 secondary_index += 1
         while (primary_index < len(primary.weights)):
-            child.weights.append(copy.deepcopy(primary.weights[primary_index]))
+            child.weights.append(primary.weights[primary_index].newCopy())
             primary_index += 1
             
         #And do the same for disabled weights, with a chance for them to re-enabled
@@ -393,28 +404,28 @@ class NEATGenome(Genome):
         secondary_index = 0
         while(primary_index < len(primary.disabled) and secondary_index < len(secondary.disabled)):
             if primary.disabled[primary_index].innovation_num < secondary.disabled[secondary_index].innovation_num:
-                child.disabled.append(copy.deepcopy(primary.disabled[primary_index]))
+                child.disabled.append(primary.disabled[primary_index].newCopy())
                 primary_index += 1
             elif primary.disabled[primary_index].innovation_num == secondary.disabled[secondary_index].innovation_num:
                 if random.random() > 0.5:
                     if random.random() < self.reenable_chance:
-                        to_add.append(copy.deepcopy(secondary.disabled[secondary_index]))
+                        to_add.append(secondary.disabled[secondary_index].newCopy())
                     else:
-                        child.disabled.append(copy.deepcopy(secondary.disabled[secondary_index]))
+                        child.disabled.append(secondary.disabled[secondary_index].newCopy())
                 else:
                     if random.random() < self.reenable_chance:
-                        to_add.append(copy.deepcopy(primary.disabled[primary_index]))
+                        to_add.append(primary.disabled[primary_index].newCopy())
                     else:
-                        child.disabled.append(copy.deepcopy(primary.disabled[primary_index]))
+                        child.disabled.append(primary.disabled[primary_index].newCopy())
                 primary_index += 1
                 secondary_index += 1
             elif primary.disabled[primary_index].innovation_num > secondary.disabled[secondary_index].innovation_num:
                 secondary_index += 1
         while (primary_index < len(primary.disabled)):
             if random.random() < self.reenable_chance:
-                to_add.append(copy.deepcopy(primary.disabled[primary_index]))
+                to_add.append(primary.disabled[primary_index].newCopy())
             else:
-                child.disabled.append(copy.deepcopy(primary.disabled[primary_index]))
+                child.disabled.append(primary.disabled[primary_index].newCopy())
             primary_index += 1
         """
         for node in primary.nodes:
@@ -499,11 +510,11 @@ class NEATGenome(Genome):
         new.nodes = []
         #Deep copy over the parent nodes
         for node in self.nodes:
-            new.nodes.append(copy.deepcopy(node))
+            new.nodes.append(node.newCopy())
         new.weights = []
         for weight in self.weights:
             #For weights we also need to adjust the pointers (from parent nodes to copied nodes)
-            copied = copy.deepcopy(weight)
+            copied = weight.newCopy()
             for node in new.nodes:
                 if node.innovation_num == copied.origin.innovation_num:
                     copied.origin = node
@@ -557,7 +568,7 @@ class NEATGenome(Genome):
         node_added = False
         if random.random() < new.m_node_chance:
             to_change = new.weights[random.randrange(len(new.weights))]
-            disabled_connection = copy.deepcopy(to_change)
+            disabled_connection = to_change.newCopy()
             new_node = NEATNode('hidden',  to_change.origin.layer + 1, 0, self.experiment.NODE_INNOVATION_NUMBER)
             self.experiment.NODE_INNOVATION_NUMBER += 1
             new_weight = NEATWeight(to_change.origin, new_node, 1, self.experiment.WEIGHT_INNOVATION_NUMBER)
