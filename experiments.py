@@ -133,7 +133,8 @@ cart_NEAT.population  = 50
 cart_NEAT.generations = 5
 cart_NEAT.elite_range = 1
 cart_NEAT.elite_evals = 1
-cart_NEAT.thread_count = 1
+cart_NEAT.thread_count = 4
+cart_NEAT.max_frames = 100000
 #---------------------------
 cart_multithread = Experiment('CartPole_mt')
 cart_multithread.env = gym.make('CartPole-v0')
@@ -160,10 +161,10 @@ frost_NEAT.device      = 'cpu'
 frost_NEAT.inputs      = 128
 frost_NEAT.outputs     = 18
 frost_NEAT.trials      = 1
-frost_NEAT.population  = 101
-frost_NEAT.generations = 250
-frost_NEAT.elite_range = 1
-frost_NEAT.elite_evals = 3
+frost_NEAT.population  = 1001
+frost_NEAT.generations = 9999
+frost_NEAT.elite_range = 3
+frost_NEAT.elite_evals = 5
 frost_NEAT.thread_count = 24
 frost_NEAT.species_c1   = 5.
 frost_NEAT.species_c2       = 5.
@@ -204,11 +205,11 @@ class TensorNExperiment(Experiment):
         self.mutate_ratio = 0.5
         self.mutate_effect = 1.0 #Can fiddle with this as well
         self.elite_per_species   = 1 
-        self.elite_threshold   = 5 #As with NEAT, for now
+        self.elite_threshold   = 10 #As with NEAT, for now
         self.elite_range   = 3 #number of genomes checked for elite copy over (should be <= threshold, always)
         self.elite_evals   = 5 #Evaluations done on each genome in the elite range to find a more accurate fitness value
-        self.activation_func = nn.Sigmoid() #Ideally this would be mutated as well
-        self.activation_const = 4.9
+        self.activation_func = nn.ReLU() #Ideally this would be mutated as well
+        self.activation_const = 1.0
         #Unique params
         self.weight_perturb_chance = 0.7 
         self.weight_reset_chance = 0.0
@@ -216,7 +217,7 @@ class TensorNExperiment(Experiment):
         self.bias_reset_chance = 0.0
         self.layer_add_chance = 0.05
         self.layer_collapse_chance = 0.025
-        self.max_network_size = 25
+        self.max_network_size = 20
         
 #----------------------------
 #Tensor Cart Pole for testing
@@ -230,22 +231,21 @@ cartpole_TN.layer_step_size  = 1
 cartpole_TN.trials           = 1
 cartpole_TN.population       = 101
 cartpole_TN.generations      = 10
-cartpole_TN.max_frames       = 1000000000
+cartpole_TN.max_frames       = 100000000
 cartpole_TN.thread_count      = 1
 #----------------------------
 #Tensor Frostbite
 frost_TN = TensorNExperiment('FrostbiteTensor')
-frost_TN.env              = gym.make('CartPole-v0')
+frost_TN.env              = gym.make('Frostbite-ram-v0', frameskip=4)
 frost_TN.device           = 'cpu'
 frost_TN.inputs           = 128
 frost_TN.outputs          = 18
 frost_TN.layer_step_count = 4
 frost_TN.layer_step_size  = 64
 frost_TN.trials           = 1
-frost_TN.population       = 101
-frost_TN.generations      = 5
+frost_TN.population       = 51
 frost_TN.max_frames       = 1000000000
-frost_TN.thread_count      = 8
+frost_TN.thread_count      = 24
 #---------------------------
         
 
