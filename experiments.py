@@ -167,21 +167,12 @@ frost_NEAT.elite_threshold = 20
 frost_NEAT.elite_range = 3
 frost_NEAT.elite_evals = 5
 frost_NEAT.thread_count = 24
-<<<<<<< HEAD
 frost_NEAT.species_c1   = 150.
 frost_NEAT.species_c2       = 200.
 frost_NEAT.species_c3       = 0.0003
 frost_NEAT.max_species_dist = 1.0
 frost_NEAT.mutate_odds      = [0.8, 0.9, 0.2, 0.6]
 frost_NEAT.max_frames       = 1000000000
-=======
-frost_NEAT.species_c1   = 7.
-frost_NEAT.species_c2       = 5.
-frost_NEAT.species_c3       = 0.01
-frost_NEAT.max_species_dist = 20.0
-frost_NEAT.mutate_odds      = [0.8, 0.9, 0.1, 0.3]
-frost_NEAT.max_frames       = 10000000
->>>>>>> 8e23647246fc43668db0e4d111d7bd38669a8a0f
 frost_NEAT.activation_func = nn.ReLU()
 frost_NEAT.activation_const = 1.0
 frost_NEAT.genome_file = "PickledGenomes/Frost_NEAT_Genes"
