@@ -30,11 +30,11 @@ if __name__ == "__main__":
         assert False
     final_vals = []
     set_start_method('spawn')
-    for i in range(5):
+    for i in range(1):
         fit_pop = None
         #These may be joined eventually (multithreaded algorithm should run fine with 1 thread) but basic evolve is better for testing things
         if experiment.thread_count > 1:
-            print("multithreading!")
+            print("Multithreading! Iteration ", i)
             fit_pop, saved = evolve_multithreaded.evolve(experiment)
         else:
             fit_pop, saved = evolve_basic.evolve(experiment)
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     print()
     print("#-------------------------------#")
     print("All experiment have concluded normally")
-    for i in range(5):
+    for i in range(1):
         print("Fitness before many evals:", final_vals[i][0])
         print("Mean Score:", final_vals[i][1])
         print("Median Score:", final_vals[i][2])
