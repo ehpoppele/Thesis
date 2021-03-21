@@ -247,7 +247,6 @@ def evolve(experiment):
                     if best_fitness > elite_max:
                         elite_max = best_fitness
                         top_elite = fittest
-                    new_pop.add(fittest)
         if top_elite is None:
             top_elite = population.fittest()
             elite_max = top_elite.fitness
