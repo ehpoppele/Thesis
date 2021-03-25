@@ -27,14 +27,13 @@ class Experiment():
         self.interspecies_crossover = 0.0 #No crossover in general
         self.mutate_ratio = 1.0 #All offspring from mutation, none from crossover
         self.mutate_range = 20
-        self.mutate_effect = 1.0 #Size of the mutations that occur; uniform random with this range centered on zero
+        self.mutate_effect = 0.002 #Size of the mutations that occur; uniform random with this range centered on zero
         self.elite_per_species   = 1 #Only 1 species, but only 1 genome copied by default
         self.elite_threshold   = 1 #Should only ever be 1 species
         self.elite_range   = 10 #number of genomes checked for elite copy over (should be <= threshold, always)
         self.elite_evals   = 30 #Evaluations done on each genome in the elite range to find a more accurate fitness value
         self.activation_func = nn.ReLU()
-        self.activation_const = 1.
-        self.thread_count = 1
+        self.activation_const = 1.0
         
 class NEATExperiment(Experiment):
     
@@ -50,7 +49,7 @@ class NEATExperiment(Experiment):
         self.device = 'cpu' 
         self.population = 150
         self.generations = 100
-        self.gens_to_improve = 50 #Gens for a species to improve before it is removed
+        self.gens_to_improve = 15 #Gens for a species to improve before it is removed
         self.reenable_chance = 0.25 #Chance for a connection to be re-enabled during crossover
         self.species_c1       =  1.0 #params for species-distance algorithm
         self.species_c2       =  1.0
@@ -120,8 +119,22 @@ venture_1.population      = 1001
 venture_1.generations     = 9999
 venture_1.outfile         = 'terminal'
 venture_1.genome_file     = 'PickledGenomes/venture_genes'
-venture_1.thread_count    = 12
+venture_1.thread_count    = 20
 venture_1.max_frames      = 1000000000
+#---------------------------
+#Atlantis
+atlantis              = Experiment('Atlantis')
+atlantis.env          = gym.make('Atlantis-ram-v0', frameskip=4)
+atlantis.inputs       = 128
+atlantis.outputs      = 4
+atlantis.layers       = 2
+atlantis.layer_size   = 512
+atlantis.trials       = 1
+atlantis.population   = 1001
+atlantis.generations  = 9999
+atlantis.genome_file  = 'PickledGenomes/atlantis'
+atlantis.thread_count = 20
+atlantis.max_frames   = 1000000000
 #---------------------------
 cart_NEAT = NEATExperiment('CartPole_NEAT')
 cart_NEAT.env         = gym.make('CartPole-v0')
@@ -167,12 +180,12 @@ frost_NEAT.elite_threshold = 20
 frost_NEAT.elite_range = 3
 frost_NEAT.elite_evals = 5
 frost_NEAT.thread_count = 24
-frost_NEAT.species_c1   = 7.
-frost_NEAT.species_c2       = 5.
-frost_NEAT.species_c3       = 0.01
-frost_NEAT.max_species_dist = 20.0
+frost_NEAT.species_c1   = 17.
+frost_NEAT.species_c2       = 23.
+frost_NEAT.species_c3       = 0.00005
+frost_NEAT.max_species_dist = 10.0
 frost_NEAT.mutate_odds      = [0.8, 0.9, 0.1, 0.3]
-frost_NEAT.max_frames       = 10000000
+frost_NEAT.max_frames       = 1000000000
 frost_NEAT.activation_func = nn.ReLU()
 frost_NEAT.activation_const = 1.0
 frost_NEAT.genome_file = "PickledGenomes/Frost_NEAT_Genes"
@@ -207,15 +220,15 @@ class TensorNExperiment(Experiment):
         self.population = 251
         self.generations = 2 #Easier to run on generation limit when testing
         self.max_frames = 1000000000 #1 Billion
-        self.gens_to_improve = 15 #Not sure about this for now
+        self.gens_to_improve = 25 #Not sure about this for now
         self.max_species_dist =  1.0 #Currently just binary effectively, so this is ok as long as it's under 99
         self.interspecies_crossover = 0.0 #This would break things so it's not allowed
-        self.mutate_ratio = 0.5
+        self.mutate_ratio = 0.70
         self.mutate_effect = 1.0 #Can fiddle with this as well
         self.elite_per_species   = 1 
         self.elite_threshold   = 10 #As with NEAT, for now
-        self.elite_range   = 3 #number of genomes checked for elite copy over (should be <= threshold, always)
-        self.elite_evals   = 5 #Evaluations done on each genome in the elite range to find a more accurate fitness value
+        self.elite_range   = 5 #number of genomes checked for elite copy over (should be <= threshold, always)
+        self.elite_evals   = 10 #Evaluations done on each genome in the elite range to find a more accurate fitness value
         self.activation_func = nn.ReLU() #Ideally this would be mutated as well
         self.activation_const = 1.0
         #Unique params
@@ -223,9 +236,9 @@ class TensorNExperiment(Experiment):
         self.weight_reset_chance = 0.0
         self.bias_perturb_chance = 0.7
         self.bias_reset_chance = 0.0
-        self.layer_add_chance = 0.05
-        self.layer_collapse_chance = 0.025
-        self.max_network_size = 20
+        self.layer_add_chance = 0.1
+        self.layer_collapse_chance = 0.02
+        self.max_network_size = 16
         
 #----------------------------
 #Tensor Cart Pole for testing
@@ -248,17 +261,16 @@ frost_TN.env              = gym.make('Frostbite-ram-v0', frameskip=4)
 frost_TN.device           = 'cpu'
 frost_TN.inputs           = 128
 frost_TN.outputs          = 18
-frost_TN.layer_step_count = 4
-frost_TN.layer_step_size  = 64
+frost_TN.layer_step_count = 6
+frost_TN.layer_step_size  = 128
 frost_TN.trials           = 1
 frost_TN.population       = 1001
 frost_TN.generations      = 9999
 frostbite_1.genome_file     = 'PickledGenomes/frost_tensor_genes'
 frost_TN.max_frames       = 1000000000
-frost_TN.thread_count      = 24
+frost_TN.thread_count      = 20
 #---------------------------
         
 
-list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN]
-
+list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN, atlantis]
 

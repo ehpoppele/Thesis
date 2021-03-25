@@ -90,7 +90,7 @@ def evolve(experiment):
     #    net_copies.append(copy.deepcopy(new_nets[i]))
     multiReturn = pool.map(multiEvalFitness, new_nets)
     for i in range(pop_size):
-        print(new_nets[i].fitness)
+        #print(new_nets[i].fitness)
         new_nets[i].fitness = multiReturn[i][0]
         total_frames += multiReturn[i][1]
     for net in new_nets:
@@ -234,6 +234,7 @@ def evolve(experiment):
             total_frames += multiReturn[i][1]
            
         elite_max = float("-inf")
+        top_elite = None
         for species in population.species:
             if species.size() >= experiment.elite_threshold and species.gens_since_improvement < experiment.gens_to_improve:
                 for i in range(experiment.elite_per_species): #This needs to be redone for elite_count > 1; currently would just take best genome twice
@@ -243,15 +244,27 @@ def evolve(experiment):
                         if species[i].fitness > best_fitness:
                             best_fitness = species[i].fitness
                             fittest = species[i]
-                    elite_max = max(best_fitness, elite_max)
-                    new_pop.add(fittest)
-                    #print("Elite fitness:", best_fitness)
-                    #Save each elite carryover to pickle file
-                    save_copy = copy.deepcopy(fittest)
-                    saved.append([save_copy, best_fitness])
+                    if best_fitness > elite_max:
+                        elite_max = best_fitness
+                        top_elite = fittest
+        if top_elite is None:
+            sys.stdout.write("No elite could be found, using pop.fittest instead\n")
+            for s in population.species:
+                sys.stdout.write(str(species.size()) + str(species.gens_since_improvement) + str(species.can_reproduce))
+            top_elite = population.fittest()
+            top_elite.evalFitness(iters=top_elite.experiment.elite_evals)#These frames are not counted since they are only for reporting purposes and do not affect the actual algorithm
+            elite_max = top_elite.fitness
+        if elite_max < 5.0:
+            for s in population.species:
+                print(s.can_reproduce)
+            sys.stdout.write("Strange elite behavior. Fitness is " + str(top_elite.fitness) + " Trial is " + str(top_elite.evalFitness()) + " Top fitness is: " + str(population.fittest().fitness) + "\n")
+            sys.stdout.flush()
+        #Save top elite carryover to pickle file
+        save_copy = copy.deepcopy(top_elite)
+        saved.append([save_copy, elite_max])
         elapsed = int(time.perf_counter()-time_start)
         time_string = str(elapsed//3600) + ":" + str((elapsed%3600)//60) + ":" + str(elapsed%60)
-        sys.stdout.write(str(100*total_frames/experiment.max_frames) + "% complete | " + time_string + " elapsed | " + str(elite_max) + " recent score\n")
+        sys.stdout.write(str(100*total_frames/experiment.max_frames) + "% complete | " + time_string + " elapsed | " + str(elite_max) + " recent score | " + str(len(population.species)) + " total species\n")
         sys.stdout.flush()
         population.species = []
         population.genomes = []
