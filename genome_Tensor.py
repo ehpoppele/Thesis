@@ -31,10 +31,10 @@ class TensorNEATGenome(Genome):
             
     def printToTerminal(self):
         print("Network has " + str(self.layer_count) + " hidden layers, with " + str(self.layer_size) + " units each.")
-        print("Tensors are:")
-        for i in range(len(self.weights)):
-            print(self.weights[i])
-            print(self.biases[i])
+        #print("Tensors are:")
+        #for i in range(len(self.weights)):
+        #    print(self.weights[i])
+        #    print(self.biases[i])
             
     def rebuildModel(self):
         genotype = []

@@ -248,8 +248,17 @@ def evolve(experiment):
                         elite_max = best_fitness
                         top_elite = fittest
         if top_elite is None:
+            sys.stdout.write("No elite could be found, using pop.fittest instead\n")
+            for s in population.species:
+                sys.stdout.write(str(species.size()) + str(species.gens_since_improvement) + str(species.can_reproduce))
             top_elite = population.fittest()
+            top_elite.evalFitness(iters=top_elite.experiment.elite_evals)#These frames are not counted since they are only for reporting purposes and do not affect the actual algorithm
             elite_max = top_elite.fitness
+        if elite_max < 5.0:
+            for s in population.species:
+                print(s.can_reproduce)
+            sys.stdout.write("Strange elite behavior. Fitness is " + str(top_elite.fitness) + " Trial is " + str(top_elite.evalFitness()) + " Top fitness is: " + str(population.fittest().fitness) + "\n")
+            sys.stdout.flush()
         #Save top elite carryover to pickle file
         save_copy = copy.deepcopy(top_elite)
         saved.append([save_copy, elite_max])

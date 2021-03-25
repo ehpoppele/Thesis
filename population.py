@@ -173,8 +173,10 @@ class Population(Species):
                     top = s
                     second = top
                 top.can_reproduce = True #This should never be None so we're okay with crashing if it gets there
+                top.gens_since_improvement = 0
                 if second is not None:
                     second.can_reproduce = True
+                    second.gens_since_improvement = 0
             
     #Assigns a percentage to each species to track how many offspring they will get for the next generation
     #This is based on the total sum of the species fitness
