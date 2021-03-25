@@ -34,6 +34,11 @@ def multiEvalFitnessElite(g):
     torch.set_default_tensor_type(torch.DoubleTensor)
     return (g.evalFitness(iters=g.experiment.elite_evals, return_frames=True))
     
+    
+def multiEvalFitnessThirty(g):
+    torch.set_default_tensor_type(torch.DoubleTensor)
+    return (g.evalFitness(iters=30))
+    
 #Runs basic evolution on the given experiment and params
 #Creates a new generation through a combination of methods:
 #Crossover from two parents, mutation from one parent, or elitism
@@ -247,6 +252,27 @@ def evolve(experiment):
                     if best_fitness > elite_max:
                         elite_max = best_fitness
                         top_elite = fittest
+                    new_pop.add(fittest)
+        #If the experiment ran enough trials, we can just use the top elite. Generally this should be reserved for single-species algorithms
+        if not experiment.save_elite: #If not, run our own trials, not counting frames, to find the actual best genome from this generation to save for final evaluation
+            elite_nets = []
+            for i in range(10):
+                elite_nets.append(population[i])
+            fitnesses = pool.map(multiEvalFitnessThirty, elite_nets)
+            for i in range(len(elite_nets)):
+                elite_nets[i].fitness = fitnesses[i]
+               
+            elite_max = float("-inf")
+            top_elite = None
+            for net in elite_nets:
+                if net.fitness > elite_max:
+                    elite_max = net.fitness
+                    top_elite = net
+                    
+        save_copy = copy.deepcopy(top_elite)
+        saved.append([save_copy, elite_max])
+            
+        """
         if top_elite is None:
             sys.stdout.write("No elite could be found, using pop.fittest instead\n")
             for s in population.species:
@@ -262,9 +288,11 @@ def evolve(experiment):
         #Save top elite carryover to pickle file
         save_copy = copy.deepcopy(top_elite)
         saved.append([save_copy, elite_max])
+        """
+        
         elapsed = int(time.perf_counter()-time_start)
         time_string = str(elapsed//3600) + ":" + str((elapsed%3600)//60) + ":" + str(elapsed%60)
-        sys.stdout.write(str(100*total_frames/experiment.max_frames) + "% complete | " + time_string + " elapsed | " + str(elite_max) + " recent score | " + str(len(population.species)) + " total species\n")
+        sys.stdout.write(str(100*total_frames/experiment.max_frames) + "% complete | " + time_string + " elapsed | " + str(elite_max) + " recent score | " + str(new_pop.size) + " population size | " + str(len(new_pop.species)) + " total species\n")
         sys.stdout.flush()
         population.species = []
         population.genomes = []
