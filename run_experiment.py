@@ -48,6 +48,7 @@ if __name__ == "__main__":
         for j in range(200):
             fits.append(fittest_genome.evalFitness())
         exp_vals = [fittest[1], statistics.mean(fits), statistics.median(fits), max(fits), min(fits), fittest_genome]
+        print(exp_vals)
         final_vals.append(exp_vals)
 
     print()
