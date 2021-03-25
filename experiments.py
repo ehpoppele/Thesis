@@ -34,6 +34,11 @@ class Experiment():
         self.elite_evals   = 30 #Evaluations done on each genome in the elite range to find a more accurate fitness value
         self.activation_func = nn.ReLU()
         self.activation_const = 1.0
+        self.max_frames = 1000000000
+        self.trials = 1
+        self.layer_size = 512
+        self.layers = 2
+        self.save_elite = True
         
 class NEATExperiment(Experiment):
     
@@ -67,6 +72,7 @@ class NEATExperiment(Experiment):
         self.activation_const = 4.9
         self.NODE_INNOVATION_NUMBER = -1
         self.WEIGHT_INNOVATION_NUMBER = -1
+        self.save_elite = False
         
 #Cart pole config, pretty much solves the problem
 #might not be optimal, but final solution about 200 (max score) each time
@@ -129,12 +135,8 @@ atlantis.inputs       = 128
 atlantis.outputs      = 4
 atlantis.layers       = 2
 atlantis.layer_size   = 512
-atlantis.trials       = 1
-atlantis.population   = 1001
-atlantis.generations  = 9999
 atlantis.genome_file  = 'PickledGenomes/atlantis'
 atlantis.thread_count = 20
-atlantis.max_frames   = 1000000000
 #---------------------------
 cart_NEAT = NEATExperiment('CartPole_NEAT')
 cart_NEAT.env         = gym.make('CartPole-v0')
@@ -239,6 +241,7 @@ class TensorNExperiment(Experiment):
         self.layer_add_chance = 0.1
         self.layer_collapse_chance = 0.02
         self.max_network_size = 16
+        self.save_elite = False
         
 #----------------------------
 #Tensor Cart Pole for testing
