@@ -173,7 +173,7 @@ class Population(Species):
                     top = s
                     second = top
                 top.can_reproduce = True #This should never be None so we're okay with crashing if it gets there
-                top.gen_since_improvement = 0
+                top.gens_since_improvement = 0
                 if second is not None:
                     second.can_reproduce = True
                     second.gens_since_improvement = 0
