@@ -184,8 +184,13 @@ xor.outputs       = 1
 xor.trials        = 1
 xor.population    = 150
 xor.generations   = 500
+xor.max_frames    = 200000
 xor.elite_range   = 1
 xor.elite_evals   = 1 #Deterministic, so no need for multiple evals
+xor.activation_func = nn.ReLU()
+xor.activation_const = 1.0
+xor.max_species_dist = 0.5
+xor.thread_count = 4
 #---------------------------
 
 class TensorNExperiment(Experiment):
