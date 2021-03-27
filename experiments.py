@@ -138,6 +138,22 @@ atlantis.layer_size   = 512
 atlantis.genome_file  = 'PickledGenomes/atlantis'
 atlantis.thread_count = 20
 #---------------------------
+#Assault
+assault              = Experiment('Assault')
+assault.env          = gym.make('Assault-ram-v0', frameskip=4)
+assault.inputs       = 128
+assault.outputs      = 7
+assault.genome_file  = "PickledGenomes/assault"
+assault.thread_count = 20
+#---------------------------
+#Seaquest
+seaquest              = Experiment('Seaquest')
+seaquest.env          = gym.make('Seaquest-ram-v0', frameskip=4)
+seaquest.inputs       = 128
+seaquest.outputs      = 18
+seaquest.genome_file  = "PickledGenomes/seaquest"
+seaquest.thread_count = 20
+#---------------------------
 cart_NEAT = NEATExperiment('CartPole_NEAT')
 cart_NEAT.env         = gym.make('CartPole-v0')
 cart_NEAT.device      = 'cpu'
@@ -275,5 +291,5 @@ frost_TN.thread_count      = 20
 #---------------------------
         
 
-list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN, atlantis]
+list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN, atlantis, assault, seaquest]
 

@@ -292,7 +292,7 @@ def evolve(experiment):
         
         elapsed = int(time.perf_counter()-time_start)
         time_string = str(elapsed//3600) + ":" + str((elapsed%3600)//60) + ":" + str(elapsed%60)
-        sys.stdout.write(str(100*total_frames/experiment.max_frames) + "% complete | " + time_string + " elapsed | " + str(elite_max) + " recent score | " + str(new_pop.size) + " population size | " + str(len(new_pop.species)) + " total species\n")
+        sys.stdout.write(str(100*total_frames/experiment.max_frames) + "% complete | " + time_string + " elapsed | " + str(elite_max) + " recent score | " + str(new_pop.size()) + " population size | " + str(len(new_pop.species)) + " total species\n")
         sys.stdout.flush()
         population.species = []
         population.genomes = []
