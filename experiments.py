@@ -52,27 +52,29 @@ class NEATExperiment(Experiment):
         self.species_select = 'weighted' #Selecting randomly from all genomes, biases towards higher fitness
         self.thread_count = 1
         self.device = 'cpu' 
-        self.population = 150
-        self.generations = 100
+        self.population = 1001
+        self.generations = 9999
+        self.trials = 1
         self.gens_to_improve = 15 #Gens for a species to improve before it is removed
         self.reenable_chance = 0.25 #Chance for a connection to be re-enabled during crossover
-        self.species_c1       =  1.0 #params for species-distance algorithm
-        self.species_c2       =  1.0
-        self.species_c3       =  0.1
-        self.max_species_dist =  1.5 #distance for genomes to be considered different species
+        self.species_c1       =  17.0 #params for species-distance algorithm
+        self.species_c2       =  23.0
+        self.species_c3       =  0.00005
+        self.max_species_dist =  10.0 #distance for genomes to be considered different species
         self.interspecies_crossover = 0.001
         self.mutate_ratio = 0.25 #percent of offspring made from mutation
         self.mutate_effect = 0.5 #Size of the mutations that occur; uniform random with this range centered on zero
-        self.mutate_odds = [0.8, 0.9, 0.03, 0.05] #odds for mutating weights, perturbing values, add nodes, and adding connections
+        self.mutate_odds = [0.8, 0.9, 0.1, 0.3] #odds for mutating weights, perturbing values, add nodes, and adding connections
         self.elite_per_species   = 1 #Number of elite copied unchanged from each species
-        self.elite_threshold   = 5 #Min size of species to get an elite copied over
+        self.elite_threshold   = 20 #Min size of species to get an elite copied over
         self.elite_range   = 3 #number of genomes checked for elite copy over (should be <= threshold, always)
         self.elite_evals   = 5 #Evaluations done on each genome in the elite range to find a more accurate fitness value
-        self.activation_func = nn.Sigmoid()
-        self.activation_const = 4.9
+        self.activation_func = nn.ReLU()
+        self.activation_const = 1.0
         self.NODE_INNOVATION_NUMBER = -1
         self.WEIGHT_INNOVATION_NUMBER = -1
         self.save_elite = False
+        self.max_frames = 1000000000
         
 #Cart pole config, pretty much solves the problem
 #might not be optimal, but final solution about 200 (max score) each time
@@ -99,7 +101,7 @@ frostbite_1.outputs         = 18
 frostbite_1.layers          = 2
 frostbite_1.layer_size      = 512
 frostbite_1.trials          = 1
-frostbite_1.population      = 501
+frostbite_1.population      = 1001
 frostbite_1.generations     = 500
 frostbite_1.child_count     = 0
 frostbite_1.mutate_range    = 20
@@ -192,6 +194,13 @@ frost_NEAT.activation_func = nn.ReLU()
 frost_NEAT.activation_const = 1.0
 frost_NEAT.genome_file = "PickledGenomes/Frost_NEAT_Genes"
 #---------------------------
+vent_NEAT = NEATExperiment('VentureNEAT')
+vent_NEAT.env = gym.make('Venture-ram-v0', frameskip=4)
+vent_NEAT.inputs = 128
+vent_NEAT.outputs = 18
+vent_NEAT.thread_count = 24
+vent_NEAT.genome_file = "PickledGenomes/VNEAT"
+#---------------------------
 xor = NEATExperiment("XOR")
 xor.env = XOR_env()
 xor.inputs        = 2
@@ -275,5 +284,5 @@ frost_TN.thread_count      = 20
 #---------------------------
         
 
-list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN, atlantis]
+list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN, atlantis, vent_NEAT]
 
