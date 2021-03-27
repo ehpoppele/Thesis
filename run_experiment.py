@@ -13,6 +13,7 @@ SELECT_TRIALS = 10 #how many
 #Runs an experiment given as a command line args
 #Mostly just a wrapper file to call one of the evolve files
 if __name__ == "__main__":
+    trials = 3
     torch.set_default_tensor_type(torch.DoubleTensor) #Could test with floats later for better speed
     experiment = None
     #read sys args for experiment to use; inputs correspond to names given in experiments.py
@@ -30,7 +31,7 @@ if __name__ == "__main__":
         assert False
     final_vals = []
     set_start_method('spawn')
-    for i in range(3):
+    for i in range(trials):
         fit_pop = None
         #These may be joined eventually (multithreaded algorithm should run fine with 1 thread) but basic evolve is better for testing things
         if experiment.thread_count > 1:
@@ -39,12 +40,12 @@ if __name__ == "__main__":
         else:
             fit_pop, saved = evolve_basic.evolve(experiment)
         #Currently gives a brief report and demonstration of the fittest individual
-        if experiment.genome_file:
-            file = open(experiment.genome_file + str(i) + ".pjar", 'wb')
-            pickle.dump(saved, file) #This saves those fitness scores as well; could fix this
         fits = []
         fittest = max(saved, key=lambda g: g[1])#Finds the fittest genome based on the fitness saved for it during elite trial evals; ignores fitness sharing
         fittest_genome = fittest[0]
+        if experiment.genome_file:
+            file = open(experiment.genome_file + str(i) + ".pjar", 'wb')
+            pickle.dump(fittest_genome, file) #This saves those fitness scores as well; could fix this
         for j in range(200):
             fits.append(fittest_genome.evalFitness())
         exp_vals = [fittest[1], statistics.mean(fits), statistics.median(fits), max(fits), min(fits), fittest_genome]
@@ -54,7 +55,7 @@ if __name__ == "__main__":
     print()
     print("#-------------------------------#")
     print("All experiment have concluded normally")
-    for i in range(3):
+    for i in range(trials):
         print("Fitness before many evals:", final_vals[i][0])
         print("Mean Score:", final_vals[i][1])
         print("Median Score:", final_vals[i][2])
