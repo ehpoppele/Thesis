@@ -88,6 +88,22 @@ class NEATGenome(Genome):
             self.nodes += outputs
             #self.rebuildModel()
             
+    def newCopy(self):
+        new = NEATGenome(self.experiment, False)
+        new.fitness = self.fitness
+        new.env = self.env
+        new.layers = self.layers
+        for n in self.nodes:
+            copy = n.newCopy()
+            new.nodes.append(copy)
+        for w in self.weights:
+            copy = w.newCopy()
+            new.weights.append(copy)
+        for d in self.disabled:
+            copy = d.newCopy()
+            new.disabled.append(copy)
+        return new
+            
     #Prints out all the nodes and connections for debugging
     def printToTerminal(self):
         print("Fitness:")

@@ -7,6 +7,7 @@ import torch
 import torch.nn as nn
 import random
 import time
+import copy
 import multiprocessing
 
 
@@ -52,6 +53,9 @@ class Genome():
                 self.genotype.append(torch.zeros(experiment.outputs))
             #self.rebuildModel()
             
+    def newCopy(self): #Will probably need to change this later
+        return copy.deepcopy(self)
+            
     def printToTerminal(self):
         print("Nothing to show for this type of genome")
 
@@ -86,7 +90,6 @@ class Genome():
         fitness = (sum_reward/trials)
         self.model = None
         #Fitnesses of zero or less screw things up, so we fix that
-        fitness = fitness.item()**2
         if fitness == 0:
             fitness = 0.01
         self.fitness = fitness
