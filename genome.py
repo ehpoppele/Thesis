@@ -7,6 +7,7 @@ import torch
 import torch.nn as nn
 import random
 import time
+import copy
 import multiprocessing
 
 
@@ -51,6 +52,9 @@ class Genome():
                 self.genotype.append((torch.randn(experiment.layer_size, experiment.outputs)) * (1/experiment.layer_size))
                 self.genotype.append(torch.zeros(experiment.outputs))
             #self.rebuildModel()
+            
+    def newCopy(self): #Will probably need to change this later
+        return copy.deepcopy(self)
             
     def printToTerminal(self):
         print("Nothing to show for this type of genome")

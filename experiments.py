@@ -259,7 +259,7 @@ class TensorNExperiment(Experiment):
         self.activation_func = nn.ReLU() #Ideally this would be mutated as well
         self.activation_const = 1.0
         #Unique params
-        self.weight_perturb_chance = 0.7 
+        self.weight_perturb_chance = 0.7
         self.weight_reset_chance = 0.0
         self.bias_perturb_chance = 0.7
         self.bias_reset_chance = 0.0
