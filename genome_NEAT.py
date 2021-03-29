@@ -102,6 +102,31 @@ class NEATGenome(Genome):
         for d in self.disabled:
             copy = d.newCopy()
             new.disabled.append(copy)
+        #Same loop as in crossover to confirm everything is pointing to the right place
+        for weight in new.weights:
+            assigned = 0
+            for node in new.nodes:
+                if weight.origin.innovation_num == node.innovation_num:
+                    weight.origin = node
+                    assigned += 1
+                if weight.destination.innovation_num == node.innovation_num:
+                    weight.destination = node
+                    assigned += 1
+            if assigned != 2:
+                print("Issue with copying; missing a node in the copy")
+                assert False
+        for weight in new.disabled:
+            assigned = 0
+            for node in new.nodes:
+                if weight.origin.innovation_num == node.innovation_num:
+                    weight.origin = node
+                    assigned += 1
+                if weight.destination.innovation_num == node.innovation_num:
+                    weight.destination = node
+                    assigned += 1
+            if assigned != 2:
+                print("Issue with copying; missing a node in the copy")
+                assert False
         return new
             
     #Prints out all the nodes and connections for debugging
