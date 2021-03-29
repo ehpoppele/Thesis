@@ -217,6 +217,13 @@ vent_NEAT.outputs = 18
 vent_NEAT.thread_count = 24
 vent_NEAT.genome_file = "PickledGenomes/VNEAT"
 #---------------------------
+atls_NEAT = NEATExperiment('AtlantisNEAT')
+atls_NEAT.env = gym.make('Atlantis-ram-v0', frameskip=4)
+atls_NEAT.inputs = 128
+atls_NEAT.outputs = 4
+atls_NEAT.thread_count = 24
+atls_NEAT.genome_file = "PickledGenomes/AtlsNEAT"
+#---------------------------
 xor = NEATExperiment("XOR")
 xor.env = XOR_env()
 xor.inputs        = 2
@@ -300,5 +307,5 @@ frost_TN.thread_count      = 20
 #---------------------------
         
 
-list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN, atlantis, assault, seaquest]
+list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN, atlantis, assault, seaquest, atls_NEAT]
 
