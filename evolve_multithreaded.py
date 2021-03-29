@@ -269,7 +269,7 @@ def evolve(experiment):
                     elite_max = net.fitness
                     top_elite = net
                     
-        save_copy = copy.deepcopy(top_elite)
+        save_copy = top_elite.newCopy() #Still need to modify/add this for regular/tensor genomes
         saved.append([save_copy, elite_max])
             
         """
