@@ -126,7 +126,7 @@ venture_1.generations     = 9999
 venture_1.outfile         = 'terminal'
 venture_1.genome_file     = 'PickledGenomes/venture_genes'
 venture_1.thread_count    = 20
-venture_1.max_frames      = 1000000000
+venture_1.max_frames      = 500000000
 #---------------------------
 #Atlantis
 atlantis              = Experiment('Atlantis')
@@ -153,6 +153,14 @@ seaquest.inputs       = 128
 seaquest.outputs      = 18
 seaquest.genome_file  = "PickledGenomes/seaquest"
 seaquest.thread_count = 20
+#---------------------------
+#Skiing
+skiing = Experiment('Skiing')
+skiing.env = gym.make('Skiing-ram-v0', frameskip=4)
+skiing.inputs = 128
+skiing.outputs = 3
+skiing.genome_file = "PickledGenomes/skiing"
+skiing.thread_count = 20
 #---------------------------
 cart_NEAT = NEATExperiment('CartPole_NEAT')
 cart_NEAT.env         = gym.make('CartPole-v0')
@@ -291,5 +299,5 @@ frost_TN.thread_count      = 20
 #---------------------------
         
 
-list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN, atlantis, assault, seaquest]
+list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN, atlantis, assault, seaquest, skiing]
 
