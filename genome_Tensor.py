@@ -25,9 +25,13 @@ class TensorNEATGenome(Genome):
             self.layer_size = math.ceil(random.randint(0, experiment.layer_step_count)*experiment.layer_step_size+experiment.inputs) #ceil since this must be an int
             self.weights.append((torch.randn(experiment.inputs, self.layer_size)) * (experiment.mutate_effect))
             self.biases.append(torch.zeros(self.layer_size))
+            added_layers = random.randint(0, experiment.initial_layer_range-1)
+            for i in range(added_layers):
+                self.weights.append((torch.randn(self.layer_size, self.layer_size)) * (experiment.mutate_effect))
+                self.biases.append(torch.zeros(self.layer_size))
             self.weights.append((torch.randn(self.layer_size, experiment.outputs)) * (experiment.mutate_effect))
             self.biases.append(torch.zeros(experiment.outputs))
-            self.layer_count = 1
+            self.layer_count = 1 + added_layers
             
     def printToTerminal(self):
         print("Network has " + str(self.layer_count) + " hidden layers, with " + str(self.layer_size) + " units each.")
@@ -95,6 +99,7 @@ class TensorNEATGenome(Genome):
             del new.biases[index+1]
             del new.biases[index+1]
             new.layer_count -= 1
+        assert (len(new.weights) == len(new.biases)) and (len(new.weights) == new.layer_count+1)
         return new
 
     #Crossover is very simple currently since it only occurs between networks with hidden layers of the same size
@@ -106,6 +111,17 @@ class TensorNEATGenome(Genome):
         right_index = random.randint(1, other.layer_count)
         new.layer_size = self.layer_size
         #Fancy work goes here to ensure that the new genome does not exceed the maximum layer count
+        trim_left = True #Alternate which side of the crossover we reduce
+        while (left_index+1 + other.layer_count+1-right_index) > self.experiment.max_network_size:
+            if (left_index == 0) and (right_index == other.layer_count):
+                assert False #Something has gone wrong
+            if trim_left and left_index > 0:
+                left_index -= 1
+                trim_left = False
+            else:
+                trim_left = True
+                if right_index < other.layer_count:
+                    right_index += 1
         for i in range(left_index+1):
             new.weights.append(self.weights[i])
             new.biases.append(self.biases[i])
@@ -113,6 +129,7 @@ class TensorNEATGenome(Genome):
             new.weights.append(other.weights[j+right_index])
             new.biases.append(other.biases[j+right_index])
         new.layer_count = len(new.weights) - 1
+        assert (len(new.weights) == len(new.biases)) and (len(new.weights) == new.layer_count+1)
         return new
 
 

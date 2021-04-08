@@ -246,11 +246,11 @@ class TensorNExperiment(Experiment):
         self.population = 251
         self.generations = 2 #Easier to run on generation limit when testing
         self.max_frames = 1000000000 #1 Billion
-        self.gens_to_improve = 25 #Not sure about this for now
+        self.gens_to_improve = 15 #Not sure about this for now
         self.max_species_dist =  1.0 #Currently just binary effectively, so this is ok as long as it's under 99
         self.interspecies_crossover = 0.0 #This would break things so it's not allowed
         self.mutate_ratio = 0.70
-        self.mutate_effect = 1.0 #Can fiddle with this as well
+        self.mutate_effect = 0.002 #Can fiddle with this as well
         self.elite_per_species   = 1 
         self.elite_threshold   = 10 #As with NEAT, for now
         self.elite_range   = 5 #number of genomes checked for elite copy over (should be <= threshold, always)
@@ -262,10 +262,11 @@ class TensorNExperiment(Experiment):
         self.weight_reset_chance = 0.0
         self.bias_perturb_chance = 0.7
         self.bias_reset_chance = 0.0
-        self.layer_add_chance = 0.1
-        self.layer_collapse_chance = 0.02
-        self.max_network_size = 16
-        self.save_elite = False
+        self.layer_add_chance = 0.0
+        self.layer_collapse_chance = 0.0
+        self.max_network_size = 9
+        self.save_elite = False    
+        self.initial_layer_range = 1
         
 #----------------------------
 #Tensor Cart Pole for testing
@@ -280,7 +281,7 @@ cartpole_TN.trials           = 1
 cartpole_TN.population       = 101
 cartpole_TN.generations      = 10
 cartpole_TN.max_frames       = 100000000
-cartpole_TN.thread_count      = 1
+cartpole_TN.thread_count     = 1
 #----------------------------
 #Tensor Frostbite
 frost_TN = TensorNExperiment('FrostbiteTensor')
@@ -296,6 +297,7 @@ frost_TN.generations      = 9999
 frostbite_1.genome_file     = 'PickledGenomes/frost_tensor_genes'
 frost_TN.max_frames       = 1000000000
 frost_TN.thread_count      = 20
+frost_TN.initial_layer_range = 5
 #---------------------------
         
 
