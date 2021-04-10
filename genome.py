@@ -88,6 +88,7 @@ class Genome():
                     break
             env.close()
         fitness = (sum_reward/trials)
+        fitness = fitness
         self.model = None
         #Fitnesses of zero or less screw things up, so we fix that
         if fitness == 0:

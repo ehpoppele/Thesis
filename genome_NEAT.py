@@ -108,6 +108,7 @@ class NEATGenome(Genome):
             for node in new.nodes:
                 if weight.origin.innovation_num == node.innovation_num:
                     weight.origin = node
+                    weight.origin_backup = node
                     assigned += 1
                 if weight.destination.innovation_num == node.innovation_num:
                     weight.destination = node
@@ -120,6 +121,7 @@ class NEATGenome(Genome):
             for node in new.nodes:
                 if weight.origin.innovation_num == node.innovation_num:
                     weight.origin = node
+                    weight.origin_backup = node
                     assigned += 1
                 if weight.destination.innovation_num == node.innovation_num:
                     weight.destination = node
@@ -521,6 +523,7 @@ class NEATGenome(Genome):
             for node in child.nodes:
                 if weight.origin.innovation_num == node.innovation_num:
                     weight.origin = node
+                    weight.origin_backup = node
                     assigned += 1
                 if weight.destination.innovation_num == node.innovation_num:
                     weight.destination = node
@@ -533,6 +536,7 @@ class NEATGenome(Genome):
             for node in child.nodes:
                 if weight.origin.innovation_num == node.innovation_num:
                     weight.origin = node
+                    weight.origin_backup = node
                     assigned += 1
                 if weight.destination.innovation_num == node.innovation_num:
                     weight.destination = node

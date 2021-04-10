@@ -223,6 +223,36 @@ atls_NEAT.inputs = 128
 atls_NEAT.outputs = 4
 atls_NEAT.thread_count = 24
 atls_NEAT.genome_file = "PickledGenomes/AtlsNEAT"
+#atls_NEAT.max_frames = 100000000
+#---------------------------
+aslt_NEAT = NEATExperiment('AssaultNEAT')
+aslt_NEAT.env = gym.make('Assault-ram-v0', frameskip=4)
+aslt_NEAT.inputs = 128
+aslt_NEAT.outputs = 7
+aslt_NEAT.thread_count = 24
+aslt_NEAT.genome_file = "PickledGenomes/AsltNEAT"
+#---------------------------
+skiing_NEAT = NEATExperiment('SkiingNEAT')
+skiing_NEAT.env = gym.make('Skiing-ram-v0')
+skiing_NEAT.inputs = 128
+skiing_NEAT.outputs = 3
+skiing_NEAT.thread_count = 24
+skiing_NEAT.genome_file = "PickledGenomes/SkiingNEAT"
+#---------------------------
+sqst_NEAT = NEATExperiment('SeaquestNEAT')
+sqst_NEAT.env = gym.make('Seaquest-ram-v0')
+sqst_NEAT.inputs = 128
+sqst_NEAT.outputs = 18
+sqst_NEAT.thread_count = 24
+sqst_NEAT.genome_file = "PickledGenomes/SeaquestNEAT"
+#---------------------------
+#Frost NEAT 2 uses standard settings since idk what the og frost NEAT is doing anymore
+frost_NEAT_2 = NEATExperiment('FrostNEAT')
+frost_NEAT_2.env = gym.make('Frostbite-ram-v0')
+frost_NEAT_2.inputs = 128
+frost_NEAT_2.outputs = 18
+frost_NEAT_2.thread_count = 24
+frost_NEAT_2.genome_file = "PickledGenomes/FinalFrost"
 #---------------------------
 xor = NEATExperiment("XOR")
 xor.env = XOR_env()
@@ -307,5 +337,4 @@ frost_TN.thread_count      = 20
 #---------------------------
         
 
-list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN, atlantis, assault, seaquest, atls_NEAT]
-
+list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN, atlantis, assault, seaquest, atls_NEAT, vent_NEAT, aslt_NEAT, skiing_NEAT, sqst_NEAT, frost_NEAT_2]

@@ -13,7 +13,7 @@ SELECT_TRIALS = 10 #how many
 #Runs an experiment given as a command line args
 #Mostly just a wrapper file to call one of the evolve files
 if __name__ == "__main__":
-    trials = 1
+    trials = 3
     torch.set_default_tensor_type(torch.DoubleTensor) #Could test with floats later for better speed
     experiment = None
     #read sys args for experiment to use; inputs correspond to names given in experiments.py
@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     print()
     print("#-------------------------------#")
-    print("All experiment have concluded normally")
+    print("All experiments have concluded normally")
     for i in range(trials):
         print("Fitness before many evals:", final_vals[i][0])
         print("Mean Score:", final_vals[i][1])

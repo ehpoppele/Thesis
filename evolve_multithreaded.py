@@ -37,7 +37,7 @@ def multiEvalFitnessElite(g):
     
 def multiEvalFitnessThirty(g):
     torch.set_default_tensor_type(torch.DoubleTensor)
-    return (g.evalFitness(iters=30))
+    return (g.evalFitness(iters=50))
     
 #Runs basic evolution on the given experiment and params
 #Creates a new generation through a combination of methods:
@@ -97,6 +97,8 @@ def evolve(experiment):
     for i in range(pop_size):
         #print(new_nets[i].fitness)
         new_nets[i].fitness = multiReturn[i][0]
+        #sys.stdout.write(str(multiReturn[i][0]) + "\n")
+        #sys.stdout.flush()
         total_frames += multiReturn[i][1]
     for net in new_nets:
         population.add(net)
