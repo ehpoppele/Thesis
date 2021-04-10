@@ -262,11 +262,11 @@ class TensorNExperiment(Experiment):
         self.weight_reset_chance = 0.0
         self.bias_perturb_chance = 0.7
         self.bias_reset_chance = 0.0
-        self.layer_add_chance = 0.0
-        self.layer_collapse_chance = 0.0
-        self.max_network_size = 9
+        self.layer_add_chance = 0.3
+        self.layer_collapse_chance = 0.3
+        self.max_network_size = 8
         self.save_elite = False    
-        self.initial_layer_range = 1
+        self.initial_layer_range = 8
         
 #----------------------------
 #Tensor Cart Pole for testing
@@ -297,7 +297,7 @@ frost_TN.generations      = 9999
 frostbite_1.genome_file     = 'PickledGenomes/frost_tensor_genes'
 frost_TN.max_frames       = 1000000000
 frost_TN.thread_count      = 20
-frost_TN.initial_layer_range = 5
+frost_TN.initial_layer_range = 8
 #---------------------------
         
 
