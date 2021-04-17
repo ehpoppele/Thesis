@@ -289,7 +289,7 @@ class TensorNExperiment(Experiment):
         self.species_select = 'weighted' #Need to rename weight to wheel, then change this to something better
         self.thread_count = 24
         self.device = 'cpu'
-        self.population = 251
+        self.population = 1001
         self.generations = 2 #Easier to run on generation limit when testing
         self.max_frames = 1000000000 #1 Billion
         self.gens_to_improve = 15 #Not sure about this for now
@@ -304,15 +304,21 @@ class TensorNExperiment(Experiment):
         self.activation_func = nn.ReLU() #Ideally this would be mutated as well
         self.activation_const = 1.0
         #Unique params
-        self.weight_perturb_chance = 0.7
+        self.weight_perturb_chance = 0.8
         self.weight_reset_chance = 0.0
-        self.bias_perturb_chance = 0.7
+        self.bias_perturb_chance = 0.8
         self.bias_reset_chance = 0.0
-        self.layer_add_chance = 0.3
-        self.layer_collapse_chance = 0.3
-        self.max_network_size = 8
+        self.layer_add_chance = 0.1
+        self.layer_collapse_chance = 0.1
+        self.max_network_size = 4
         self.save_elite = False    
-        self.initial_layer_range = 8
+        self.initial_layer_range = 4
+        self.layer_step_count = 5
+        self.layer_step_size = 128
+        self.trials = 1
+        self.population = 1001
+        self.generations = 9999
+        self.thread_count = 24
         
 #----------------------------
 #Tensor Cart Pole for testing
@@ -331,20 +337,28 @@ cartpole_TN.thread_count     = 1
 #----------------------------
 #Tensor Frostbite
 frost_TN = TensorNExperiment('FrostbiteTensor')
-frost_TN.env              = gym.make('Frostbite-ram-v0', frameskip=4)
+frost_TN.env              = gym.make('Frostbite-ram-v0', frameskip=8)
 frost_TN.device           = 'cpu'
 frost_TN.inputs           = 128
 frost_TN.outputs          = 18
-frost_TN.layer_step_count = 6
+frost_TN.layer_step_count = 5
 frost_TN.layer_step_size  = 128
 frost_TN.trials           = 1
 frost_TN.population       = 1001
 frost_TN.generations      = 9999
 frostbite_1.genome_file     = 'PickledGenomes/frost_tensor_genes'
 frost_TN.max_frames       = 1000000000
-frost_TN.thread_count      = 20
-frost_TN.initial_layer_range = 8
+frost_TN.thread_count      = 24
+frost_TN.initial_layer_range = 4
+frost_TN.max_network_size = 4
 #---------------------------
-        
+#Tensor Assault
+aslt_TN = TensorNExperiment('AssaultTensor')
+aslt_TN.env = gym.make('Assault-ram-v0', frameskip=8)
+aslt_TN.device = 'cpu'
+aslt_TN.inputs = 128
+aslt_TN.outputs = 7
+aslt_TN.genome_file = 'PickledGenomes/Aslt_TNG'
+#---------------------------
 
-list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN, atlantis, assault, seaquest, skiing, atls_NEAT, vent_NEAT, aslt_NEAT, skiing_NEAT, sqst_NEAT, frost_NEAT_2]
+list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN, atlantis, assault, seaquest, skiing, atls_NEAT, vent_NEAT, aslt_NEAT, skiing_NEAT, sqst_NEAT, frost_NEAT_2, aslt_TN]
