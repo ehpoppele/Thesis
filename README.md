@@ -2,7 +2,9 @@
 Senior Undergraduate Thesis Investigating Neuroevolution
 Completed for the Reed College Computer Science Department, 2021
 
-This readme is a work in progress and will be changed and updated frequently until May 2021. The project is accompanied by a written thesis, which will be included or linked once it is finished.
+The project is accompanied by a written thesis, which will be included or linked once it is finished. 
+
+This readme is a work in progress. It is not in a completed state, and will be sometime after I actually finish up the written portion.
 
 ## Neuroevolution
 This project implements the NEAT algorithm for neuroevolution (http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf), as well as another algorithm from Uber's AI division (https://arxiv.org/pdf/1712.06567.pdf). A third type of genome, appearing in genome_Tensor.py, contains my own improvements to the NEAT algorithm to make it more applicable to this specific problem domain (playing Atari games).
