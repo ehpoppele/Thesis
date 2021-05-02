@@ -291,13 +291,14 @@ def evolve(experiment):
         save_copy = copy.deepcopy(top_elite)
         saved.append([save_copy, elite_max])
         """
-        total_layers = 0
-        for genome in new_pop:
-            total_layers += genome.layer_count
-        avg_layers = total_layers/new_pop.size()
+        #total_layers = 0
+        #for genome in new_pop:
+        #    total_layers += genome.layer_count
+        #avg_layers = total_layers/new_pop.size()
         elapsed = int(time.perf_counter()-time_start)
         time_string = str(elapsed//3600) + ":" + str((elapsed%3600)//60) + ":" + str(elapsed%60)
-        sys.stdout.write(str(100*total_frames/experiment.max_frames) + "% complete | " + time_string + " elapsed | " + str(elite_max) + " recent score | " + str(save_copy.layer_size) + " " + str(save_copy.layer_count) + " layer size/count | " + str(len(new_pop.species)) + " total species | " + str(avg_layers) + " average layers\n")
+        #sys.stdout.write(str(100*total_frames/experiment.max_frames) + "% complete | " + time_string + " elapsed | " + str(elite_max) + " recent score | " + str(save_copy.layer_size) + " " + str(save_copy.layer_count) + " layer size/count | " + str(len(new_pop.species)) + " total species | " + str(avg_layers) + " average layers\n")
+        sys.stdout.write(str(100*total_frames/experiment.max_frames) + "% complete | " + time_string + " elapsed | " + str(elite_max) + " recent score | "  + str(len(new_pop.species)) + " total species \n")
         sys.stdout.flush()
         population.species = []
         population.genomes = []

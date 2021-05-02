@@ -111,9 +111,9 @@ frostbite_1.elite_count     = frostbite_1.population - (frostbite_1.child_count 
 frostbite_1.elite_range     = 10
 frostbite_1.elite_evals     = 30
 frostbite_1.outfile         = 'terminal' #"frostbite.txt"
-frostbite_1.genome_file     = 'PickledGenomes/frost_genes'
+frostbite_1.genome_file     = 'PickledGenomes/frost_genes_6bil'
 frostbite_1.thread_count    = 24
-frostbite_1.max_frames      = 1000000000
+frostbite_1.max_frames      = 6000000000
 #---------------------------
 #Venture
 venture_1 = Experiment('Venture')
@@ -126,9 +126,9 @@ venture_1.trials          = 1
 venture_1.population      = 1001
 venture_1.generations     = 9999
 venture_1.outfile         = 'terminal'
-venture_1.genome_file     = 'PickledGenomes/venture_genes'
-venture_1.thread_count    = 20
-venture_1.max_frames      = 500000000
+venture_1.genome_file     = 'PickledGenomes/venture_genes_6bil'
+venture_1.thread_count    = 24
+venture_1.max_frames      = 6000000000
 #---------------------------
 #Atlantis
 atlantis              = Experiment('Atlantis')
@@ -360,5 +360,19 @@ aslt_TN.inputs = 128
 aslt_TN.outputs = 7
 aslt_TN.genome_file = 'PickledGenomes/Aslt_TNG'
 #---------------------------
+#Tensor Seaquest
+sqst_TN = TensorNExperiment('SeaquestTensor')
+sqst_TN.env = gym.make('Seaquest-ram-v0', frameskip=8)
+sqst_TN.inputs = 128
+sqst_TN.outputs = 18
+sqst_TN.genome_file = 'PickledGenomes/Sqst_TNG'
+#---------------------------
+#Tensor Skiing
+skiing_TN = TensorNExperiment('SkiingTensor')
+skiing_TN.env = gym.make('Skiing-ram-v0', frameskip=8)
+skiing_TN.inputs = 128
+skiing_TN.outputs = 3
+skiing_TN.genome_file = 'PickledGenomes/Ski_TNG'
+#---------------------------
 
-list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN, atlantis, assault, seaquest, skiing, atls_NEAT, vent_NEAT, aslt_NEAT, skiing_NEAT, sqst_NEAT, frost_NEAT_2, aslt_TN]
+list = [cart_pole, frostbite_1, venture_1, cart_NEAT, cart_multithread, frost_NEAT, xor, cartpole_TN, frost_TN, atlantis, assault, seaquest, skiing, atls_NEAT, vent_NEAT, aslt_NEAT, skiing_NEAT, sqst_NEAT, frost_NEAT_2, aslt_TN, sqst_TN, skiing_TN]
