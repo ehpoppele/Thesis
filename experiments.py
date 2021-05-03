@@ -111,9 +111,9 @@ frostbite_1.elite_count     = frostbite_1.population - (frostbite_1.child_count 
 frostbite_1.elite_range     = 10
 frostbite_1.elite_evals     = 30
 frostbite_1.outfile         = 'terminal' #"frostbite.txt"
-frostbite_1.genome_file     = 'PickledGenomes/frost_genes_6bil'
+frostbite_1.genome_file     = 'PickledGenomes/frost_genes_10mil'
 frostbite_1.thread_count    = 24
-frostbite_1.max_frames      = 6000000000
+frostbite_1.max_frames      = 30000000
 #---------------------------
 #Venture
 venture_1 = Experiment('Venture')
@@ -346,7 +346,7 @@ frost_TN.layer_step_size  = 128
 frost_TN.trials           = 1
 frost_TN.population       = 1001
 frost_TN.generations      = 9999
-frostbite_1.genome_file     = 'PickledGenomes/frost_tensor_genes'
+frost_TN.genome_file     = 'PickledGenomes/frost_tensor_genes'
 frost_TN.max_frames       = 1000000000
 frost_TN.thread_count      = 24
 frost_TN.initial_layer_range = 4
